@@ -100,9 +100,9 @@ function PasswordRule({ met, label }) {
         border: `1px solid ${met ? 'rgba(167,139,250,0.3)' : 'rgba(255,255,255,0.06)'}`,
         transition: 'all 0.25s',
       }}>
-        {met ? <Check size={9} color="#a78bfa" strokeWidth={3} /> : <X size={9} color="#27272a" strokeWidth={2.5} />}
+  {met ? <Check size={9} color="#a78bfa" strokeWidth={3} /> : <X size={9} color="#e4e4e7" strokeWidth={2.5} />}
       </div>
-      <span style={{ fontSize: '0.75rem', color: met ? '#a78bfa' : '#27272a', transition: 'color 0.25s' }}>{label}</span>
+  <span style={{ fontSize: '0.75rem', color: met ? '#a78bfa' : '#e4e4e7', transition: 'color 0.25s' }}>{label}</span>
     </div>
   )
 }
@@ -187,8 +187,8 @@ export default function Register() {
           background: rgba(255,255,255,0.06);
         }
         .auth-input.has-error { border-color: rgba(248,113,113,0.4); }
-        .auth-input.has-error:focus { box-shadow: 0 0 0 3px rgba(248,113,113,0.08); }
-        .auth-input::placeholder { color: #1e1e2e; }
+    .auth-input.has-error:focus { box-shadow: 0 0 0 3px rgba(248,113,113,0.08); }
+  .auth-input::placeholder { color: #9aa0a6; }
 
         .submit-btn {
           width: 100%; background: linear-gradient(135deg, #8b5cf6, #6366f1);
@@ -213,14 +213,14 @@ export default function Register() {
         .eye-btn {
           position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
           background: none; border: none; cursor: pointer;
-          color: #27272a; display: flex; padding: 0; transition: color 0.2s;
+          color: #e4e4e7; display: flex; padding: 0; transition: color 0.2s;
         }
-        .eye-btn:hover { color: #52525b; }
+  .eye-btn:hover { color: #e4e4e7; }
 
         .ghost-btn {
           width: 100%; background: rgba(255,255,255,0.02);
           border: 1px solid rgba(255,255,255,0.07); border-radius: 10px;
-          padding: 14px; color: #3f3f46;
+          padding: 14px; color: #e4e4e7;
           font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
           cursor: pointer; transition: all 0.2s; backdrop-filter: blur(4px);
         }
@@ -228,10 +228,10 @@ export default function Register() {
 
         .nav-back {
           background: none; border: none; cursor: pointer;
-          color: #27272a; font-family: 'Outfit', sans-serif;
+          color: #e4e4e7; font-family: 'Outfit', sans-serif;
           font-size: 0.82rem; padding: 0; transition: color 0.2s;
         }
-        .nav-back:hover { color: #52525b; }
+  .nav-back:hover { color: #cfcfd6; }
       `}</style>
 
       <FullScreenCanvas />
@@ -272,7 +272,7 @@ export default function Register() {
         {/* LEFT */}
         <div className="left-content" style={{
           display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', padding: '120px 64px 80px 64px',
+          justifyContent: 'center', padding: '120px 96px 80px 160px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '64px' }}>
             <div style={{
@@ -308,7 +308,7 @@ export default function Register() {
             }}>with one search</span>
           </h2>
 
-          <p style={{ color: '#3f3f46', fontSize: '0.9rem', lineHeight: 1.8, maxWidth: '320px', marginBottom: '48px' }}>
+          <p style={{ color: '#e4e4e7', fontSize: '0.9rem', lineHeight: 1.8, maxWidth: '320px', marginBottom: '48px' }}>
             Thousands of local businesses need a website. BizScout finds them, scores them, and helps you close them.
           </p>
 
@@ -330,7 +330,7 @@ export default function Register() {
                 }}>
                   <Icon size={12} color="#8b5cf6" strokeWidth={1.5} />
                 </div>
-                <span style={{ color: '#52525b', fontSize: '0.83rem', lineHeight: 1.4 }}>{text}</span>
+                <span style={{ color: '#e4e4e7', fontSize: '0.83rem', lineHeight: 1.4 }}>{text}</span>
               </div>
             ))}
           </div>
@@ -346,7 +346,7 @@ export default function Register() {
 
             <div style={{ marginBottom: '30px' }}>
               <p style={{
-                color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                 fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2.5px',
                 textTransform: 'uppercase', marginBottom: '10px',
               }}>Get started</p>
@@ -371,12 +371,12 @@ export default function Register() {
 
               <div>
                 <label style={{
-                  display: 'block', color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                  display: 'block', color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                   letterSpacing: '1.8px', marginBottom: '7px',
                   fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
                 }}>Full name</label>
                 <div style={{ position: 'relative' }}>
-                  <User size={14} color="#1e1e28" strokeWidth={1.5} style={{
+                  <User size={14} color="#e4e4e7" strokeWidth={1.5} style={{
                     position: 'absolute', left: '15px', top: '50%',
                     transform: 'translateY(-50%)', pointerEvents: 'none',
                   }} />
@@ -400,12 +400,12 @@ export default function Register() {
 
               <div>
                 <label style={{
-                  display: 'block', color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                  display: 'block', color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                   letterSpacing: '1.8px', marginBottom: '7px',
                   fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
                 }}>Email address</label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={14} color="#1e1e28" strokeWidth={1.5} style={{
+                  <Mail size={14} color="#e4e4e7" strokeWidth={1.5} style={{
                     position: 'absolute', left: '15px', top: '50%',
                     transform: 'translateY(-50%)', pointerEvents: 'none',
                   }} />
@@ -435,12 +435,12 @@ export default function Register() {
 
               <div>
                 <label style={{
-                  display: 'block', color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                  display: 'block', color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                   letterSpacing: '1.8px', marginBottom: '7px',
                   fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
                 }}>Password</label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={14} color="#1e1e28" strokeWidth={1.5} style={{
+                  <Lock size={14} color="#e4e4e7" strokeWidth={1.5} style={{
                     position: 'absolute', left: '15px', top: '50%',
                     transform: 'translateY(-50%)', pointerEvents: 'none',
                   }} />
@@ -505,7 +505,7 @@ export default function Register() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', margin: '22px 0' }}>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
-              <span style={{ color: '#1a1a24', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>HAVE AN ACCOUNT?</span>
+              <span style={{ color: '#bdbdc3', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>HAVE AN ACCOUNT?</span>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
             </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
 
 function Leads() {
   const [leads, setLeads] = useState([])
@@ -12,7 +13,9 @@ function Leads() {
   }, [])
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div>
+      <Navbar />
+      <div style={{ padding: '80px 2rem 2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Leads</h1>
         <button onClick={() => navigate('/add')}>+ Add Lead</button>
@@ -39,6 +42,7 @@ function Leads() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

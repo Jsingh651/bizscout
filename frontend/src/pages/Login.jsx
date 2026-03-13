@@ -169,8 +169,8 @@ export default function Login() {
           background: rgba(255,255,255,0.06);
         }
         .auth-input.has-error { border-color: rgba(248,113,113,0.4); }
-        .auth-input.has-error:focus { box-shadow: 0 0 0 3px rgba(248,113,113,0.08); }
-        .auth-input::placeholder { color: #1e1e2e; }
+    .auth-input.has-error:focus { box-shadow: 0 0 0 3px rgba(248,113,113,0.08); }
+  .auth-input::placeholder { color: #9aa0a6; }
 
         .submit-btn {
           width: 100%; background: linear-gradient(135deg, #8b5cf6, #6366f1);
@@ -195,14 +195,14 @@ export default function Login() {
         .eye-btn {
           position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
           background: none; border: none; cursor: pointer;
-          color: #27272a; display: flex; padding: 0; transition: color 0.2s;
+          color: #e4e4e7; display: flex; padding: 0; transition: color 0.2s;
         }
-        .eye-btn:hover { color: #52525b; }
+  .eye-btn:hover { color: #e4e4e7; }
 
         .ghost-btn {
           width: 100%; background: rgba(255,255,255,0.02);
           border: 1px solid rgba(255,255,255,0.07); border-radius: 10px;
-          padding: 14px; color: #3f3f46;
+          padding: 14px; color: #e4e4e7;
           font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600;
           cursor: pointer; transition: all 0.2s; backdrop-filter: blur(4px);
         }
@@ -210,10 +210,10 @@ export default function Login() {
 
         .nav-back {
           background: none; border: none; cursor: pointer;
-          color: #27272a; font-family: 'Outfit', sans-serif;
+          color: #e4e4e7; font-family: 'Outfit', sans-serif;
           font-size: 0.82rem; padding: 0; transition: color 0.2s;
         }
-        .nav-back:hover { color: #52525b; }
+  .nav-back:hover { color: #cfcfd6; }
       `}</style>
 
       <FullScreenCanvas />
@@ -255,7 +255,7 @@ export default function Login() {
         {/* LEFT — branding */}
         <div className="left-content" style={{
           display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', padding: '120px 64px 80px 64px',
+          justifyContent: 'center', padding: '120px 96px 80px 160px',
           gap: '0',
         }}>
           {/* Logo */}
@@ -294,7 +294,7 @@ export default function Login() {
             }}>before anyone else</span>
           </h2>
 
-          <p style={{ color: '#3f3f46', fontSize: '0.9rem', lineHeight: 1.8, maxWidth: '320px', marginBottom: '48px' }}>
+          <p style={{ color: '#e4e4e7', fontSize: '0.9rem', lineHeight: 1.8, maxWidth: '320px', marginBottom: '48px' }}>
             Scrape Google Maps, detect missing websites, score every lead with AI — close more deals faster.
           </p>
 
@@ -319,7 +319,7 @@ export default function Login() {
                 </div>
                 <div>
                   <div style={{ color: '#a78bfa', fontWeight: '800', fontSize: '0.95rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '-0.5px' }}>{value}</div>
-                  <div style={{ color: '#27272a', fontSize: '0.67rem', textTransform: 'uppercase', letterSpacing: '1.2px' }}>{label}</div>
+                  <div style={{ color: '#e4e4e7', fontSize: '0.67rem', textTransform: 'uppercase', letterSpacing: '1.2px' }}>{label}</div>
                 </div>
               </div>
             ))}
@@ -336,7 +336,7 @@ export default function Login() {
 
             <div style={{ marginBottom: '36px' }}>
               <p style={{
-                color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                 fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2.5px',
                 textTransform: 'uppercase', marginBottom: '10px',
               }}>Welcome back</p>
@@ -360,12 +360,12 @@ export default function Login() {
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               <div>
                 <label style={{
-                  display: 'block', color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                  display: 'block', color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                   letterSpacing: '1.8px', marginBottom: '8px',
                   fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
                 }}>Email address</label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={14} color="#1e1e28" strokeWidth={1.5} style={{
+                  <Mail size={14} color="#e4e4e7" strokeWidth={1.5} style={{
                     position: 'absolute', left: '15px', top: '50%',
                     transform: 'translateY(-50%)', pointerEvents: 'none',
                   }} />
@@ -392,17 +392,17 @@ export default function Login() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <label style={{
-                    color: '#2e2e3a', fontSize: '0.68rem', fontWeight: '700',
+                    color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
                     letterSpacing: '1.8px', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
                   }}>Password</label>
                   <span
-                    style={{ color: '#27272a', fontSize: '0.74rem', cursor: 'pointer', transition: 'color 0.2s' }}
+                    style={{ color: '#e4e4e7', fontSize: '0.74rem', cursor: 'pointer', transition: 'color 0.2s' }}
                     onMouseEnter={e => e.target.style.color = '#a78bfa'}
-                    onMouseLeave={e => e.target.style.color = '#27272a'}
+                    onMouseLeave={e => e.target.style.color = '#e4e4e7'}
                   >Forgot password?</span>
                 </div>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={14} color="#1e1e28" strokeWidth={1.5} style={{
+                  <Lock size={14} color="#e4e4e7" strokeWidth={1.5} style={{
                     position: 'absolute', left: '15px', top: '50%',
                     transform: 'translateY(-50%)', pointerEvents: 'none',
                   }} />
@@ -432,7 +432,7 @@ export default function Login() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', margin: '26px 0' }}>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
-              <span style={{ color: '#1a1a24', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>NEW HERE?</span>
+              <span style={{ color: '#e4e4e7', fontSize: '0.65rem', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>NEW HERE?</span>
               <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
             </div>
 

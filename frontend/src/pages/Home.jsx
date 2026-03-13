@@ -1,10 +1,12 @@
   import { useState, useEffect, useRef } from 'react'
-  import { useNavigate } from 'react-router-dom'
+    import { useNavigate } from 'react-router-dom'
+    import { useAuth } from '../context/AuthContext'
   import Select from 'react-select'
   import {
     Search, Brain, LayoutDashboard, Mail, BarChart2, Download,
     MapPin, Globe, Sparkles, Handshake, AlertTriangle, ExternalLink
   } from 'lucide-react'
+  import Navbar from '../components/Navbar'
 
   const NICHES = ['Plumbing','HVAC','Roofing','Landscaping','Auto Repair','Dentists',
     'Barbershops','Restaurants','Electricians','Tree Services','Pressure Washing',
@@ -243,13 +245,19 @@
 
   export default function Home() {
     const navigate = useNavigate()
+    const { user, loading } = useAuth()
     const [city, setCity] = useState(null)
     const [niche, setNiche] = useState(null)
     const word = useTypewriter(['websites', 'clients', 'visibility', 'growth'])
 
+    // If already authenticated, redirect to leads
+    useEffect(() => {
+      if (!loading && user) navigate('/leads')
+    }, [user, loading, navigate])
+
     return (
       <div style={{ minHeight: '100vh', background: '#09090f', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
-        <style>{`
+  <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
           *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -347,8 +355,10 @@
             margin-bottom: 18px; flex-shrink: 0;
           }
         `}</style>
+        
+  <Navbar />
 
-        <ParticleCanvas />
+  <ParticleCanvas />
 
         {/* Background glows */}
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>

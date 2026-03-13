@@ -1,10 +1,14 @@
+// FILE: frontend/src/App.jsx
+// ACTION: REPLACE your entire existing App.jsx
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
-import Home from './pages/Home'
-import Leads from './pages/Leads'
-import AddLead from './pages/AddLead'
-import Login from './pages/Login'
+import Home     from './pages/Home'
+import Login    from './pages/Login'
 import Register from './pages/Register'
+import Leads    from './pages/Leads'
+import AddLead  from './pages/AddLead'
+import Profile  from './pages/Profile'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -17,11 +21,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        {/* Public */}
+        <Route path="/"         element={<Home />} />
+        <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
-        <Route path="/add" element={<ProtectedRoute><AddLead /></ProtectedRoute>} />
+
+        {/* Protected */}
+        <Route path="/leads"   element={<ProtectedRoute><Leads /></ProtectedRoute>} />
+        <Route path="/add"     element={<ProtectedRoute><AddLead /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   )

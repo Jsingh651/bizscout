@@ -6,8 +6,9 @@ export default function Navbar() {
   const { user, logout } = useAuth()
 
   const handleLogout = () => {
-    logout()
+    // navigate to home first so ProtectedRoute doesn't redirect to /login
     navigate('/')
+    logout()
   }
 
   return (

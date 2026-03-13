@@ -5,6 +5,7 @@ from app.models.lead import Lead, Base
 from app.models.user import User
 from app.routers import leads
 from app.routers import auth as auth_router
+from app.routers import scrape as scrape_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -12,8 +13,6 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # Allow localhost on any port (useful when the dev server picks a different port)
-    # We use allow_origin_regex so requests from e.g. http://localhost:5174 will be accepted.
     allow_origins=[],
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_methods=["*"],
@@ -23,6 +22,7 @@ app.add_middleware(
 
 app.include_router(leads.router)
 app.include_router(auth_router.router)
+app.include_router(scrape_router.router)
 
 @app.get("/")
 def root():

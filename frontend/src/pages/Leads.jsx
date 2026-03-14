@@ -826,8 +826,8 @@ export default function Leads() {
           <div style={{ display:'flex',gap:24 }}>
             <button className="nav-lnk" style={{ color:'#fafafa',fontWeight:600 }}>Leads</button>
             <button className="nav-lnk" onClick={() => navigate('/batches')}>Batches</button>
-            <button className="nav-lnk">Pipeline</button>
-            <button className="nav-lnk">Analytics</button>
+            <button className="nav-lnk" onClick={() => navigate('/pipeline')}>Pipeline</button>
+          <button className="nav-lnk" onClick={() => navigate('/analytics')}>Analytics</button>
           </div>
         </div>
         <NavbarDropdown />

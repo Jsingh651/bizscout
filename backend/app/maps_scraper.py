@@ -63,8 +63,8 @@ DELAY_BETWEEN_CLICKS  = (1.5, 3.5)
 DELAY_BETWEEN_SCROLLS = (0.8, 2.0)
 DELAY_AFTER_LOAD      = (3.0, 5.0)
 WORKER_STAGGER_DELAY  = (4.0, 8.0)
-MAX_WORKERS = 3
-MAX_RESULTS = 30
+MAX_WORKERS = 4
+MAX_RESULTS = 100
 
 # High-urgency niches — businesses that need a website most
 HIGH_URGENCY_NICHES = {

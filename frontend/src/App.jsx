@@ -1,12 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
-import Home     from './pages/Home'
-import Login    from './pages/Login'
-import Register from './pages/Register'
-import Leads    from './pages/Leads'
-import AddLead  from './pages/AddLead'
-import Profile  from './pages/Profile'
-import Batches  from './pages/Batches'
+import Home       from './pages/Home'
+import Login      from './pages/Login'
+import Register   from './pages/Register'
+import Leads      from './pages/Leads'
+import AddLead    from './pages/AddLead'
+import Profile    from './pages/Profile'
+import Batches    from './pages/Batches'
+import Pipeline   from './pages/Pipeline'
+import Analytics  from './pages/Analytics'
+import LeadDetail from './pages/LeadDetail'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -25,10 +28,13 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Protected */}
-        <Route path="/leads"   element={<ProtectedRoute><Leads /></ProtectedRoute>} />
-        <Route path="/add"     element={<ProtectedRoute><AddLead /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/batches" element={<ProtectedRoute><Batches /></ProtectedRoute>} />
+        <Route path="/leads"        element={<ProtectedRoute><Leads /></ProtectedRoute>} />
+        <Route path="/leads/:id"    element={<ProtectedRoute><LeadDetail /></ProtectedRoute>} />
+        <Route path="/add"          element={<ProtectedRoute><AddLead /></ProtectedRoute>} />
+        <Route path="/profile"      element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/batches"      element={<ProtectedRoute><Batches /></ProtectedRoute>} />
+        <Route path="/pipeline"     element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
+        <Route path="/analytics"    element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />

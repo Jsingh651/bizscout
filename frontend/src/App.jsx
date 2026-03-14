@@ -1,6 +1,3 @@
-// FILE: frontend/src/App.jsx
-// ACTION: REPLACE your entire existing App.jsx
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import Home     from './pages/Home'
@@ -9,6 +6,7 @@ import Register from './pages/Register'
 import Leads    from './pages/Leads'
 import AddLead  from './pages/AddLead'
 import Profile  from './pages/Profile'
+import Batches  from './pages/Batches'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -30,6 +28,7 @@ function App() {
         <Route path="/leads"   element={<ProtectedRoute><Leads /></ProtectedRoute>} />
         <Route path="/add"     element={<ProtectedRoute><AddLead /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/batches" element={<ProtectedRoute><Batches /></ProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />

@@ -80,7 +80,7 @@ pip install playwright
 
 Or install everything in one command:
 ```bash
-pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv "pydantic[email]" "python-jose[cryptography]" "passlib[bcrypt]" "bcrypt==4.0.1" python-multipart openai playwright
+pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv "pydantic[email]" "python-jose[cryptography]" "passlib[bcrypt]" "bcrypt==4.0.1" python-multipart openai playwright selenium beautifulsoup4
 ```
 
 ### Create the .env file

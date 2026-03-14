@@ -3,9 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.models.lead import Lead, Base
 from app.models.user import User
+from app.models.batch import Batch          # ← import so table is created
 from app.routers import leads
 from app.routers import auth as auth_router
 from app.routers import scrape as scrape_router
+from app.routers import batches as batches_router   # ← new router
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,6 +25,7 @@ app.add_middleware(
 app.include_router(leads.router)
 app.include_router(auth_router.router)
 app.include_router(scrape_router.router)
+app.include_router(batches_router.router)   # ← register
 
 @app.get("/")
 def root():

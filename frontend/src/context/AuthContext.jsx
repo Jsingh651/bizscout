@@ -21,8 +21,15 @@ export function AuthProvider({ children }) {
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data) {
-          setUser(data)
-          try { localStorage.setItem('user', JSON.stringify(data)) } catch {}
+          const userData = { id: data.id, email: data.email, full_name: data.full_name }
+          setUser(userData)
+          try { localStorage.setItem('user', JSON.stringify(userData)) } catch {}
+          if (data.access_token) {
+            try {
+              sessionStorage.setItem('access_token', data.access_token)
+              localStorage.setItem('access_token', data.access_token)
+            } catch (_) {}
+          }
         }
       })
       .catch(() => {})
@@ -37,7 +44,11 @@ export function AuthProvider({ children }) {
   const logout = () => {
     fetch('http://127.0.0.1:8000/auth/logout', { method: 'POST', credentials: 'include' })
     setUser(null)
-    try { localStorage.removeItem('user') } catch {}
+    try {
+      localStorage.removeItem('user')
+      localStorage.removeItem('access_token')
+      sessionStorage.removeItem('access_token')
+    } catch {}
   }
 
   return (

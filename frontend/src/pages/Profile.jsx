@@ -148,7 +148,7 @@ export default function Profile() {
           border-color: rgba(139,92,246,0.5);
           box-shadow: 0 0 0 3px rgba(139,92,246,0.08);
         }
-        .profile-input:disabled { color: #3f3f46; cursor: not-allowed; }
+        .profile-input:disabled { color: #b8c2d4; cursor: not-allowed; }
         .profile-input.err { border-color: rgba(248,113,113,0.4); }
 
         .save-btn {
@@ -162,7 +162,7 @@ export default function Profile() {
         .tab-btn {
           display: flex; align-items: center; gap: 10px; padding: 10px 14px;
           border-radius: 10px; background: transparent; border: none;
-          color: #71717a; font-size: 14px; cursor: pointer;
+          color: #c4c4cc; font-size: 14px; cursor: pointer;
           font-family: 'Outfit',sans-serif; text-align: left; transition: all 0.15s; width: 100%;
         }
         .tab-btn:hover { background: rgba(139,92,246,0.06); color: #c4b5fd; }
@@ -171,10 +171,10 @@ export default function Profile() {
         .back-btn {
           display: flex; align-items: center; background: rgba(255,255,255,0.03);
           border: 1px solid rgba(255,255,255,0.07); border-radius: 8px;
-          padding: 6px 12px; color: #71717a; font-size: 13px; cursor: pointer;
+          padding: 6px 12px; color: #c4c4cc; font-size: 13px; cursor: pointer;
           font-family: 'Outfit',sans-serif; transition: color 0.2s; gap: 6px;
         }
-        .back-btn:hover { color: #a1a1aa; }
+        .back-btn:hover { color: #c4c4cc; }
 
         .delete-btn {
           display: flex; align-items: center; gap: 6px;
@@ -186,13 +186,13 @@ export default function Profile() {
 
         .eye-btn {
           position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-          background: none; border: none; color: #52525b; cursor: pointer;
+          background: none; border: none; color: #c4c4cc; cursor: pointer;
           display: flex; align-items: center; padding: 0;
         }
-        .eye-btn:hover { color: #a1a1aa; }
+        .eye-btn:hover { color: #c4c4cc; }
 
-        .nav-link { background: none; border: none; color: #3f3f46; font-size: 14px; cursor: pointer; font-family: 'Outfit',sans-serif; transition: color 0.2s; padding: 0; }
-        .nav-link:hover { color: #a1a1aa; }
+        .nav-link { background: none; border: none; color: #b8c2d4; font-size: 14px; cursor: pointer; font-family: 'Outfit',sans-serif; transition: color 0.2s; padding: 0; }
+        .nav-link:hover { color: #c4c4cc; }
       `}</style>
 
       <ParticleCanvas />
@@ -245,7 +245,7 @@ export default function Profile() {
           </div>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px', letterSpacing: '-0.5px' }}>{user?.full_name || 'User'}</h1>
-            <p style={{ fontSize: 13, color: '#52525b', fontFamily: "'JetBrains Mono', monospace", margin: '0 0 8px' }}>{user?.email}</p>
+            <p style={{ fontSize: 13, color: '#c4c4cc', fontFamily: "'JetBrains Mono', monospace", margin: '0 0 8px' }}>{user?.email}</p>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 4,
               background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)',
@@ -280,11 +280,11 @@ export default function Profile() {
             {activeTab === 'info' && (
               <>
                 <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 6px', letterSpacing: '-0.3px' }}>Profile Information</h2>
-                <p style={{ fontSize: 14, color: '#52525b', marginBottom: 28 }}>Update your display name.</p>
+                <p style={{ fontSize: 14, color: '#c4c4cc', marginBottom: 28 }}>Update your display name.</p>
 
                 <form onSubmit={handleInfo(onSaveInfo)} style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 480 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#52525b', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
                       <User size={11} color="#8b5cf6" /> Full Name
                     </label>
                     <input className={`profile-input${errInfo.full_name ? ' err' : ''}`}
@@ -294,11 +294,11 @@ export default function Profile() {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#52525b', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
                       <Mail size={11} color="#8b5cf6" /> Email Address
                     </label>
                     <input className="profile-input" disabled {...regInfo('email')} />
-                    <span style={{ fontSize: 12, color: '#3f3f46' }}>Email cannot be changed.</span>
+                    <span style={{ fontSize: 12, color: '#b8c2d4' }}>Email cannot be changed.</span>
                   </div>
 
                   {nameSuccess && (
@@ -321,13 +321,13 @@ export default function Profile() {
             {activeTab === 'security' && (
               <>
                 <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 6px', letterSpacing: '-0.3px' }}>Security</h2>
-                <p style={{ fontSize: 14, color: '#52525b', marginBottom: 28 }}>Change your password.</p>
+                <p style={{ fontSize: 14, color: '#c4c4cc', marginBottom: 28 }}>Change your password.</p>
 
                 <form onSubmit={handlePw(onChangePassword)} style={{ display: 'flex', flexDirection: 'column', gap: 18, maxWidth: 480 }}>
 
                   {/* Current password */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#52525b', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
                       <Lock size={11} color="#8b5cf6" /> Current Password
                     </label>
                     <div style={{ position: 'relative' }}>
@@ -344,7 +344,7 @@ export default function Profile() {
 
                   {/* New password */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#52525b', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
                       <Lock size={11} color="#8b5cf6" /> New Password
                     </label>
                     <div style={{ position: 'relative' }}>
@@ -366,8 +366,8 @@ export default function Profile() {
                       <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 8, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                         {pwRules.map(r => (
                           <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <CheckCircle2 size={12} style={{ color: r.pass ? '#4ade80' : '#3f3f46' }} />
-                            <span style={{ fontSize: 12, color: r.pass ? '#a1a1aa' : '#52525b' }}>{r.label}</span>
+                            <CheckCircle2 size={12} style={{ color: r.pass ? '#4ade80' : '#b8c2d4' }} />
+                            <span style={{ fontSize: 12, color: r.pass ? '#c4c4cc' : '#c4c4cc' }}>{r.label}</span>
                           </div>
                         ))}
                       </div>
@@ -376,7 +376,7 @@ export default function Profile() {
 
                   {/* Confirm */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#52525b', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <label style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'JetBrains Mono', monospace" }}>
                       <Lock size={11} color="#8b5cf6" /> Confirm New Password
                     </label>
                     <div style={{ position: 'relative' }}>
@@ -416,7 +416,7 @@ export default function Profile() {
                   <div style={{ padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Delete Account</div>
-                      <div style={{ fontSize: 13, color: '#52525b' }}>Permanently remove your account and all data.</div>
+                      <div style={{ fontSize: 13, color: '#c4c4cc' }}>Permanently remove your account and all data.</div>
                     </div>
                     <button className="delete-btn"><Trash2 size={13} /> Delete</button>
                   </div>
@@ -428,16 +428,16 @@ export default function Profile() {
             {activeTab === 'activity' && (
               <>
                 <h2 style={{ fontSize: 20, fontWeight: 700, margin: '0 0 6px', letterSpacing: '-0.3px' }}>Activity</h2>
-                <p style={{ fontSize: 14, color: '#52525b', marginBottom: 28 }}>Your recent actions.</p>
+                <p style={{ fontSize: 14, color: '#c4c4cc', marginBottom: 28 }}>Your recent actions.</p>
                 <div>
                   {ACTIVITY.map((a, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#8b5cf6', flexShrink: 0 }} />
                       <div style={{ flex: 1 }}>
                         <span style={{ fontSize: 13, fontWeight: 600 }}>{a.action}</span>
-                        <span style={{ fontSize: 13, color: '#71717a' }}> — {a.detail}</span>
+                        <span style={{ fontSize: 13, color: '#c4c4cc' }}> — {a.detail}</span>
                       </div>
-                      <span style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>{a.time}</span>
+                      <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{a.time}</span>
                     </div>
                   ))}
                 </div>

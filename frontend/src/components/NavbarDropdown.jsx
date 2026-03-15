@@ -81,7 +81,7 @@ export default function NavbarDropdown() {
               <div style={{ fontSize: 13, fontWeight: 600, color: '#fafafa', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user?.full_name || 'User'}
               </div>
-              <div style={{ fontSize: 11, color: '#52525b', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: 11, color: '#c4c4cc', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user?.email}
               </div>
             </div>
@@ -96,9 +96,9 @@ export default function NavbarDropdown() {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.08)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <span style={{ color: '#71717a', display: 'flex', alignItems: 'center' }}>{item.icon}</span>
-              <span style={{ fontSize: 13, color: '#a1a1aa', fontFamily: "'Outfit', sans-serif" }}>{item.label}</span>
-              <ChevronRight size={12} style={{ color: '#3f3f46', marginLeft: 'auto' }} />
+              <span style={{ color: '#c4c4cc', display: 'flex', alignItems: 'center' }}>{item.icon}</span>
+              <span style={{ fontSize: 13, color: '#c4c4cc', fontFamily: "'Outfit', sans-serif" }}>{item.label}</span>
+              <ChevronRight size={12} style={{ color: '#b8c2d4', marginLeft: 'auto' }} />
             </div>
           ))}
 

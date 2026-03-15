@@ -41,6 +41,11 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+class LoginRegisterResponse(BaseModel):
+    user: UserResponse
+    access_token: str
+
+
 def validate_password(password: str):
     errors = []
     if len(password) < 8:
@@ -52,7 +57,7 @@ def validate_password(password: str):
     return errors
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=LoginRegisterResponse)
 def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)):
     errors = validate_password(body.password)
     if errors:
@@ -66,10 +71,10 @@ def register(body: RegisterRequest, response: Response, db: Session = Depends(ge
         httponly=True, secure=False, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
-    return user
+    return {"user": user, "access_token": token}
 
 
-@router.post("/login", response_model=UserResponse)
+@router.post("/login", response_model=LoginRegisterResponse)
 def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)):
     user = get_user_by_email(db, body.email)
     if not user or not verify_password(body.password, user.hashed_password):
@@ -80,7 +85,7 @@ def login(body: LoginRequest, response: Response, db: Session = Depends(get_db))
         httponly=True, secure=False, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
-    return user
+    return {"user": user, "access_token": token}
 
 
 @router.post("/logout")
@@ -89,7 +94,17 @@ def logout(response: Response):
     return {"message": "Logged out"}
 
 
-@router.get("/me", response_model=UserResponse)
+class MeResponse(BaseModel):
+    id: int
+    email: str
+    full_name: Optional[str]
+    access_token: str
+
+    class Config:
+        from_attributes = True
+
+
+@router.get("/me", response_model=MeResponse)
 def me(access_token: Optional[str] = Cookie(default=None), db: Session = Depends(get_db)):
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -99,7 +114,13 @@ def me(access_token: Optional[str] = Cookie(default=None), db: Session = Depends
     user = db.query(User).filter(User.id == int(payload["sub"])).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
-    return user
+    new_token = create_access_token({"sub": str(user.id), "email": user.email})
+    return {
+        "id": user.id,
+        "email": user.email,
+        "full_name": user.full_name,
+        "access_token": new_token,
+    }
 
 
 @router.put("/me", response_model=UserResponse)

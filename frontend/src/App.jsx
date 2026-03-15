@@ -9,6 +9,7 @@ import Profile    from './pages/Profile'
 import Batches    from './pages/Batches'
 import Pipeline   from './pages/Pipeline'
 import Analytics  from './pages/Analytics'
+import Meetings   from './pages/Meetings'
 import LeadDetail from './pages/LeadDetail'
 
 function ProtectedRoute({ children }) {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/batches"      element={<ProtectedRoute><Batches /></ProtectedRoute>} />
         <Route path="/pipeline"     element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
         <Route path="/analytics"    element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+        <Route path="/meetings"     element={<ProtectedRoute><Meetings /></ProtectedRoute>} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />

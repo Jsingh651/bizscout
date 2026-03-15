@@ -488,7 +488,7 @@
                   <div className="icon-box" style={{ marginBottom: '20px' }}>
                     <Icon size={16} color="#8b5cf6" strokeWidth={1.5} />
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: '#3f3f46', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', marginBottom: '10px', letterSpacing: '1px' }}>{s.step}</div>
+                  <div style={{ fontSize: '0.62rem', color: '#b8c2d4', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', marginBottom: '10px', letterSpacing: '1px' }}>{s.step}</div>
                   <div style={{ fontWeight: '700', fontSize: '0.95rem', color: '#e4e4e7', marginBottom: '10px' }}>{s.title}</div>
                   <div style={{ color: '#bdbdc3', fontSize: '0.82rem', lineHeight: 1.7 }}>{s.desc}</div>
                 </div>

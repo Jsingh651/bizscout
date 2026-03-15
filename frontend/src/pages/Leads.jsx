@@ -215,9 +215,11 @@ const NICHES_RAW = [
 
 // ─── Select styles (fixed — no menuIsOpen on indicator to avoid glitch) ───────
 
+const siteFont = "'Outfit', sans-serif"
 const makeSelectStyles = (minH = '42px') => ({
   control: (b, s) => ({
     ...b,
+    fontFamily: siteFont,
     background: 'rgba(255,255,255,0.04)',
     border: `1px solid ${s.isFocused ? 'rgba(139,92,246,0.65)' : 'rgba(255,255,255,0.09)'}`,
     borderRadius: '10px',
@@ -230,6 +232,7 @@ const makeSelectStyles = (minH = '42px') => ({
   menuPortal: b => ({ ...b, zIndex: 9999 }),
   menu: b => ({
     ...b,
+    fontFamily: siteFont,
     background: '#111118',
     border: '1px solid rgba(255,255,255,0.08)',
     borderRadius: '12px',
@@ -237,48 +240,41 @@ const makeSelectStyles = (minH = '42px') => ({
     zIndex: 9999,
     overflow: 'hidden',
   }),
-  menuList: b => ({
-    ...b,
-    padding: '6px',
-    maxHeight: 260,
-    overflowY: 'auto',
-    '::-webkit-scrollbar': { width: '3px' },
-    '::-webkit-scrollbar-thumb': { background: 'rgba(139,92,246,0.35)', borderRadius: '2px' },
-  }),
+  menuList: b => ({ ...b, fontFamily: siteFont }),
   option: (b, s) => ({
     ...b,
+    fontFamily: siteFont,
     background: s.isSelected
       ? 'rgba(139,92,246,0.18)'
       : s.isFocused
       ? 'rgba(139,92,246,0.08)'
       : 'transparent',
-    color: s.isSelected ? '#c4b5fd' : s.isFocused ? '#d4d4d8' : '#71717a',
+    color: s.isSelected ? '#c4b5fd' : s.isFocused ? '#d4d4d8' : '#c4c4cc',
     borderRadius: '7px',
     fontSize: '0.875rem',
     padding: '9px 12px',
     cursor: 'pointer',
     transition: 'background 0.12s, color 0.12s',
   }),
-  singleValue: b => ({ ...b, color: '#f4f4f5', fontSize: '0.9rem' }),
-  placeholder: b => ({ ...b, color: '#3f3f46', fontSize: '0.9rem' }),
-  input: b => ({ ...b, color: '#fff', fontSize: '0.9rem' }),
+  singleValue: b => ({ ...b, fontFamily: siteFont, color: '#f4f4f5', fontSize: '0.9rem' }),
+  placeholder: b => ({ ...b, fontFamily: siteFont, color: '#b8c2d4', fontSize: '0.9rem' }),
+  input: b => ({ ...b, fontFamily: siteFont, color: '#fff', fontSize: '0.9rem' }),
   indicatorSeparator: () => ({ display: 'none' }),
-  // Fixed: no dynamic transform based on menuIsOpen (was causing re-render glitch)
   dropdownIndicator: b => ({
     ...b,
-    color: '#3f3f46',
+    color: '#b8c2d4',
     paddingRight: '12px',
     transition: 'color 0.2s',
     '&:hover': { color: '#8b5cf6' },
   }),
   clearIndicator: b => ({
     ...b,
-    color: '#3f3f46',
+    color: '#b8c2d4',
     padding: '0 6px',
     cursor: 'pointer',
     '&:hover': { color: '#f87171' },
   }),
-  noOptionsMessage: b => ({ ...b, color: '#3f3f46', fontSize: '0.85rem', padding: '12px' }),
+  noOptionsMessage: b => ({ ...b, fontFamily: siteFont, color: '#b8c2d4', fontSize: '0.85rem', padding: '12px' }),
 })
 
 const selectStyles = makeSelectStyles()
@@ -398,26 +394,26 @@ function ScrapeAnimation({ job, query, location, jobId, onDismiss }) {
                 </div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#c4b5fd' }}>Scanning{'.'.repeat(dots)}</div>
-                  <div style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace", marginTop: 1 }}>{query?.value} · {location?.value}</div>
+                  <div style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace", marginTop: 1 }}>{query?.value} · {location?.value}</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 16, fontWeight: 800, color: '#e4e4e7', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{foundCount}</div>
-                  <div style={{ fontSize: 9, color: '#3f3f46', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>found</div>
+                  <div style={{ fontSize: 9, color: '#b8c2d4', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>found</div>
                 </div>
                 <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.06)' }} />
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 16, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1, color: displayEta != null && displayEta < 15 ? '#4ade80' : displayEta != null && displayEta < 30 ? '#fb923c' : '#e4e4e7' }}>
                     {formatEta(displayEta)}
                   </div>
-                  <div style={{ fontSize: 9, color: '#3f3f46', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>remaining</div>
+                  <div style={{ fontSize: 9, color: '#b8c2d4', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>remaining</div>
                 </div>
                 <button onClick={handleStop} disabled={stopping}
-                  style={{ display: 'flex', alignItems: 'center', gap: 5, background: stopping ? 'rgba(255,255,255,0.02)' : 'rgba(248,113,113,0.08)', border: `1px solid ${stopping ? 'rgba(255,255,255,0.06)' : 'rgba(248,113,113,0.2)'}`, borderRadius: 8, padding: '6px 12px', color: stopping ? '#3f3f46' : '#f87171', fontSize: 12, fontWeight: 600, cursor: stopping ? 'not-allowed' : 'pointer', fontFamily: "'Outfit', sans-serif", transition: 'all 0.2s' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 5, background: stopping ? 'rgba(255,255,255,0.02)' : 'rgba(248,113,113,0.08)', border: `1px solid ${stopping ? 'rgba(255,255,255,0.06)' : 'rgba(248,113,113,0.2)'}`, borderRadius: 8, padding: '6px 12px', color: stopping ? '#b8c2d4' : '#f87171', fontSize: 12, fontWeight: 600, cursor: stopping ? 'not-allowed' : 'pointer', fontFamily: "'Outfit', sans-serif", transition: 'all 0.2s' }}
                   onMouseEnter={e => { if (!stopping) e.currentTarget.style.background = 'rgba(248,113,113,0.14)' }}
                   onMouseLeave={e => { if (!stopping) e.currentTarget.style.background = 'rgba(248,113,113,0.08)' }}>
-                  <Square size={10} fill={stopping ? '#3f3f46' : '#f87171'} />
+                  <Square size={10} fill={stopping ? '#b8c2d4' : '#f87171'} />
                   {stopping ? 'Stopping...' : 'Stop'}
                 </button>
               </div>
@@ -432,7 +428,7 @@ function ScrapeAnimation({ job, query, location, jobId, onDismiss }) {
                   <>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#e4e4e7', textShadow: '0 0 20px rgba(139,92,246,0.8)', maxWidth: '80%', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{visibleCompany.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                      {visibleCompany.phone && <span style={{ fontSize: 10, color: '#52525b', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 3 }}><PhoneCall size={8} />{visibleCompany.phone}</span>}
+                      {visibleCompany.phone && <span style={{ fontSize: 10, color: '#c4c4cc', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 3 }}><PhoneCall size={8} />{visibleCompany.phone}</span>}
                       <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 20, background: visibleCompany.has_website ? 'rgba(139,92,246,0.12)' : 'rgba(248,113,113,0.12)', border: `1px solid ${visibleCompany.has_website ? 'rgba(139,92,246,0.25)' : 'rgba(248,113,113,0.25)'}`, color: visibleCompany.has_website ? '#a78bfa' : '#f87171', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 3 }}>
                         {visibleCompany.has_website ? <><Globe size={7} /> HAS SITE</> : <><AlertTriangle size={7} /> NO SITE</>}
                       </span>
@@ -445,7 +441,7 @@ function ScrapeAnimation({ job, query, location, jobId, onDismiss }) {
 
             <div style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                <span style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>{job?.message || 'Initialising...'}</span>
+                <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{job?.message || 'Initialising...'}</span>
                 <span style={{ fontSize: 11, color: '#8b5cf6', fontFamily: "'JetBrains Mono', monospace" }}>{progress}%</span>
               </div>
               <div style={{ height: 3, background: 'rgba(255,255,255,0.04)', borderRadius: 2, overflow: 'hidden' }}>
@@ -458,8 +454,8 @@ function ScrapeAnimation({ job, query, location, jobId, onDismiss }) {
                 const done = progress > s.pct
                 const current = currentStage.label === s.label
                 return (
-                  <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 20, fontSize: 10, background: done ? 'rgba(139,92,246,0.12)' : current ? 'rgba(139,92,246,0.06)' : 'transparent', border: `1px solid ${done ? 'rgba(139,92,246,0.22)' : current ? 'rgba(139,92,246,0.12)' : 'rgba(255,255,255,0.04)'}`, color: done ? '#a78bfa' : current ? '#7c3aed' : '#27272a', fontFamily: "'JetBrains Mono', monospace", transition: 'all 0.3s' }}>
-                    {done ? <CheckCheck size={8} /> : current ? <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#8b5cf6', animation: 'pulse 1.2s infinite' }} /> : <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#27272a' }} />}
+                  <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 20, fontSize: 10, background: done ? 'rgba(139,92,246,0.12)' : current ? 'rgba(139,92,246,0.06)' : 'transparent', border: `1px solid ${done ? 'rgba(139,92,246,0.22)' : current ? 'rgba(139,92,246,0.12)' : 'rgba(255,255,255,0.04)'}`, color: done ? '#a78bfa' : current ? '#7c3aed' : '#b8c2d4', fontFamily: "'JetBrains Mono', monospace", transition: 'all 0.3s' }}>
+                    {done ? <CheckCheck size={8} /> : current ? <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#8b5cf6', animation: 'pulse 1.2s infinite' }} /> : <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#b8c2d4' }} />}
                     {s.label}
                   </div>
                 )
@@ -478,10 +474,10 @@ function ScrapeAnimation({ job, query, location, jobId, onDismiss }) {
                 <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2, color: isDone ? '#4ade80' : isStopped ? '#fb923c' : '#f87171' }}>
                   {isDone ? 'Scrape complete!' : isStopped ? 'Stopped — results saved' : 'Scrape failed'}
                 </div>
-                <div style={{ fontSize: 12, color: '#52525b', maxWidth: 460 }}>{job?.message}</div>
+                <div style={{ fontSize: 12, color: '#c4c4cc', maxWidth: 460 }}>{job?.message}</div>
               </div>
             </div>
-            <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3f3f46', padding: 6, display: 'flex', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#71717a'} onMouseLeave={e => e.currentTarget.style.color = '#3f3f46'}>
+            <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b8c2d4', padding: 6, display: 'flex', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#c4c4cc'} onMouseLeave={e => e.currentTarget.style.color = '#b8c2d4'}>
               <X size={14} />
             </button>
           </div>
@@ -517,7 +513,7 @@ function StageDropdown({ lead, onChange }) {
             const active = stage === (lead.pipeline_stage || 'New Lead')
             return (
               <div key={stage} onClick={() => { onChange(lead.id, stage); setOpen(false) }}
-                style={{ padding: '8px 12px', borderRadius: 7, fontSize: 12, cursor: 'pointer', color: active ? c.color : '#71717a', background: active ? c.bg : 'transparent', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.15s' }}
+                style={{ padding: '8px 12px', borderRadius: 7, fontSize: 12, cursor: 'pointer', color: active ? c.color : '#c4c4cc', background: active ? c.bg : 'transparent', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.15s' }}
                 onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
                 onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}>
                 {active ? <CheckCircle2 size={11} /> : <Circle size={11} />}
@@ -563,10 +559,10 @@ function BatchResults({ batchId, onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
             <CheckCircle2 size={15} color="#4ade80" strokeWidth={1.5} />
             <span style={{ fontSize: 15, fontWeight: 700, color: '#4ade80' }}>Scrape complete</span>
-            <span style={{ fontSize: 13, color: '#3f3f46' }}>·</span>
-            <span style={{ fontSize: 13, color: '#71717a' }}>{data.query} · {data.location}</span>
+            <span style={{ fontSize: 13, color: '#b8c2d4' }}>·</span>
+            <span style={{ fontSize: 13, color: '#c4c4cc' }}>{data.query} · {data.location}</span>
           </div>
-          <div style={{ fontSize: 12, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>
+          <div style={{ fontSize: 12, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>
             {leads.length} leads · {noSite} without a website
           </div>
         </div>
@@ -574,7 +570,7 @@ function BatchResults({ batchId, onClose }) {
           <button onClick={() => navigate('/batches')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 8, padding: '7px 14px', color: '#a78bfa', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit', sans-serif', transition: 'background 0.15s'" }} onMouseEnter={e => e.currentTarget.style.background='rgba(139,92,246,0.14)'} onMouseLeave={e => e.currentTarget.style.background='rgba(139,92,246,0.08)'}>
             View in Batches <ArrowRight size={12} />
           </button>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3f3f46', padding: 6, display: 'flex' }} onMouseEnter={e => e.currentTarget.style.color='#71717a'} onMouseLeave={e => e.currentTarget.style.color='#3f3f46'}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b8c2d4', padding: 6, display: 'flex' }} onMouseEnter={e => e.currentTarget.style.color='#c4c4cc'} onMouseLeave={e => e.currentTarget.style.color='#b8c2d4'}>
             <X size={14} />
           </button>
         </div>
@@ -584,7 +580,7 @@ function BatchResults({ batchId, onClose }) {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(74,222,128,0.4),transparent)' }} />
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.2fr 1.2fr 1fr', gap: 16, padding: '10px 18px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
           {['Business','Website','Score','Status','Phone'].map(h => (
-            <div key={h} style={{ fontSize: 10, fontWeight: 700, color: '#3f3f46', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>{h}</div>
+            <div key={h} style={{ fontSize: 10, fontWeight: 700, color: '#b8c2d4', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono', monospace" }}>{h}</div>
           ))}
         </div>
         {leads.map(lead => {
@@ -611,12 +607,12 @@ function BatchResults({ batchId, onClose }) {
                 <span style={{ fontSize: 11, color: scoreColor(lead.score||0), fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, marginLeft: 4 }}>{lead.score||0}</span>
               </div>
               <StageDropdown lead={lead} onChange={changeStage} />
-              <span style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>{lead.phone || '—'}</span>
+              <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{lead.phone || '—'}</span>
             </div>
           )
         })}
         <div style={{ padding: '10px 18px', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>{leads.length} leads</span>
+          <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{leads.length} leads</span>
           <button onClick={() => navigate('/batches')} style={{ fontSize: 11, color: '#8b5cf6', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'JetBrains Mono', monospace", display: 'flex', alignItems: 'center', gap: 4 }}>
             view all batches <ArrowRight size={10} />
           </button>
@@ -639,7 +635,7 @@ function PreviousBatches({ batches, loading }) {
 
   if (batches.length === 0) return (
     <div style={{ padding: '20px 0', textAlign: 'center' }}>
-      <div style={{ fontSize: 12, color: '#27272a', fontFamily: "'JetBrains Mono', monospace" }}>No previous batches yet</div>
+      <div style={{ fontSize: 12, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>No previous batches yet</div>
     </div>
   )
 
@@ -659,9 +655,9 @@ function PreviousBatches({ batches, loading }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#e4e4e7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.query}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-                <span style={{ fontSize: 11, color: '#52525b', display: 'flex', alignItems: 'center', gap: 3 }}><MapPin size={9} />{b.location}</span>
-                <span style={{ fontSize: 10, color: '#27272a' }}>·</span>
-                <span style={{ fontSize: 11, color: '#3f3f46', fontFamily: "'JetBrains Mono', monospace" }}>{b.lead_count}</span>
+                <span style={{ fontSize: 11, color: '#c4c4cc', display: 'flex', alignItems: 'center', gap: 3 }}><MapPin size={9} />{b.location}</span>
+                <span style={{ fontSize: 10, color: '#b8c2d4' }}>·</span>
+                <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{b.lead_count}</span>
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3, flexShrink: 0 }}>
@@ -670,16 +666,16 @@ function PreviousBatches({ batches, loading }) {
                   <Star key={i} size={9} strokeWidth={1.5} style={{ color: i <= filledStars ? scoreColor(b.avg_score) : 'rgba(255,255,255,0.08)', fill: i <= filledStars ? scoreColor(b.avg_score) : 'transparent' }} />
                 ))}
               </div>
-              <span style={{ fontSize: 10, color: '#27272a', fontFamily: "'JetBrains Mono', monospace" }}>{date}</span>
+              <span style={{ fontSize: 10, color: '#b8c2d4', fontFamily: "'JetBrains Mono', monospace" }}>{date}</span>
             </div>
           </div>
         )
       })}
       {batches.length > 6 && (
         <button onClick={() => navigate('/batches')}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: 'none', border: '1px dashed rgba(255,255,255,0.06)', borderRadius: 10, padding: '9px', color: '#3f3f46', fontSize: 12, cursor: 'pointer', fontFamily: "'Outfit', sans-serif", transition: 'all 0.15s' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: 'none', border: '1px dashed rgba(255,255,255,0.06)', borderRadius: 10, padding: '9px', color: '#b8c2d4', fontSize: 12, cursor: 'pointer', fontFamily: "'Outfit', sans-serif", transition: 'all 0.15s' }}
           onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(139,92,246,0.2)'; e.currentTarget.style.color='#a78bfa' }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(255,255,255,0.06)'; e.currentTarget.style.color='#3f3f46' }}>
+          onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(255,255,255,0.06)'; e.currentTarget.style.color='#b8c2d4' }}>
           +{batches.length - 6} more <ChevronRight size={12} />
         </button>
       )}
@@ -805,8 +801,8 @@ export default function Leads() {
         .f1{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both}
         .f2{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.13s both}
         .f3{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.21s both}
-        .nav-lnk { background:none;border:none;color:#3f3f46;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
-        .nav-lnk:hover { color:#a1a1aa; }
+        .nav-lnk { background:none;border:none;color:#b8c2d4;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
+        .nav-lnk:hover { color:#c4c4cc; }
         .scan-btn { background:linear-gradient(135deg,#8b5cf6,#6366f1);border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;padding:11px 24px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity 0.2s,transform 0.15s;box-shadow:0 4px 16px rgba(139,92,246,0.3); }
         .scan-btn:hover:not(:disabled) { opacity:0.88;transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,92,246,0.4); }
         .scan-btn:disabled { opacity:0.35;cursor:not-allowed;transform:none; }
@@ -827,7 +823,8 @@ export default function Leads() {
             <button className="nav-lnk" style={{ color:'#fafafa',fontWeight:600 }}>Leads</button>
             <button className="nav-lnk" onClick={() => navigate('/batches')}>Batches</button>
             <button className="nav-lnk" onClick={() => navigate('/pipeline')}>Pipeline</button>
-          <button className="nav-lnk" onClick={() => navigate('/analytics')}>Analytics</button>
+            <button className="nav-lnk" onClick={() => navigate('/analytics')}>Analytics</button>
+            <button className="nav-lnk" onClick={() => navigate('/meetings')}>Meetings</button>
           </div>
         </div>
         <NavbarDropdown />
@@ -847,7 +844,7 @@ export default function Leads() {
             <h1 style={{ fontSize:'clamp(1.8rem,3vw,2.6rem)',fontWeight:900,letterSpacing:'-1.5px',color:'#fafafa',marginBottom:6 }}>
               Welcome back, {firstName}.
             </h1>
-            <p style={{ color:'#52525b',fontSize:15,lineHeight:1.6 }}>
+            <p style={{ color:'#c4c4cc',fontSize:15,lineHeight:1.6 }}>
               {batches.length === 0
                 ? 'Run your first search to start finding leads.'
                 : <>{totalLeads} leads across {batches.length} {batches.length===1?'batch':'batches'} · <span style={{ color:'#f87171',fontWeight:600 }}>{totalNoSite} without a website</span></>
@@ -871,13 +868,13 @@ export default function Leads() {
                 <div style={{ padding:'28px 28px 24px' }}>
                   <div style={{ marginBottom:20 }}>
                     <div style={{ fontSize:18,fontWeight:800,color:'#fafafa',letterSpacing:'-0.5px',marginBottom:5 }}>New Search</div>
-                    <div style={{ fontSize:13,color:'#3f3f46' }}>Type to search any city or business niche</div>
+                    <div style={{ fontSize:13,color:'#b8c2d4' }}>Type to search any city or business niche</div>
                   </div>
 
                   <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
                     <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12 }}>
                       <div>
-                        <div style={{ fontSize:10,fontWeight:700,color:'#3f3f46',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace",marginBottom:7 }}>Business Niche</div>
+                        <div style={{ fontSize:10,fontWeight:700,color:'#b8c2d4',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace",marginBottom:7 }}>Business Niche</div>
                         <Select
                           options={NICHES_RAW}
                           styles={selectStyles}
@@ -895,7 +892,7 @@ export default function Leads() {
                         />
                       </div>
                       <div>
-                        <div style={{ fontSize:10,fontWeight:700,color:'#3f3f46',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace",marginBottom:7 }}>City</div>
+                        <div style={{ fontSize:10,fontWeight:700,color:'#b8c2d4',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace",marginBottom:7 }}>City</div>
                         <Select
                           options={CITIES_RAW}
                           styles={selectStyles}
@@ -915,7 +912,7 @@ export default function Leads() {
                     </div>
 
                     <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between' }}>
-                      <label style={{ display:'flex',alignItems:'center',gap:8,cursor:'pointer',userSelect:'none',fontSize:13,color:'#71717a' }}>
+                      <label style={{ display:'flex',alignItems:'center',gap:8,cursor:'pointer',userSelect:'none',fontSize:13,color:'#c4c4cc' }}>
                         <input type="checkbox" checked={noWebOnly} onChange={e => setNoWebOnly(e.target.checked)} style={{ accentColor:'#8b5cf6',width:14,height:14 }} />
                         No website leads only
                       </label>
@@ -928,7 +925,7 @@ export default function Leads() {
                     {dupWarning && (
                       <div style={{ display:'flex',alignItems:'center',gap:10,background:'rgba(251,146,60,0.06)',border:'1px solid rgba(251,146,60,0.2)',borderRadius:10,padding:'10px 14px' }}>
                         <AlertCircle size={14} color="#fb923c" strokeWidth={1.5} style={{ flexShrink:0 }} />
-                        <div style={{ flex:1,fontSize:13,color:'#71717a' }}>
+                        <div style={{ flex:1,fontSize:13,color:'#c4c4cc' }}>
                           <span style={{ color:'#fb923c',fontWeight:600 }}>Already scraped. </span>
                           {dupWarning.query} · {dupWarning.location} has {dupWarning.lead_count} leads. New results will append.
                         </div>
@@ -938,7 +935,7 @@ export default function Leads() {
                       </div>
                     )}
 
-                    <p style={{ fontSize:11,color:'#27272a',fontFamily:"'JetBrains Mono',monospace",margin:0 }}>
+                    <p style={{ fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",margin:0 }}>
                       Headless Chrome · 1–3 min · Duplicates skipped automatically
                     </p>
                   </div>
@@ -968,10 +965,10 @@ export default function Leads() {
                   <div style={{ width:30,height:30,borderRadius:8,background:`${s.accent}18`,border:`1px solid ${s.accent}30`,display:'flex',alignItems:'center',justifyContent:'center' }}>
                     <s.icon size={13} color={s.accent} strokeWidth={1.5} />
                   </div>
-                  <span style={{ fontSize:10,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.08em',fontFamily:"'JetBrains Mono',monospace" }}>{s.label}</span>
+                  <span style={{ fontSize:10,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.08em',fontFamily:"'JetBrains Mono',monospace" }}>{s.label}</span>
                 </div>
                 <div style={{ fontSize:26,fontWeight:800,color:'#fafafa',letterSpacing:'-1px',fontFamily:"'JetBrains Mono',monospace" }}>{s.value}</div>
-                {s.sub && <div style={{ fontSize:11,color:'#3f3f46',marginTop:3,display:'flex',alignItems:'center',gap:3 }}><ArrowUpRight size={10} color="#4ade80" />{s.sub}</div>}
+                {s.sub && <div style={{ fontSize:11,color:'#b8c2d4',marginTop:3,display:'flex',alignItems:'center',gap:3 }}><ArrowUpRight size={10} color="#4ade80" />{s.sub}</div>}
               </div>
             ))}
           </div>
@@ -990,7 +987,7 @@ export default function Leads() {
                     <span style={{ fontSize:10,background:'rgba(139,92,246,0.12)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:20,padding:'2px 7px',color:'#a78bfa',fontFamily:"'JetBrains Mono',monospace" }}>{batches.length}</span>
                   )}
                 </div>
-                <button onClick={() => navigate('/batches')} style={{ display:'flex',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',color:'#3f3f46',fontSize:11,fontFamily:"'Outfit',sans-serif",transition:'color 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='#a78bfa'} onMouseLeave={e=>e.currentTarget.style.color='#3f3f46'}>
+                <button onClick={() => navigate('/batches')} style={{ display:'flex',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',color:'#b8c2d4',fontSize:11,fontFamily:"'Outfit',sans-serif",transition:'color 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='#a78bfa'} onMouseLeave={e=>e.currentTarget.style.color='#b8c2d4'}>
                   View all <ChevronRight size={11} />
                 </button>
               </div>
@@ -999,7 +996,7 @@ export default function Leads() {
             <div style={{ padding:'10px 16px 14px' }}>
               <div style={{ display:'flex',alignItems:'center',gap:5 }}>
                 <div style={{ width:5,height:5,borderRadius:'50%',background:isScraping?'#fb923c':'#8b5cf6',animation:'pulse 1.5s infinite' }} />
-                <span style={{ fontSize:10,color:'#27272a',fontFamily:"'JetBrains Mono',monospace" }}>{isScraping?'Scraping live...':'Live data'}</span>
+                <span style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>{isScraping?'Scraping live...':'Live data'}</span>
               </div>
             </div>
           </div>

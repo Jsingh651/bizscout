@@ -80,7 +80,7 @@ pip install playwright
 
 Or install everything in one command:
 ```bash
-pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv "pydantic[email]" "python-jose[cryptography]" "passlib[bcrypt]" "bcrypt==4.0.1" python-multipart openai playwright selenium beautifulsoup4
+pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv "pydantic[email]" "python-jose[cryptography]" "passlib[bcrypt]" "bcrypt==4.0.1" python-multipart openai playwright selenium beautifulsoup4 reportlab
 ```
 
 ### Create the .env file
@@ -184,37 +184,61 @@ Then visit http://localhost:5173
 
 ```
 bizscout/
-├── frontend/                  # React + Vite app
+├── frontend/                        # React + Vite app
 │   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx           # Main navigation bar
+│   │   │   └── NavbarDropdown.jsx   # Mobile/dropdown nav menu
 │   │   ├── context/
-│   │   │   └── AuthContext.jsx      # Auth state (login/logout/me)
+│   │   │   └── AuthContext.jsx     # Auth state (login/logout/me)
 │   │   ├── pages/
 │   │   │   ├── Home.jsx             # Landing page
-│   │   │   ├── Login.jsx            # Login page
-│   │   │   ├── Register.jsx         # Register page
-│   │   │   ├── Leads.jsx            # Leads dashboard
-│   │   │   └── AddLead.jsx          # Add lead form
+│   │   │   ├── Login.jsx            # Sign in
+│   │   │   ├── Register.jsx        # Create account
+│   │   │   ├── Leads.jsx            # Leads list/dashboard
+│   │   │   ├── LeadDetail.jsx       # Single lead view + actions
+│   │   │   ├── AddLead.jsx          # Add lead form
+│   │   │   ├── Batches.jsx          # Scrape batches
+│   │   │   ├── Pipeline.jsx         # Pipeline view
+│   │   │   ├── Analytics.jsx        # Analytics
+│   │   │   ├── Meetings.jsx         # Zoom meetings / demos
+│   │   │   └── Profile.jsx          # User profile
+│   │   ├── styles/
+│   │   │   └── datepicker-overrides.css
+│   │   ├── assets/
+│   │   │   └── react.svg
 │   │   ├── App.jsx                  # Router + protected routes
-│   │   └── main.jsx                 # App entry point
+│   │   ├── main.jsx                 # App entry point
+│   │   └── index.css                # Global styles
 │   ├── index.html
+│   ├── vite.config.js
+│   ├── eslint.config.js
 │   └── package.json
 │
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                  # FastAPI app + CORS + router setup
+│   │   ├── main.py                  # FastAPI app, CORS, router setup
 │   │   ├── database.py              # SQLAlchemy engine + session
+│   │   ├── maps_scraper.py          # Google Maps scraping helpers
 │   │   ├── models/
-│   │   │   ├── lead.py              # Lead table model
-│   │   │   └── user.py              # User table model
+│   │   │   ├── __init__.py
+│   │   │   ├── lead.py              # Lead model
+│   │   │   ├── user.py              # User model
+│   │   │   ├── batch.py             # Scrape batch model
+│   │   │   └── meeting.py           # Meeting (Zoom) model
 │   │   ├── routers/
-│   │   │   ├── leads.py             # GET /leads, POST /leads
-│   │   │   └── auth.py              # POST /auth/register, /auth/login, /auth/logout, GET /auth/me
+│   │   │   ├── auth.py              # Register, login, logout, /me
+│   │   │   ├── leads.py             # CRUD leads
+│   │   │   ├── batches.py           # Scrape batches
+│   │   │   ├── scrape.py            # Scrape (Maps) endpoints
+│   │   │   └── meetings.py          # Zoom meeting scheduling
 │   │   └── services/
-│   │       └── auth.py              # JWT tokens, bcrypt hashing, user queries
-│   ├── venv/                        # Python virtual environment (gitignored)
+│   │       └── auth.py              # JWT, bcrypt, user lookup
+│   ├── venv/                        # Python virtual env (gitignored)
 │   ├── requirements.txt
 │   └── .env                         # Secrets (gitignored)
 │
+├── package.json                     # Root package (optional workspace)
 ├── .gitignore
 └── README.md
 ```
@@ -288,20 +312,34 @@ pip install -r requirements.txt
 
 ## Routes
 
-| Route | Auth Required | Description |
-|---|---|---|
+### Frontend
+
+| Route | Auth | Description |
+|-------|------|--------------|
 | `/` | No | Landing page |
 | `/login` | No | Sign in |
 | `/register` | No | Create account |
-| `/leads` | ✅ Yes | Leads dashboard |
-| `/add` | ✅ Yes | Add a new lead |
+| `/leads` | ✅ | Leads list |
+| `/leads/:id` | ✅ | Lead detail + actions |
+| `/add` | ✅ | Add a new lead |
+| `/batches` | ✅ | Scrape batches |
+| `/pipeline` | ✅ | Pipeline view |
+| `/analytics` | ✅ | Analytics |
+| `/meetings` | ✅ | Scheduled meetings (Zoom) |
+| `/profile` | ✅ | User profile |
 
-| API Endpoint | Method | Auth | Description |
-|---|---|---|---|
+### API
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
 | `/` | GET | No | Health check |
 | `/auth/register` | POST | No | Create account |
 | `/auth/login` | POST | No | Sign in, sets cookie |
 | `/auth/logout` | POST | No | Clear cookie |
-| `/auth/me` | GET | Cookie | Get current user |
-| `/leads` | GET | No | Get all leads |
-| `/leads` | POST | No | Create a lead |
+| `/auth/me` | GET | Cookie | Current user |
+| `/leads` | GET | Cookie | List leads |
+| `/leads` | POST | Cookie | Create lead |
+| `/leads/:id` | GET/PUT/DELETE | Cookie | Lead CRUD |
+| `/batches` | GET/POST | Cookie | Scrape batches |
+| `/scrape/*` | * | Cookie | Scrape (Maps) |
+| `/meetings/*` | * | Cookie | Zoom meeting scheduling |

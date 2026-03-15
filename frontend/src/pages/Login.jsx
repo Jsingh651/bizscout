@@ -117,7 +117,13 @@ export default function Login() {
       })
       const json = await res.json()
       if (!res.ok) { setServerError(json.detail); return }
-      login(json)
+      if (json.access_token) {
+        try {
+          sessionStorage.setItem('access_token', json.access_token)
+          localStorage.setItem('access_token', json.access_token)
+        } catch (_) {}
+      }
+      login(json.user || json)
       navigate('/leads')
     } catch {
       setServerError('Something went wrong. Try again.')

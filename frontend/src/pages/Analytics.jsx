@@ -38,7 +38,7 @@ function BarChart({ data, valueKey, labelKey, color = '#8b5cf6', maxBars = 8 }) 
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {sorted.map((item, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 130, flexShrink: 0, fontSize: 12, color: '#71717a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item[labelKey]}</div>
+          <div style={{ width: 130, flexShrink: 0, fontSize: 12, color: '#c4c4cc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item[labelKey]}</div>
           <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.04)', borderRadius: 3, overflow: 'hidden' }}>
             <div style={{
               height: '100%', borderRadius: 3,
@@ -87,10 +87,10 @@ function StatCard({ icon: Icon, label, value, sub, accent, delay = 0 }) {
         <div style={{ width: 32, height: 32, borderRadius: 9, background: `${accent}18`, border: `1px solid ${accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Icon size={14} color={accent} strokeWidth={1.5} />
         </div>
-        <span style={{ fontSize: 10, color: '#3f3f46', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
+        <span style={{ fontSize: 10, color: '#b8c2d4', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
       </div>
       <div style={{ fontSize: 32, fontWeight: 900, color: '#fafafa', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-2px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: '#52525b', marginTop: 6, display: 'flex', alignItems: 'center', gap: 3 }}><ArrowUpRight size={10} color={accent} />{sub}</div>}
+      {sub && <div style={{ fontSize: 11, color: '#c4c4cc', marginTop: 6, display: 'flex', alignItems: 'center', gap: 3 }}><ArrowUpRight size={10} color={accent} />{sub}</div>}
     </div>
   )
 }
@@ -179,8 +179,8 @@ export default function Analytics() {
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pulse  { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
         @keyframes spin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        .nav-link { background:none;border:none;color:#3f3f46;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
-        .nav-link:hover { color:#a1a1aa; }
+        .nav-link { background:none;border:none;color:#b8c2d4;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
+        .nav-link:hover { color:#c4c4cc; }
         .nav-link.active { color:#fafafa; font-weight:600; }
         .card { background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:22px 24px;position:relative;overflow:hidden; }
       `}</style>
@@ -200,6 +200,7 @@ export default function Analytics() {
             <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
             <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
             <button className="nav-link active">Analytics</button>
+            <button className="nav-link" onClick={() => navigate('/meetings')}>Meetings</button>
           </div>
         </div>
         <NavbarDropdown />
@@ -214,7 +215,7 @@ export default function Analytics() {
             <span style={{ color:'#a78bfa',fontSize:'0.64rem',fontWeight:700,letterSpacing:'2px',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace" }}>Intelligence</span>
           </div>
           <h1 style={{ fontSize:'clamp(1.8rem,3vw,2.6rem)',fontWeight:900,letterSpacing:'-1.5px',color:'#fafafa',marginBottom:6 }}>Analytics</h1>
-          <p style={{ color:'#52525b',fontSize:15 }}>{batches.length} batches · {totalLeads} leads tracked</p>
+          <p style={{ color:'#c4c4cc',fontSize:15 }}>{batches.length} batches · {totalLeads} leads tracked</p>
         </div>
 
         {loading ? (
@@ -223,7 +224,7 @@ export default function Analytics() {
           </div>
         ) : totalLeads === 0 ? (
           <div style={{ textAlign:'center',paddingTop:80 }}>
-            <div style={{ fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginBottom:16 }}>— No data yet — run some scrapes first —</div>
+            <div style={{ fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginBottom:16 }}>— No data yet — run some scrapes first —</div>
             <button onClick={() => navigate('/leads')} style={{ background:'linear-gradient(135deg,#8b5cf6,#6366f1)',border:'none',borderRadius:9,padding:'10px 22px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif" }}>Go scrape some leads →</button>
           </div>
         ) : (
@@ -245,7 +246,7 @@ export default function Analytics() {
                 <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:20 }}>
                   <Zap size={13} color="#8b5cf6" strokeWidth={1.5} />
                   <span style={{ fontSize:13,fontWeight:700,color:'#e4e4e7' }}>Pipeline Stages</span>
-                  <span style={{ fontSize:11,color:'#3f3f46',marginLeft:'auto',fontFamily:"'JetBrains Mono',monospace" }}>{totalLeads} total</span>
+                  <span style={{ fontSize:11,color:'#b8c2d4',marginLeft:'auto',fontFamily:"'JetBrains Mono',monospace" }}>{totalLeads} total</span>
                 </div>
                 <PipelineFunnel stageCounts={stageCounts} />
               </div>
@@ -266,12 +267,12 @@ export default function Analytics() {
                           {b.count > 0 && <span style={{ fontSize:10,color:b.color,fontFamily:"'JetBrains Mono',monospace",fontWeight:700 }}>{b.count}</span>}
                         </div>
                       </div>
-                      <div style={{ width:28,flexShrink:0,textAlign:'right',fontSize:11,color:'#52525b',fontFamily:"'JetBrains Mono',monospace" }}>{totalLeads ? Math.round((b.count/totalLeads)*100) : 0}%</div>
+                      <div style={{ width:28,flexShrink:0,textAlign:'right',fontSize:11,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace" }}>{totalLeads ? Math.round((b.count/totalLeads)*100) : 0}%</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop:16,paddingTop:14,borderTop:'1px solid rgba(255,255,255,0.05)',display:'flex',justifyContent:'space-between' }}>
-                  <span style={{ fontSize:11,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace" }}>website status split</span>
+                  <span style={{ fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>website status split</span>
                   <div style={{ display:'flex',gap:14 }}>
                     <span style={{ fontSize:11,color:'#f87171',fontFamily:"'JetBrains Mono',monospace" }}>🚫 {noSiteLeads.length} no site</span>
                     <span style={{ fontSize:11,color:'#a78bfa',fontFamily:"'JetBrains Mono',monospace" }}>🌐 {hasSiteLeads.length} has site</span>
@@ -296,15 +297,15 @@ export default function Analytics() {
                 <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:20 }}>
                   <Target size={13} color="#f87171" strokeWidth={1.5} />
                   <span style={{ fontSize:13,fontWeight:700,color:'#e4e4e7' }}>Best Niches</span>
-                  <span style={{ fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginLeft:'auto' }}>% no website</span>
+                  <span style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginLeft:'auto' }}>% no website</span>
                 </div>
                 {nicheOpportunity.length === 0 ? (
-                  <div style={{ fontSize:12,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace" }}>— not enough data yet —</div>
+                  <div style={{ fontSize:12,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>— not enough data yet —</div>
                 ) : (
                   <div style={{ display:'flex',flexDirection:'column',gap:8 }}>
                     {nicheOpportunity.map((n, i) => (
                       <div key={i} style={{ display:'flex',alignItems:'center',gap:10 }}>
-                        <div style={{ width:130,flexShrink:0,fontSize:12,color:'#71717a',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{n.query}</div>
+                        <div style={{ width:130,flexShrink:0,fontSize:12,color:'#c4c4cc',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{n.query}</div>
                         <div style={{ flex:1,height:6,background:'rgba(255,255,255,0.04)',borderRadius:3,overflow:'hidden' }}>
                           <div style={{ height:'100%',borderRadius:3,width:`${n.pct}%`,background:`linear-gradient(90deg,#f87171,#fb923c)`,transition:'width 0.8s cubic-bezier(0.16,1,0.3,1)' }} />
                         </div>
@@ -325,17 +326,17 @@ export default function Analytics() {
                   <span style={{ fontSize:13,fontWeight:700,color:'#e4e4e7' }}>City Breakdown</span>
                 </div>
                 {cityArr.length === 0 ? (
-                  <div style={{ fontSize:12,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace" }}>— no city data yet —</div>
+                  <div style={{ fontSize:12,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>— no city data yet —</div>
                 ) : (
                   <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
                     {cityArr.map((c, i) => {
                       const pct = c.leads ? Math.round((c.noSite/c.leads)*100) : 0
                       return (
                         <div key={i} style={{ display:'flex',alignItems:'center',gap:10 }}>
-                          <div style={{ width:110,flexShrink:0,fontSize:12,color:'#71717a',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{c.city}</div>
+                          <div style={{ width:110,flexShrink:0,fontSize:12,color:'#c4c4cc',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{c.city}</div>
                           <div style={{ flex:1 }}>
                             <div style={{ display:'flex',justifyContent:'space-between',marginBottom:3 }}>
-                              <span style={{ fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace" }}>{c.leads} leads</span>
+                              <span style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>{c.leads} leads</span>
                               <span style={{ fontSize:10,color:'#f87171',fontFamily:"'JetBrains Mono',monospace" }}>{pct}% no site</span>
                             </div>
                             <div style={{ height:4,background:'rgba(255,255,255,0.04)',borderRadius:2,overflow:'hidden' }}>
@@ -357,7 +358,7 @@ export default function Analytics() {
                     <TrendingUp size={13} color="#4ade80" strokeWidth={1.5} />
                     <span style={{ fontSize:13,fontWeight:700,color:'#e4e4e7' }}>Recent Scrapes</span>
                   </div>
-                  <button onClick={() => navigate('/batches')} style={{ display:'flex',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',color:'#3f3f46',fontSize:11,fontFamily:"'Outfit',sans-serif",transition:'color 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='#a78bfa'} onMouseLeave={e=>e.currentTarget.style.color='#3f3f46'}>
+                  <button onClick={() => navigate('/batches')} style={{ display:'flex',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',color:'#b8c2d4',fontSize:11,fontFamily:"'Outfit',sans-serif",transition:'color 0.2s' }} onMouseEnter={e=>e.currentTarget.style.color='#a78bfa'} onMouseLeave={e=>e.currentTarget.style.color='#b8c2d4'}>
                     View all <ChevronRight size={11} />
                   </button>
                 </div>
@@ -372,12 +373,12 @@ export default function Analytics() {
                         onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                         <div style={{ flex:1,minWidth:0 }}>
                           <div style={{ fontSize:12,fontWeight:600,color:'#e4e4e7',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{b.query}</div>
-                          <div style={{ fontSize:10,color:'#52525b',marginTop:1 }}>{b.location}</div>
+                          <div style={{ fontSize:10,color:'#c4c4cc',marginTop:1 }}>{b.location}</div>
                         </div>
                         <div style={{ display:'flex',gap:10,flexShrink:0 }}>
                           <span style={{ fontSize:11,color:'#fafafa',fontFamily:"'JetBrains Mono',monospace",fontWeight:700 }}>{b.lead_count}</span>
                           <span style={{ fontSize:11,color:'#f87171',fontFamily:"'JetBrains Mono',monospace" }}>{noSitePctB}%</span>
-                          <span style={{ fontSize:10,color:'#27272a',fontFamily:"'JetBrains Mono',monospace" }}>{date}</span>
+                          <span style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>{date}</span>
                         </div>
                       </div>
                     )

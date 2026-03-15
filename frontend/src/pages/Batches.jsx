@@ -25,7 +25,7 @@ const CALL_OUTCOME_COLORS = {
     'Not Interested':{ color: '#f87171', bg: 'rgba(248,113,113,0.08)',  border: 'rgba(248,113,113,0.2)' },
     'Call Later':    { color: '#eab308', bg: 'rgba(234,179,8,0.08)',    border: 'rgba(234,179,8,0.2)'   },
     'No Answer':     { color: '#fb923c', bg: 'rgba(251,146,60,0.08)',   border: 'rgba(251,146,60,0.2)'  },
-    'Wrong Number':  { color: '#71717a', bg: 'rgba(113,113,122,0.08)',  border: 'rgba(113,113,122,0.2)' },
+    'Wrong Number':  { color: '#c4c4cc', bg: 'rgba(113,113,122,0.08)',  border: 'rgba(113,113,122,0.2)' },
 }
 
 const scoreColor = s => s >= 75 ? '#4ade80' : s >= 50 ? '#fb923c' : '#f87171'
@@ -123,12 +123,12 @@ function ScoreBreakdown({ lead }) {
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                     <span style={{fontSize:12,fontWeight:700,color:'#e4e4e7'}}>Score Breakdown</span>
-                    <span style={{fontSize:10,color:'#52525b',fontFamily:"'JetBrains Mono',monospace"}}>{lead.name}</span>
+                    <span style={{fontSize:10,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace"}}>{lead.name}</span>
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:6}}>
-                    <span style={{fontSize:10,color:'#52525b',fontFamily:"'JetBrains Mono',monospace"}}>total</span>
+                    <span style={{fontSize:10,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace"}}>total</span>
                     <span style={{fontSize:18,fontWeight:800,color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{total}</span>
-                    <span style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>/100</span>
+                    <span style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>/100</span>
                 </div>
             </div>
             <div style={{height:3,background:'rgba(255,255,255,0.04)',borderRadius:2,marginBottom:16,overflow:'hidden'}}>
@@ -138,12 +138,12 @@ function ScoreBreakdown({ lead }) {
                 {signals.map(sig=>(
                     <div key={sig.label} style={{display:'flex',alignItems:'center',gap:12}}>
                         <div style={{width:6,height:6,borderRadius:'50%',flexShrink:0,background:sig.pts>0?'#4ade80':'rgba(255,255,255,0.1)'}}/>
-                        <div style={{width:130,flexShrink:0,fontSize:12,color:sig.pts>0?'#a1a1aa':'#3f3f46'}}>{sig.label}</div>
+                        <div style={{width:130,flexShrink:0,fontSize:12,color:sig.pts>0?'#c4c4cc':'#b8c2d4'}}>{sig.label}</div>
                         <div style={{flex:1,height:3,background:'rgba(255,255,255,0.04)',borderRadius:2,overflow:'hidden'}}>
                             <div style={{height:'100%',width:`${(sig.pts/sig.max)*100}%`,background:sig.pts>0?(sig.pts===sig.max?'#4ade80':'#fb923c'):'transparent',borderRadius:2,transition:'width 0.5s ease'}}/>
                         </div>
-                        <div style={{width:52,flexShrink:0,textAlign:'right',fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:sig.pts>0?'#e4e4e7':'#27272a'}}>+{sig.pts}<span style={{color:'#27272a'}}>/{sig.max}</span></div>
-                        <div style={{width:200,flexShrink:0,fontSize:11,color:'#52525b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sig.detail}</div>
+                        <div style={{width:52,flexShrink:0,textAlign:'right',fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:sig.pts>0?'#e4e4e7':'#b8c2d4'}}>+{sig.pts}<span style={{color:'#b8c2d4'}}>/{sig.max}</span></div>
+                        <div style={{width:200,flexShrink:0,fontSize:11,color:'#c4c4cc',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sig.detail}</div>
                     </div>
                 ))}
             </div>
@@ -193,7 +193,7 @@ function StageDropdown({ lead, onChange }) {
                         const c = STAGE_STYLE[stage], active = stage === (lead.pipeline_stage || 'New Lead')
                         return (
                             <div key={stage} onClick={e => { e.stopPropagation(); onChange(lead.id, stage); setOpen(false) }}
-                                style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#71717a',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
+                                style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
                                 onMouseEnter={e => { if(!active) e.currentTarget.style.background='rgba(255,255,255,0.04)' }}
                                 onMouseLeave={e => { if(!active) e.currentTarget.style.background='transparent' }}>
                                 {active ? <CheckCircle2 size={11}/> : <Circle size={11}/>}{stage}
@@ -240,7 +240,7 @@ function CallOutcomeDropdown({ lead, onChange }) {
     return (
         <>
             <div ref={triggerRef} onClick={handleOpen}
-                style={{display:'inline-flex',alignItems:'center',gap:5,cursor:'pointer',background:oc?oc.bg:'rgba(255,255,255,0.03)',border:`1px solid ${oc?oc.border:'rgba(255,255,255,0.07)'}`,borderRadius:20,padding:'4px 10px',fontSize:11,color:oc?oc.color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",userSelect:'none',whiteSpace:'nowrap',transition:'all 0.15s'}}
+                style={{display:'inline-flex',alignItems:'center',gap:5,cursor:'pointer',background:oc?oc.bg:'rgba(255,255,255,0.03)',border:`1px solid ${oc?oc.border:'rgba(255,255,255,0.07)'}`,borderRadius:20,padding:'4px 10px',fontSize:11,color:oc?oc.color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",userSelect:'none',whiteSpace:'nowrap',transition:'all 0.15s'}}
                 onMouseEnter={e=>{if(!oc)e.currentTarget.style.borderColor='rgba(255,255,255,0.15)'}}
                 onMouseLeave={e=>{if(!oc)e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'}}>
                 {lead.call_outcome || '— set —'}
@@ -254,7 +254,7 @@ function CallOutcomeDropdown({ lead, onChange }) {
                         const active = outcome === lead.call_outcome
                         return (
                             <div key={outcome} onClick={e => { e.stopPropagation(); onChange(lead.id, outcome); setOpen(false) }}
-                                style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#71717a',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
+                                style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
                                 onMouseEnter={e => { if(!active) e.currentTarget.style.background='rgba(255,255,255,0.04)' }}
                                 onMouseLeave={e => { if(!active) e.currentTarget.style.background='transparent' }}>
                                 {active ? <CheckCircle2 size={11}/> : <Circle size={11}/>}{outcome}
@@ -276,14 +276,14 @@ function FilterBar({ batches, filters, onChange, onClear }) {
 
     const pill = (label, active, onClick) => (
         <button key={label} onClick={onClick}
-            style={{display:'inline-flex',alignItems:'center',padding:'5px 12px',borderRadius:20,fontSize:12,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s',background:active?'rgba(139,92,246,0.15)':'rgba(255,255,255,0.03)',border:`1px solid ${active?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.07)'}`,color:active?'#c4b5fd':'#71717a',whiteSpace:'nowrap'}}>
+            style={{display:'inline-flex',alignItems:'center',padding:'5px 12px',borderRadius:20,fontSize:12,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s',background:active?'rgba(139,92,246,0.15)':'rgba(255,255,255,0.03)',border:`1px solid ${active?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.07)'}`,color:active?'#c4b5fd':'#c4c4cc',whiteSpace:'nowrap'}}>
             {label}
         </button>
     )
 
     const section = (label, children) => (
         <div style={{marginBottom:14}}>
-            <div style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:7}}>{label}</div>
+            <div style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:7}}>{label}</div>
             <div style={{display:'flex',flexWrap:'wrap',gap:6}}>{children}</div>
         </div>
     )
@@ -292,8 +292,8 @@ function FilterBar({ batches, filters, onChange, onClear }) {
         <div>
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
                 <div style={{display:'flex',alignItems:'center',gap:7}}>
-                    <SlidersHorizontal size={12} color="#52525b" strokeWidth={1.5}/>
-                    <span style={{fontSize:11,color:'#52525b',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em'}}>Filters</span>
+                    <SlidersHorizontal size={12} color="#c4c4cc" strokeWidth={1.5}/>
+                    <span style={{fontSize:11,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em'}}>Filters</span>
                 </div>
                 {hasActive && (
                     <button onClick={onClear} style={{display:'flex',alignItems:'center',gap:4,background:'rgba(248,113,113,0.06)',border:'1px solid rgba(248,113,113,0.18)',borderRadius:20,padding:'3px 10px',color:'#f87171',fontSize:11,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>
@@ -326,9 +326,9 @@ function BatchCard({ batch, onClick }) {
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
                 <div>
                     <div style={{fontSize:16,fontWeight:700,color:'#fafafa',marginBottom:5,letterSpacing:'-0.3px'}}>{batch.query}</div>
-                    <div style={{display:'flex',alignItems:'center',gap:5,color:'#52525b',fontSize:12}}><MapPin size={10}/>{batch.location}</div>
+                    <div style={{display:'flex',alignItems:'center',gap:5,color:'#c4c4cc',fontSize:12}}><MapPin size={10}/>{batch.location}</div>
                 </div>
-                <ChevronRight size={16} color="#3f3f46"/>
+                <ChevronRight size={16} color="#b8c2d4"/>
             </div>
             <div style={{display:'flex',gap:20,marginBottom:16}}>
                 {[
@@ -336,23 +336,23 @@ function BatchCard({ batch, onClick }) {
                     {val:batch.no_site,label:'no website',color:'#f87171'},
                     {val:batch.avg_score||'—',label:'avg score',color:scoreColor(batch.avg_score)},
                 ].reduce((acc,s,i)=>i===0?[
-                    <div key={i}><div style={{fontSize:22,fontWeight:800,color:s.color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{s.val}</div><div style={{fontSize:10,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.08em',marginTop:2}}>{s.label}</div></div>
-                ]:[...acc,<div key={`d${i}`} style={{width:1,background:'rgba(255,255,255,0.05)'}}/>,<div key={i}><div style={{fontSize:22,fontWeight:800,color:s.color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{s.val}</div><div style={{fontSize:10,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.08em',marginTop:2}}>{s.label}</div></div>],[])}
+                    <div key={i}><div style={{fontSize:22,fontWeight:800,color:s.color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{s.val}</div><div style={{fontSize:10,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.08em',marginTop:2}}>{s.label}</div></div>
+                ]:[...acc,<div key={`d${i}`} style={{width:1,background:'rgba(255,255,255,0.05)'}}/>,<div key={i}><div style={{fontSize:22,fontWeight:800,color:s.color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{s.val}</div><div style={{fontSize:10,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.08em',marginTop:2}}>{s.label}</div></div>],[])}
             </div>
             <div style={{display:'flex',alignItems:'center',gap:3,marginBottom:14}}>
                 {[1,2,3,4,5].map(i=><Star key={i} size={12} strokeWidth={1.5} style={{color:i<=filledStars?scoreColor(batch.avg_score):'rgba(255,255,255,0.08)',fill:i<=filledStars?scoreColor(batch.avg_score):'transparent'}}/>)}
-                <span style={{fontSize:11,color:'#52525b',marginLeft:6,fontFamily:"'JetBrains Mono',monospace"}}>avg quality</span>
+                <span style={{fontSize:11,color:'#c4c4cc',marginLeft:6,fontFamily:"'JetBrains Mono',monospace"}}>avg quality</span>
             </div>
             <div>
                 <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                    <span style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>no website</span>
+                    <span style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>no website</span>
                     <span style={{fontSize:10,color:'#f87171',fontFamily:"'JetBrains Mono',monospace"}}>{noSitePct}%</span>
                 </div>
                 <div style={{height:2,background:'rgba(255,255,255,0.04)',borderRadius:2}}>
                     <div style={{height:'100%',width:`${noSitePct}%`,background:'linear-gradient(90deg,#f87171,#fb923c)',borderRadius:2}}/>
                 </div>
             </div>
-            <div style={{marginTop:14,fontSize:11,color:'#27272a',fontFamily:"'JetBrains Mono',monospace"}}>{date}</div>
+            <div style={{marginTop:14,fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>{date}</div>
         </div>
     )
 }
@@ -381,14 +381,14 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
         <div style={{animation:'fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both'}}>
             <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:28}}>
                 <button onClick={onBack}
-                    style={{display:'flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 14px',color:'#71717a',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'color 0.2s'}}
-                    onMouseEnter={e=>e.currentTarget.style.color='#a1a1aa'}
-                    onMouseLeave={e=>e.currentTarget.style.color='#71717a'}>
+                    style={{display:'flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 14px',color:'#c4c4cc',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'color 0.2s'}}
+                    onMouseEnter={e=>e.currentTarget.style.color='#c4c4cc'}
+                    onMouseLeave={e=>e.currentTarget.style.color='#c4c4cc'}>
                     <ArrowLeft size={13}/> All Batches
                 </button>
                 <div>
                     <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.5px',color:'#fafafa',margin:0}}>{batch.query}</h2>
-                    <div style={{display:'flex',alignItems:'center',gap:5,color:'#52525b',fontSize:13,marginTop:3}}><MapPin size={11}/>{batch.location}</div>
+                    <div style={{display:'flex',alignItems:'center',gap:5,color:'#c4c4cc',fontSize:13,marginTop:3}}><MapPin size={11}/>{batch.location}</div>
                 </div>
             </div>
 
@@ -402,7 +402,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                         <div style={{width:32,height:32,borderRadius:9,background:`${s.accent}18`,border:`1px solid ${s.accent}30`,display:'flex',alignItems:'center',justifyContent:'center'}}><s.icon size={14} color={s.accent} strokeWidth={1.5}/></div>
                         <div>
                             <div style={{fontSize:20,fontWeight:800,color:'#fafafa',fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px'}}>{s.value}</div>
-                            <div style={{fontSize:10,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.08em'}}>{s.label}</div>
+                            <div style={{fontSize:10,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.08em'}}>{s.label}</div>
                         </div>
                     </div>
                 ))}
@@ -410,7 +410,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
 
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14,flexWrap:'wrap'}}>
                 <div style={{display:'flex',alignItems:'center',gap:10,flex:1,minWidth:200,background:'rgba(255,255,255,0.03)',border:`1px solid ${focused?'rgba(139,92,246,0.5)':'rgba(255,255,255,0.07)'}`,borderRadius:9,padding:'0 14px',height:38,transition:'border-color 0.2s'}}>
-                    <Search size={13} color="#3f3f46"/>
+                    <Search size={13} color="#b8c2d4"/>
                     <input style={{background:'none',border:'none',outline:'none',color:'#fafafa',fontSize:13,width:'100%',fontFamily:"'Outfit',sans-serif"}} placeholder="Search leads..." value={search} onChange={e=>setSearch(e.target.value)} onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)}/>
                 </div>
                 <div style={{display:'flex',gap:6}}>
@@ -418,7 +418,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                         <button key={s} className={`fbtn${filterSite===s?' on':''}`} onClick={()=>setFilterSite(s)}>{s}</button>
                     ))}
                 </div>
-                <div style={{fontSize:11,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginLeft:'auto'}}>
+                <div style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginLeft:'auto'}}>
                     click name to open · click score to expand
                 </div>
             </div>
@@ -429,12 +429,12 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                 {/* Header */}
                 <div style={{display:'grid',gridTemplateColumns:GRID,gap:16,padding:'12px 20px',borderBottom:'1px solid rgba(255,255,255,0.05)',background:'rgba(255,255,255,0.02)'}}>
                     {['Business','Website','Score','Status','Call','Phone'].map(h=>(
-                        <div key={h} style={{fontSize:10,fontWeight:700,color:'#3f3f46',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace"}}>{h}</div>
+                        <div key={h} style={{fontSize:10,fontWeight:700,color:'#b8c2d4',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace"}}>{h}</div>
                     ))}
                 </div>
 
                 {filtered.length===0 ? (
-                    <div style={{padding:'48px 20px',textAlign:'center',fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>— No leads match your filters —</div>
+                    <div style={{padding:'48px 20px',textAlign:'center',fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>— No leads match your filters —</div>
                 ) : filtered.map(lead => {
                     const noSiteL  = lead.website_status==='NO WEBSITE'
                     const isExpanded = expandedScore===lead.id
@@ -453,7 +453,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                                     </div>
                                     <div style={{minWidth:0}}>
                                         <div style={{fontSize:14,fontWeight:600,color:'#e4e4e7',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{lead.name}</div>
-                                        {lead.city && <div style={{fontSize:11,color:'#3f3f46',marginTop:1}}>{lead.city}</div>}
+                                        {lead.city && <div style={{fontSize:11,color:'#b8c2d4',marginTop:1}}>{lead.city}</div>}
                                     </div>
                                 </div>
 
@@ -478,7 +478,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                                 </div>
 
                                 {/* Phone */}
-                                <span style={{fontSize:11,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>{lead.phone||'—'}</span>
+                                <span style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>{lead.phone||'—'}</span>
                             </div>
 
                             {isExpanded && (
@@ -491,7 +491,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                 })}
 
                 <div style={{padding:'11px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'space-between'}}>
-                    <span style={{fontSize:11,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>Showing {filtered.length} of {leads.length} leads</span>
+                    <span style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>Showing {filtered.length} of {leads.length} leads</span>
                 </div>
             </div>
         </div>
@@ -573,10 +573,10 @@ export default function Batches() {
                 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
                 .f1{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both}
                 .f2{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.14s both}
-                .nav-link{background:none;border:none;color:#3f3f46;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0;}
-                .nav-link:hover{color:#a1a1aa;}
+                .nav-link{background:none;border:none;color:#b8c2d4;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0;}
+                .nav-link:hover{color:#c4c4cc;}
                 .nav-link.active{color:#fafafa;font-weight:600;}
-                .fbtn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;color:#71717a;font-family:'Outfit',sans-serif;font-size:13px;padding:7px 14px;cursor:pointer;transition:all 0.15s;}
+                .fbtn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;color:#c4c4cc;font-family:'Outfit',sans-serif;font-size:13px;padding:7px 14px;cursor:pointer;transition:all 0.15s;}
                 .fbtn:hover,.fbtn.on{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.35);color:#c4b5fd;}
             `}</style>
 
@@ -595,6 +595,7 @@ export default function Batches() {
                         <button className="nav-link active">Batches</button>
                         <button className="nav-link" onClick={()=>navigate('/pipeline')}>Pipeline</button>
                         <button className="nav-link" onClick={()=>navigate('/analytics')}>Analytics</button>
+                        <button className="nav-link" onClick={()=>navigate('/meetings')}>Meetings</button>
                     </div>
                 </div>
                 <NavbarDropdown/>
@@ -618,7 +619,7 @@ export default function Batches() {
                             <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
                                 <div>
                                     <h1 style={{fontSize:'clamp(1.8rem,3vw,2.6rem)',fontWeight:900,letterSpacing:'-1.5px',color:'#fafafa',marginBottom:6}}>Your Batches</h1>
-                                    <p style={{color:'#52525b',fontSize:15}}>
+                                    <p style={{color:'#c4c4cc',fontSize:15}}>
                                         {batches.length===0
                                             ? 'No batches yet — run a scrape from the Leads page to get started.'
                                             : `${filteredBatches.length} of ${batches.length} ${batches.length===1?'batch':'batches'} shown`}
@@ -626,7 +627,7 @@ export default function Batches() {
                                 </div>
                                 {batches.length>0 && (
                                     <button onClick={()=>setShowFilters(f=>!f)}
-                                        style={{display:'flex',alignItems:'center',gap:7,background:showFilters||activeFilterCount>0?'rgba(139,92,246,0.1)':'rgba(255,255,255,0.03)',border:`1px solid ${showFilters||activeFilterCount>0?'rgba(139,92,246,0.35)':'rgba(255,255,255,0.07)'}`,borderRadius:10,padding:'9px 16px',color:showFilters||activeFilterCount>0?'#c4b5fd':'#71717a',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s'}}>
+                                        style={{display:'flex',alignItems:'center',gap:7,background:showFilters||activeFilterCount>0?'rgba(139,92,246,0.1)':'rgba(255,255,255,0.03)',border:`1px solid ${showFilters||activeFilterCount>0?'rgba(139,92,246,0.35)':'rgba(255,255,255,0.07)'}`,borderRadius:10,padding:'9px 16px',color:showFilters||activeFilterCount>0?'#c4b5fd':'#c4c4cc',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s'}}>
                                         <SlidersHorizontal size={13}/>
                                         Filters
                                         {activeFilterCount>0 && <span style={{background:'#8b5cf6',borderRadius:20,padding:'1px 7px',fontSize:10,color:'#fff',fontWeight:700,marginLeft:2}}>{activeFilterCount}</span>}
@@ -647,14 +648,14 @@ export default function Batches() {
                             </div>
                         ) : batches.length===0 ? (
                             <div style={{textAlign:'center',paddingTop:80}}>
-                                <div style={{fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginBottom:16}}>— No batches yet —</div>
+                                <div style={{fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginBottom:16}}>— No batches yet —</div>
                                 <button onClick={()=>navigate('/leads')} style={{background:'linear-gradient(135deg,#8b5cf6,#6366f1)',border:'none',borderRadius:9,padding:'10px 22px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>
                                     Go scrape some leads →
                                 </button>
                             </div>
                         ) : filteredBatches.length===0 ? (
                             <div style={{textAlign:'center',paddingTop:60}}>
-                                <div style={{fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginBottom:12}}>— No batches match your filters —</div>
+                                <div style={{fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginBottom:12}}>— No batches match your filters —</div>
                                 <button onClick={clearFilters} style={{background:'rgba(139,92,246,0.08)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:9,padding:'8px 18px',color:'#a78bfa',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>
                                     Clear filters
                                 </button>

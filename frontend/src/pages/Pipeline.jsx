@@ -65,9 +65,9 @@ function NotesModal({ lead, onClose, onSave }) {
         <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
           <div>
             <div style={{ fontSize:14,fontWeight:700,color:'#fafafa' }}>Notes</div>
-            <div style={{ fontSize:11,color:'#52525b',marginTop:2 }}>{lead.name}</div>
+            <div style={{ fontSize:11,color:'#c4c4cc',marginTop:2 }}>{lead.name}</div>
           </div>
-          <button onClick={onClose} style={{ background:'none',border:'none',cursor:'pointer',color:'#3f3f46',padding:4,display:'flex' }} onMouseEnter={e=>e.currentTarget.style.color='#71717a'} onMouseLeave={e=>e.currentTarget.style.color='#3f3f46'}>
+          <button onClick={onClose} style={{ background:'none',border:'none',cursor:'pointer',color:'#b8c2d4',padding:4,display:'flex' }} onMouseEnter={e=>e.currentTarget.style.color='#c4c4cc'} onMouseLeave={e=>e.currentTarget.style.color='#b8c2d4'}>
             <X size={14} />
           </button>
         </div>
@@ -81,7 +81,7 @@ function NotesModal({ lead, onClose, onSave }) {
           onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.08)'}
         />
         <div style={{ display:'flex',justifyContent:'flex-end',gap:8,marginTop:12 }}>
-          <button onClick={onClose} style={{ background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 16px',color:'#71717a',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif" }}>Cancel</button>
+          <button onClick={onClose} style={{ background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 16px',color:'#c4c4cc',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif" }}>Cancel</button>
           <button onClick={save} disabled={saving} style={{ background:'linear-gradient(135deg,#8b5cf6,#6366f1)',border:'none',borderRadius:8,padding:'7px 16px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif",display:'flex',alignItems:'center',gap:6,opacity:saving?0.6:1 }}>
             <Check size={12} /> {saving ? 'Saving...' : 'Save'}
           </button>
@@ -128,7 +128,7 @@ function StageDropdown({ lead, onChange }) {
             const c = STAGE_CONFIG[stage]; const active = stage === lead.pipeline_stage
             return (
               <div key={stage} onClick={e=>{e.stopPropagation();onChange(lead.id,stage);setOpen(false)}}
-                style={{ padding:'7px 10px',borderRadius:6,fontSize:11,cursor:'pointer',color:active?c.color:'#71717a',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:7,transition:'background 0.12s' }}
+                style={{ padding:'7px 10px',borderRadius:6,fontSize:11,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:7,transition:'background 0.12s' }}
                 onMouseEnter={e=>{if(!active)e.currentTarget.style.background='rgba(255,255,255,0.04)'}}
                 onMouseLeave={e=>{if(!active)e.currentTarget.style.background='transparent'}}>
                 {active?<CheckCircle2 size={10}/>:<Circle size={10}/>} {stage}
@@ -160,7 +160,7 @@ function LeadCard({ lead, onStageChange, onNoteClick }) {
         </div>
         <div style={{ flex:1,minWidth:0 }}>
           <div style={{ fontSize:12,fontWeight:700,color:'#e4e4e7',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',lineHeight:1.3 }}>{lead.name}</div>
-          <div style={{ fontSize:10,color:'#3f3f46',marginTop:2,display:'flex',alignItems:'center',gap:3 }}><MapPin size={8}/>{lead.city}</div>
+          <div style={{ fontSize:10,color:'#b8c2d4',marginTop:2,display:'flex',alignItems:'center',gap:3 }}><MapPin size={8}/>{lead.city}</div>
         </div>
       </div>
 
@@ -177,14 +177,14 @@ function LeadCard({ lead, onStageChange, onNoteClick }) {
 
       {/* Phone */}
       {lead.phone && (
-        <div style={{ fontSize:10,color:'#52525b',fontFamily:"'JetBrains Mono',monospace",marginBottom:10,display:'flex',alignItems:'center',gap:4 }}>
+        <div style={{ fontSize:10,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace",marginBottom:10,display:'flex',alignItems:'center',gap:4 }}>
           <Phone size={9}/>{lead.phone}
         </div>
       )}
 
       {/* Notes preview */}
       {lead.notes && (
-        <div style={{ fontSize:10,color:'#52525b',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:6,padding:'5px 8px',marginBottom:10,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>
+        <div style={{ fontSize:10,color:'#c4c4cc',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:6,padding:'5px 8px',marginBottom:10,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>
           {lead.notes}
         </div>
       )}
@@ -193,9 +193,9 @@ function LeadCard({ lead, onStageChange, onNoteClick }) {
       <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',gap:6 }}>
         <StageDropdown lead={lead} onChange={onStageChange} />
         <button onClick={e=>{e.stopPropagation();onNoteClick(lead)}}
-          style={{ display:'flex',alignItems:'center',gap:4,background:lead.notes?'rgba(139,92,246,0.08)':'rgba(255,255,255,0.03)',border:`1px solid ${lead.notes?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.06)'}`,borderRadius:7,padding:'4px 8px',color:lead.notes?'#a78bfa':'#3f3f46',fontSize:10,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s' }}
+          style={{ display:'flex',alignItems:'center',gap:4,background:lead.notes?'rgba(139,92,246,0.08)':'rgba(255,255,255,0.03)',border:`1px solid ${lead.notes?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.06)'}`,borderRadius:7,padding:'4px 8px',color:lead.notes?'#a78bfa':'#b8c2d4',fontSize:10,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all 0.15s' }}
           onMouseEnter={e=>{e.currentTarget.style.background='rgba(139,92,246,0.1)';e.currentTarget.style.color='#a78bfa'}}
-          onMouseLeave={e=>{e.currentTarget.style.background=lead.notes?'rgba(139,92,246,0.08)':'rgba(255,255,255,0.03)';e.currentTarget.style.color=lead.notes?'#a78bfa':'#3f3f46'}}>
+          onMouseLeave={e=>{e.currentTarget.style.background=lead.notes?'rgba(139,92,246,0.08)':'rgba(255,255,255,0.03)';e.currentTarget.style.color=lead.notes?'#a78bfa':'#b8c2d4'}}>
           <StickyNote size={9}/>{lead.notes?'Edit note':'Add note'}
         </button>
       </div>
@@ -227,7 +227,7 @@ function KanbanColumn({ stage, leads, onStageChange, onNoteClick }) {
       {!collapsed && (
         <div style={{ flex:1,minHeight:80 }}>
           {leads.length === 0 ? (
-            <div style={{ border:'1px dashed rgba(255,255,255,0.05)',borderRadius:10,padding:'20px 12px',textAlign:'center',fontSize:11,color:'#27272a',fontFamily:"'JetBrains Mono',monospace" }}>empty</div>
+            <div style={{ border:'1px dashed rgba(255,255,255,0.05)',borderRadius:10,padding:'20px 12px',textAlign:'center',fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>empty</div>
           ) : leads.map(lead=>(
             <LeadCard key={lead.id} lead={lead} onStageChange={onStageChange} onNoteClick={onNoteClick} />
           ))}
@@ -292,8 +292,8 @@ export default function Pipeline() {
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         @keyframes pulse  { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
         @keyframes spin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        .nav-link { background:none;border:none;color:#3f3f46;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
-        .nav-link:hover { color:#a1a1aa; }
+        .nav-link { background:none;border:none;color:#b8c2d4;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0; }
+        .nav-link:hover { color:#c4c4cc; }
         .nav-link.active { color:#fafafa;font-weight:600; }
       `}</style>
 
@@ -312,6 +312,7 @@ export default function Pipeline() {
             <button className="nav-link" onClick={()=>navigate('/batches')}>Batches</button>
             <button className="nav-link active">Pipeline</button>
             <button className="nav-link" onClick={()=>navigate('/analytics')}>Analytics</button>
+            <button className="nav-link" onClick={()=>navigate('/meetings')}>Meetings</button>
           </div>
         </div>
         <NavbarDropdown />
@@ -334,7 +335,7 @@ export default function Pipeline() {
             ].map(s=>(
               <div key={s.label} style={{ display:'flex',alignItems:'center',gap:6 }}>
                 <span style={{ fontSize:18,fontWeight:800,color:s.color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px' }}>{s.value}</span>
-                <span style={{ fontSize:11,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.08em' }}>{s.label}</span>
+                <span style={{ fontSize:11,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.08em' }}>{s.label}</span>
               </div>
             ))}
           </div>
@@ -346,7 +347,7 @@ export default function Pipeline() {
           </div>
         ) : totalLeads === 0 ? (
           <div style={{ textAlign:'center',paddingTop:80 }}>
-            <div style={{ fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",marginBottom:16 }}>— No leads yet —</div>
+            <div style={{ fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",marginBottom:16 }}>— No leads yet —</div>
             <button onClick={()=>navigate('/leads')} style={{ background:'linear-gradient(135deg,#8b5cf6,#6366f1)',border:'none',borderRadius:9,padding:'10px 22px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif" }}>
               Go scrape some leads →
             </button>

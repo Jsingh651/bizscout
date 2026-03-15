@@ -1,12 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException
+from pathlib import Path
+from fastapi import APIRouter, Depends, HTTPException, Cookie, Header
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.lead import Lead
+from app.models.user import User
+from app.services.auth import decode_token
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 
 router = APIRouter(prefix="/leads", tags=["leads"])
+
+_CONTRACT_TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "templates" / "contracts" / "service_agreement.html"
+
+
+def _get_current_user(
+    db: Session = Depends(get_db),
+    access_token: Optional[str] = Cookie(default=None),
+    authorization: Optional[str] = Header(default=None),
+) -> User:
+    token = access_token
+    if not token and authorization and authorization.startswith("Bearer "):
+        token = authorization[7:].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    payload = decode_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    user = db.query(User).filter(User.id == int(payload["sub"])).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
 
 
 class LeadCreate(BaseModel):
@@ -32,6 +57,37 @@ class LeadUpdate(BaseModel):
 @router.get("/")
 def get_leads(db: Session = Depends(get_db)):
     return db.query(Lead).all()
+
+
+@router.get("/{lead_id}/contract", response_class=HTMLResponse)
+def get_lead_contract(
+    lead_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(_get_current_user),
+):
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    if not _CONTRACT_TEMPLATE_PATH.exists():
+        raise HTTPException(status_code=500, detail="Contract template not found")
+    template = _CONTRACT_TEMPLATE_PATH.read_text(encoding="utf-8")
+    date_str = datetime.now(timezone.utc).strftime("%B %d, %Y")
+    company_name = (current_user.full_name and current_user.full_name.strip()) or "Your Company"
+    representative_name = (current_user.full_name and current_user.full_name.strip()) or current_user.email
+    replacements = {
+        "{{lead_name}}": (lead.name or "").strip() or "—",
+        "{{lead_address}}": (lead.address or "").strip() or "—",
+        "{{lead_city}}": (lead.city or "").strip() or "—",
+        "{{lead_phone}}": (lead.phone or "").strip() or "—",
+        "{{lead_category}}": (lead.category or "").strip() or "—",
+        "{{date}}": date_str,
+        "{{company_name}}": company_name,
+        "{{representative_name}}": representative_name,
+    }
+    html = template
+    for key, value in replacements.items():
+        html = html.replace(key, value)
+    return HTMLResponse(html)
 
 
 @router.get("/{lead_id}")

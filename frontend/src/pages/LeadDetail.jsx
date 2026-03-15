@@ -2,12 +2,15 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
     ArrowLeft, MapPin, Phone, Star, AlertTriangle, ExternalLink,
-    BarChart2, Clock, Tag, Globe, FileText, Video, Mail,
+    BarChart2, Clock, Tag, Globe, FileText, Video,
     ChevronDown, CheckCircle2, Circle, StickyNote, Check, X,
     Info, Building2, PhoneCall, PhoneOff, PhoneMissed,
     ThumbsUp, ThumbsDown, CalendarClock,
 } from 'lucide-react'
 import NavbarDropdown from '../components/NavbarDropdown'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import '../styles/datepicker-overrides.css'
 import ReactDOM from 'react-dom'
 const API = 'http://127.0.0.1:8000'
 
@@ -27,7 +30,7 @@ const CALL_OUTCOMES = [
     { key: 'Not Interested',  label: 'Not Interested',  icon: ThumbsDown,    color: '#f87171', bg: 'rgba(248,113,113,0.08)',  border: 'rgba(248,113,113,0.25)'  },
     { key: 'Call Later',      label: 'Call Later',      icon: CalendarClock, color: '#eab308', bg: 'rgba(234,179,8,0.08)',    border: 'rgba(234,179,8,0.25)'    },
     { key: 'No Answer',       label: 'No Answer',       icon: PhoneMissed,   color: '#fb923c', bg: 'rgba(251,146,60,0.08)',   border: 'rgba(251,146,60,0.25)'   },
-    { key: 'Wrong Number',    label: 'Wrong Number',    icon: PhoneOff,      color: '#71717a', bg: 'rgba(113,113,122,0.08)',  border: 'rgba(113,113,122,0.25)'  },
+    { key: 'Wrong Number',    label: 'Wrong Number',    icon: PhoneOff,      color: '#c4c4cc', bg: 'rgba(113,113,122,0.08)',  border: 'rgba(113,113,122,0.25)'  },
 ]
 
 const outcomeStyle = key => CALL_OUTCOMES.find(o => o.key === key) || null
@@ -143,7 +146,7 @@ function StageDropdown({ stage, onChange }) {
                         const c = STAGE_STYLE[st], active = st === (stage || 'New Lead')
                         return (
                             <div key={st} onClick={() => { onChange(st); setOpen(false) }}
-                                style={{padding:'9px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#a1a1aa',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.12s',whiteSpace:'nowrap'}}
+                                style={{padding:'9px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.12s',whiteSpace:'nowrap'}}
                                 onMouseEnter={e => { if(!active) e.currentTarget.style.background='rgba(255,255,255,0.06)' }}
                                 onMouseLeave={e => { if(!active) e.currentTarget.style.background='transparent' }}>
                                 {active ? <CheckCircle2 size={11}/> : <Circle size={11}/>}{st}
@@ -187,7 +190,7 @@ function CallLog({ lead, onOutcomeSet }) {
                         <current.icon size={13} color={current.color} strokeWidth={1.5}/>
                         <span style={{fontSize:12,fontWeight:700,color:current.color,fontFamily:"'JetBrains Mono',monospace"}}>Last: {current.label}</span>
                     </div>
-                    {callTime && <span style={{fontSize:10,color:'#52525b',fontFamily:"'JetBrains Mono',monospace"}}>{callTime}</span>}
+                    {callTime && <span style={{fontSize:10,color:'#c4c4cc',fontFamily:"'JetBrains Mono',monospace"}}>{callTime}</span>}
                 </div>
             )}
 
@@ -198,9 +201,9 @@ function CallLog({ lead, onOutcomeSet }) {
                     const isLoading = saving === o.key
                     return (
                         <button key={o.key} onClick={() => setOutcome(o.key)} disabled={!!saving}
-                            style={{display:'flex',alignItems:'center',gap:7,padding:'9px 12px',borderRadius:10,cursor:saving?'wait':'pointer',fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:600,transition:'all 0.15s',background:isActive?o.bg:'rgba(255,255,255,0.03)',border:`1px solid ${isActive?o.border:'rgba(255,255,255,0.07)'}`,color:isActive?o.color:'#71717a',opacity:saving&&!isLoading?0.5:1}}
+                            style={{display:'flex',alignItems:'center',gap:7,padding:'9px 12px',borderRadius:10,cursor:saving?'wait':'pointer',fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:600,transition:'all 0.15s',background:isActive?o.bg:'rgba(255,255,255,0.03)',border:`1px solid ${isActive?o.border:'rgba(255,255,255,0.07)'}`,color:isActive?o.color:'#c4c4cc',opacity:saving&&!isLoading?0.5:1}}
                             onMouseEnter={e => { if(!saving) { e.currentTarget.style.background=o.bg; e.currentTarget.style.borderColor=o.border; e.currentTarget.style.color=o.color } }}
-                            onMouseLeave={e => { if(!isActive) { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'; e.currentTarget.style.color='#71717a' } }}>
+                            onMouseLeave={e => { if(!isActive) { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'; e.currentTarget.style.color='#c4c4cc' } }}>
                             {isLoading
                                 ? <div style={{width:12,height:12,border:'2px solid rgba(255,255,255,0.2)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin 0.6s linear infinite'}}/>
                                 : <o.icon size={12} strokeWidth={1.5}/>
@@ -267,11 +270,11 @@ function ActionCard({ icon: Icon, title, description, accent, badge, onClick, di
                             {title}
                             {badge && <span style={{fontSize:9,background:`${accent}18`,border:`1px solid ${accent}30`,borderRadius:20,padding:'2px 7px',color:accent,fontFamily:"'JetBrains Mono',monospace",fontWeight:700}}>{badge}</span>}
                         </div>
-                        <div style={{fontSize:11,color:'#52525b',marginTop:1}}>{description}</div>
+                        <div style={{fontSize:11,color:'#c4c4cc',marginTop:1}}>{description}</div>
                     </div>
                 </div>
                 {disabled
-                    ? <span style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:20,padding:'3px 8px',flexShrink:0}}>soon</span>
+                    ? <span style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:20,padding:'3px 8px',flexShrink:0}}>soon</span>
                     : <div style={{width:26,height:26,borderRadius:7,background:`${accent}10`,border:`1px solid ${accent}20`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                         <ExternalLink size={10} color={accent} strokeWidth={1.5}/>
                       </div>
@@ -295,7 +298,7 @@ function ScoreRing({ score }) {
             </svg>
             <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
                 <span style={{fontSize:22,fontWeight:900,color,fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-1px',lineHeight:1}}>{score}</span>
-                <span style={{fontSize:9,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.1em',marginTop:2}}>score</span>
+                <span style={{fontSize:9,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.1em',marginTop:2}}>score</span>
             </div>
         </div>
     )
@@ -309,11 +312,34 @@ export default function LeadDetail() {
     const [loading, setLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
 
+    // Demo scheduler state
+    const [showScheduler, setShowScheduler] = useState(false)
+    const [demoName, setDemoName] = useState('')
+    const [demoEmail, setDemoEmail] = useState('')
+    const [demoTime, setDemoTime] = useState(null)
+    const [demoLoading, setDemoLoading] = useState(false)
+    const [demoStatus, setDemoStatus] = useState(null)
+    const [upcomingMeeting, setUpcomingMeeting] = useState(null)
+    const [showConfirmDemo, setShowConfirmDemo] = useState(false)
+    const [demoEmailError, setDemoEmailError] = useState('')
+    const [contractLoading, setContractLoading] = useState(false)
+    const [contractError, setContractError] = useState(null)
+
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim())
+
     useEffect(() => {
         fetch(`${API}/leads/${id}`, { credentials: 'include' })
             .then(r => { if(!r.ok) throw new Error(); return r.json() })
             .then(data => { setLead(data); setLoading(false) })
             .catch(() => { setNotFound(true); setLoading(false) })
+    }, [id])
+
+    useEffect(() => {
+        if (!id) return
+        fetch(`${API}/meetings/lead/${id}`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => setUpcomingMeeting(data || null))
+            .catch(() => {})
     }, [id])
 
     const handleStageChange = stage => {
@@ -324,6 +350,68 @@ export default function LeadDetail() {
     const handleNotesSave  = notes        => setLead(prev => ({ ...prev, notes }))
     const handleOutcomeSet = call_outcome => setLead(prev => ({ ...prev, call_outcome, call_outcome_at: new Date().toISOString() }))
 
+    const handleScheduleDemo = () => {
+        if (!demoName?.trim() || !demoEmail || !demoTime || !lead) return
+        if (!isValidEmail(demoEmail)) {
+            setDemoEmailError('Please enter a valid email address.')
+            return
+        }
+        setDemoEmailError('')
+        setDemoLoading(true)
+        setDemoStatus(null)
+
+        const iso = demoTime.toISOString()
+
+        fetch(`${API}/meetings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                lead_id: lead.id,
+                prospect_name: demoName.trim(),
+                email: demoEmail,
+                start_time: iso,
+                duration_minutes: 30,
+            }),
+        })
+            .then(r => r.json().then(data => ({ ok: r.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok) {
+                    setDemoStatus({ error: data.detail || 'Failed to schedule meeting' })
+                } else {
+                    setDemoStatus({ join_url: data.zoom_join_url })
+                }
+            })
+            .catch(() => {
+                setDemoStatus({ error: 'Network error while scheduling meeting' })
+            })
+            .finally(() => {
+                setDemoLoading(false)
+            })
+    }
+
+    const handleGenerateContract = () => {
+        if (!id || !lead) return
+        setContractError(null)
+        setContractLoading(true)
+        const token = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('access_token')) ||
+            (typeof localStorage !== 'undefined' && localStorage.getItem('access_token'))
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        fetch(`${API}/leads/${id}/contract`, { credentials: 'include', headers })
+            .then(r => {
+                if (!r.ok) return r.json().then(d => { throw new Error(d.detail || 'Failed to generate contract') })
+                return r.text()
+            })
+            .then(html => {
+                const blob = new Blob([html], { type: 'text/html' })
+                const url = URL.createObjectURL(blob)
+                window.open(url, '_blank', 'noopener,noreferrer')
+                URL.revokeObjectURL(url)
+            })
+            .catch(err => setContractError(err.message || 'Could not generate contract'))
+            .finally(() => setContractLoading(false))
+    }
+
     if(loading) return (
         <div style={{minHeight:'100vh',background:'#09090f',display:'flex',alignItems:'center',justifyContent:'center'}}>
             <div style={{width:20,height:20,border:'2px solid rgba(139,92,246,0.3)',borderTopColor:'#8b5cf6',borderRadius:'50%',animation:'spin 0.8s linear infinite'}}/>
@@ -333,7 +421,7 @@ export default function LeadDetail() {
 
     if(notFound) return (
         <div style={{minHeight:'100vh',background:'#09090f',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16}}>
-            <div style={{fontSize:13,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace"}}>— Lead not found —</div>
+            <div style={{fontSize:13,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>— Lead not found —</div>
             <button onClick={() => navigate('/batches')} style={{background:'linear-gradient(135deg,#8b5cf6,#6366f1)',border:'none',borderRadius:9,padding:'10px 22px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>Back to Batches</button>
         </div>
     )
@@ -355,9 +443,9 @@ export default function LeadDetail() {
                 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
                 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
                 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
-                .nav-link{background:none;border:none;color:#3f3f46;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0;}
-                .nav-link:hover{color:#a1a1aa;}
-                .sec-title{font-size:11px;font-weight:700;color:#3f3f46;text-transform:uppercase;letter-spacing:0.1em;font-family:'JetBrains Mono',monospace;margin-bottom:12px;}
+                .nav-link{background:none;border:none;color:#b8c2d4;font-size:14px;cursor:pointer;font-family:'Outfit',sans-serif;transition:color 0.2s;padding:0;}
+                .nav-link:hover{color:#c4c4cc;}
+                .sec-title{font-size:11px;font-weight:700;color:#b8c2d4;text-transform:uppercase;letter-spacing:0.1em;font-family:'JetBrains Mono',monospace;margin-bottom:12px;}
             `}</style>
 
             <ParticleCanvas/>
@@ -375,6 +463,7 @@ export default function LeadDetail() {
                         <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
                         <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
                         <button className="nav-link" onClick={() => navigate('/analytics')}>Analytics</button>
+                        <button className="nav-link" onClick={() => navigate('/meetings')}>Meetings</button>
                     </div>
                 </div>
                 <NavbarDropdown/>
@@ -385,9 +474,9 @@ export default function LeadDetail() {
                 {/* Back + hero */}
                 <div style={{marginBottom:32,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both'}}>
                     <button onClick={() => navigate(-1)}
-                        style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 14px',color:'#71717a',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif",marginBottom:20,transition:'color 0.2s'}}
-                        onMouseEnter={e => e.currentTarget.style.color='#a1a1aa'}
-                        onMouseLeave={e => e.currentTarget.style.color='#71717a'}>
+                        style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:'7px 14px',color:'#c4c4cc',fontSize:13,cursor:'pointer',fontFamily:"'Outfit',sans-serif",marginBottom:20,transition:'color 0.2s'}}
+                        onMouseEnter={e => e.currentTarget.style.color='#c4c4cc'}
+                        onMouseLeave={e => e.currentTarget.style.color='#c4c4cc'}>
                         <ArrowLeft size={13}/> Back
                     </button>
 
@@ -409,17 +498,17 @@ export default function LeadDetail() {
                                 )}
                             </div>
                             <div style={{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}}>
-                                {lead.category && <span style={{fontSize:12,color:'#52525b',display:'flex',alignItems:'center',gap:4}}><Tag size={11}/>{lead.category}</span>}
-                                {lead.city     && <span style={{fontSize:12,color:'#52525b',display:'flex',alignItems:'center',gap:4}}><MapPin size={11}/>{lead.city}</span>}
-                                {lead.phone    && <span style={{fontSize:12,color:'#52525b',display:'flex',alignItems:'center',gap:4}}><Phone size={11}/>{lead.phone}</span>}
-                                {lead.rating > 0 && <span style={{fontSize:12,color:'#52525b',display:'flex',alignItems:'center',gap:4}}><Star size={11} style={{fill:'#eab308',color:'#eab308'}}/>{lead.rating} ({lead.review_count || 0} reviews)</span>}
+                                {lead.category && <span style={{fontSize:12,color:'#c4c4cc',display:'flex',alignItems:'center',gap:4}}><Tag size={11}/>{lead.category}</span>}
+                                {lead.city     && <span style={{fontSize:12,color:'#c4c4cc',display:'flex',alignItems:'center',gap:4}}><MapPin size={11}/>{lead.city}</span>}
+                                {lead.phone    && <span style={{fontSize:12,color:'#c4c4cc',display:'flex',alignItems:'center',gap:4}}><Phone size={11}/>{lead.phone}</span>}
+                                {lead.rating > 0 && <span style={{fontSize:12,color:'#c4c4cc',display:'flex',alignItems:'center',gap:4}}><Star size={11} style={{fill:'#eab308',color:'#eab308'}}/>{lead.rating} ({lead.review_count || 0} reviews)</span>}
                             </div>
                         </div>
 
                         <div style={{display:'flex',alignItems:'center',gap:16,flexShrink:0}}>
                             <ScoreRing score={total}/>
                             <div>
-                                <div style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8}}>Pipeline Stage</div>
+                                <div style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8}}>Pipeline Stage</div>
                                 <StageDropdown stage={lead.pipeline_stage} onChange={handleStageChange}/>
                             </div>
                         </div>
@@ -450,10 +539,10 @@ export default function LeadDetail() {
                                 ].map(f => (
                                     <div key={f.label} style={{display:'flex',gap:10,alignItems:'flex-start'}}>
                                         <div style={{width:28,height:28,borderRadius:7,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>
-                                            <f.icon size={12} color="#52525b" strokeWidth={1.5}/>
+                                            <f.icon size={12} color="#c4c4cc" strokeWidth={1.5}/>
                                         </div>
                                         <div>
-                                            <div style={{fontSize:10,color:'#3f3f46',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:2}}>{f.label}</div>
+                                            <div style={{fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:2}}>{f.label}</div>
                                             <div style={{fontSize:13,color:'#e4e4e7',fontWeight:500,wordBreak:'break-word'}}>{f.value}</div>
                                         </div>
                                     </div>
@@ -478,12 +567,12 @@ export default function LeadDetail() {
                                 {signals.map(sig => (
                                     <div key={sig.label} style={{display:'flex',alignItems:'center',gap:10}}>
                                         <div style={{width:6,height:6,borderRadius:'50%',flexShrink:0,background:sig.pts>0?'#4ade80':'rgba(255,255,255,0.1)'}}/>
-                                        <div style={{width:120,flexShrink:0,fontSize:12,color:sig.pts>0?'#a1a1aa':'#3f3f46'}}>{sig.label}</div>
+                                        <div style={{width:120,flexShrink:0,fontSize:12,color:sig.pts>0?'#c4c4cc':'#b8c2d4'}}>{sig.label}</div>
                                         <div style={{flex:1,height:3,background:'rgba(255,255,255,0.04)',borderRadius:2,overflow:'hidden'}}>
                                             <div style={{height:'100%',width:`${(sig.pts/sig.max)*100}%`,background:sig.pts>0?(sig.pts===sig.max?'#4ade80':'#fb923c'):'transparent',borderRadius:2}}/>
                                         </div>
-                                        <div style={{width:48,flexShrink:0,textAlign:'right',fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:sig.pts>0?'#e4e4e7':'#27272a'}}>+{sig.pts}<span style={{color:'#27272a'}}>/{sig.max}</span></div>
-                                        <div style={{width:160,flexShrink:0,fontSize:11,color:'#52525b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sig.detail}</div>
+                                        <div style={{width:48,flexShrink:0,textAlign:'right',fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:sig.pts>0?'#e4e4e7':'#b8c2d4'}}>+{sig.pts}<span style={{color:'#b8c2d4'}}>/{sig.max}</span></div>
+                                        <div style={{width:160,flexShrink:0,fontSize:11,color:'#c4c4cc',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sig.detail}</div>
                                     </div>
                                 ))}
                             </div>
@@ -509,27 +598,201 @@ export default function LeadDetail() {
 
                     {/* RIGHT — Action Center */}
                     <div style={{display:'flex',flexDirection:'column',gap:10,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.18s both'}}>
-                        <div style={{fontSize:11,fontWeight:700,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:"'JetBrains Mono',monospace",marginBottom:4}}>Action Center</div>
+                        <div style={{fontSize:11,fontWeight:700,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:"'JetBrains Mono',monospace",marginBottom:4}}>Action Center</div>
 
-                        <ActionCard icon={Globe}     title="Generate Demo Site"   description="Build a sample website to show the prospect" accent="#8b5cf6" badge="FREE" onClick={() => navigate(`/leads/${id}/demo`)}/>
-                        <ActionCard icon={Mail}      title="Outreach Scripts"     description="Cold email & follow-up templates"            accent="#4ade80"             onClick={() => navigate(`/leads/${id}/outreach`)}/>
-                        <ActionCard icon={Video}     title="Schedule Demo Call"   description="Create a Zoom meeting and send invite"        accent="#fb923c" disabled/>
-                        <ActionCard icon={FileText}  title="Generate Contract"    description="Auto-fill contract with lead data"            accent="#a78bfa" disabled/>
+                        <ActionCard
+                            icon={Video}
+                            title="Schedule Demo Call"
+                            description="Create a Zoom meeting and email the invite"
+                            accent="#fb923c"
+                            onClick={() => setShowScheduler(prev => !prev)}
+                        />
+                        <ActionCard
+                            icon={FileText}
+                            title="Generate Contract"
+                            description={contractLoading ? 'Generating…' : 'Auto-fill contract with lead data'}
+                            accent="#a78bfa"
+                            onClick={() => !contractLoading && handleGenerateContract()}
+                            disabled={contractLoading}
+                        />
+                        {contractError && (
+                            <div style={{ fontSize: 11, color: '#f87171', marginTop: -4, marginBottom: 4 }}>{contractError}</div>
+                        )}
                         <ActionCard icon={BarChart2} title="Send Invoice"         description="Generate and send Stripe payment link"        accent="#f87171" disabled/>
-                        <ActionCard icon={Globe}     title="Check Domain"         description="Check domain availability for this business"  accent="#eab308" disabled/>
+
+                        {/* Zoom scheduler */}
+                        {showScheduler && (
+                            <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(251,146,60,0.4)',borderRadius:14,padding:'16px 18px',marginTop:4}}>
+                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+                                    <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                        <CalendarClock size={14} color="#fb923c" strokeWidth={1.5}/>
+                                        <span style={{fontSize:12,fontWeight:700,color:'#e4e4e7'}}>Schedule demo (Zoom)</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowScheduler(false)}
+                                        style={{background:'none',border:'none',cursor:'pointer',color:'#b8c2d4',padding:2,display:'flex'}}
+                                        onMouseEnter={e => e.currentTarget.style.color='#c4c4cc'}
+                                        onMouseLeave={e => e.currentTarget.style.color='#b8c2d4'}
+                                    >
+                                        <X size={13}/>
+                                    </button>
+                                </div>
+                                <div style={{fontSize:11,color:'#b8c2d4',marginBottom:10}}>
+                                    Enter the prospect&apos;s name and email, pick a time. BizScout creates the Zoom meeting and sends them a professional invite email (if SMTP is configured).
+                                </div>
+                                <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                                    <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                                        <label style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em'}}>Prospect name</label>
+                                        <input
+                                            type="text"
+                                            value={demoName}
+                                            onChange={e => setDemoName(e.target.value)}
+                                            placeholder="e.g. John Smith"
+                                            style={{height:34,borderRadius:8,border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',padding:'0 10px',color:'#e4e4e7',fontSize:13,fontFamily:"'Outfit',sans-serif",outline:'none'}}
+                                        />
+                                    </div>
+                                    <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                                        <label style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em'}}>Prospect email</label>
+                                        <input
+                                            type="email"
+                                            value={demoEmail}
+                                            onChange={e => { setDemoEmail(e.target.value); if (demoEmailError && isValidEmail(e.target.value)) setDemoEmailError('') }}
+                                            onBlur={() => setDemoEmailError(demoEmail ? (isValidEmail(demoEmail) ? '' : 'Please enter a valid email address.') : '')}
+                                            placeholder="name@example.com"
+                                            style={{height:34,borderRadius:8,border: demoEmailError ? '1px solid #f87171' : '1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',padding:'0 10px',color:'#e4e4e7',fontSize:13,fontFamily:"'Outfit',sans-serif",outline:'none'}}
+                                        />
+                                        {demoEmailError ? <span style={{fontSize:11,color:'#f87171'}}>{demoEmailError}</span> : null}
+                                    </div>
+                                    <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                                        <label style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.08em'}}>Demo Time</label>
+                                        <DatePicker
+                                            selected={demoTime}
+                                            onChange={setDemoTime}
+                                            showTimeSelect
+                                            timeIntervals={15}
+                                            dateFormat="MMM d, yyyy h:mm aa"
+                                            placeholderText="Pick date & time"
+                                            minDate={new Date()}
+                                            className="biz-datepicker-input"
+                                            popperClassName="biz-datepicker-popper"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => setShowConfirmDemo(true)}
+                                        disabled={demoLoading || !demoName?.trim() || !demoEmail || !demoTime || !isValidEmail(demoEmail)}
+                                        style={{
+                                            marginTop:4,
+                                            display:'flex',
+                                            alignItems:'center',
+                                            justifyContent:'center',
+                                            gap:8,
+                                            background:'linear-gradient(135deg,#fb923c,#f97316)',
+                                            border:'none',
+                                            borderRadius:9,
+                                            padding:'9px 14px',
+                                            color:'#fff',
+                                            fontSize:12,
+                                            fontWeight:700,
+                                            cursor:demoLoading?'wait':'pointer',
+                                            fontFamily:"'Outfit',sans-serif",
+                                            opacity:demoLoading || !demoName?.trim() || !demoEmail || !demoTime || !isValidEmail(demoEmail) ? 0.7 : 1,
+                                        }}
+                                    >
+                                        {demoLoading ? 'Scheduling...' : 'Create Zoom invite'}
+                                    </button>
+                                    {showConfirmDemo && (
+                                        <div style={{position:'fixed',inset:0,zIndex:99999,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(0,0,0,0.7)',backdropFilter:'blur(6px)'}} onClick={() => setShowConfirmDemo(false)}>
+                                            <div style={{background:'#111118',border:'1px solid rgba(255,255,255,0.1)',borderRadius:16,padding:24,maxWidth:400,width:'90%',boxShadow:'0 24px 60px rgba(0,0,0,0.8)'}} onClick={e => e.stopPropagation()}>
+                                                <div style={{fontSize:15,fontWeight:700,color:'#fafafa',marginBottom:16}}>Confirm demo</div>
+                                                <p style={{fontSize:13,color:'#c4c4cc',marginBottom:14,lineHeight:1.5}}>Send a Zoom invite to:</p>
+                                                <div style={{background:'rgba(255,255,255,0.04)',borderRadius:10,padding:'12px 14px',marginBottom:18,fontSize:13,color:'#e4e4e7'}}>
+                                                    <div style={{marginBottom:4}}><strong>{demoName?.trim() || '—'}</strong></div>
+                                                    <div style={{color:'#c4c4cc'}}>{demoEmail || '—'}</div>
+                                                    <div style={{color:'#c4c4cc',marginTop:4}}>{demoTime ? demoTime.toLocaleString(undefined, { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '—'}</div>
+                                                </div>
+                                                <p style={{fontSize:12,color:'#c4c4cc',marginBottom:18}}>A meeting will be created and an email invite sent to this address.</p>
+                                                <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
+                                                    <button onClick={() => setShowConfirmDemo(false)} style={{background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'8px 16px',color:'#c4c4cc',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>Cancel</button>
+                                                    <button onClick={() => { setShowConfirmDemo(false); handleScheduleDemo() }} style={{background:'linear-gradient(135deg,#fb923c,#f97316)',border:'none',borderRadius:8,padding:'8px 16px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif"}}>Confirm & send</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {demoStatus && (
+                                        <div style={{marginTop:8,fontSize:11}}>
+                                            {demoStatus.error ? (
+                                                <span style={{color:'#f87171'}}>{demoStatus.error}</span>
+                                            ) : (
+                                                <span style={{color:'#4ade80'}}>
+                                                    Meeting created. Join link:&nbsp;
+                                                    <a href={demoStatus.join_url} target="_blank" rel="noreferrer" style={{color:'#a5b4fc',textDecoration:'underline'}}>
+                                                        {demoStatus.join_url}
+                                                    </a>
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div style={{marginTop:4,fontSize:10,color:'#b8c2d4',display:'flex',alignItems:'flex-start',gap:6}}>
+                                        <Info size={11}/>
+                                        <span>
+                                            Zoom: ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET, ZOOM_USER_ID. To send the invite email: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD (and optional FROM_EMAIL) in <code style={{fontFamily:"'JetBrains Mono',monospace"}}>backend/.env</code>.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Upcoming meeting (if any) */}
+                        {upcomingMeeting && upcomingMeeting.zoom_join_url && (
+                            <div style={{background:'rgba(37,99,235,0.08)',border:'1px solid rgba(37,99,235,0.4)',borderRadius:14,padding:'14px 16px',marginTop:4}}>
+                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+                                    <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                        <CalendarClock size={14} color="#60a5fa" />
+                                        <span style={{fontSize:12,fontWeight:700,color:'#e5edff'}}>Upcoming meeting</span>
+                                    </div>
+                                </div>
+                                <div style={{fontSize:12,color:'#cbd5f5',marginBottom:4}}>
+                                    {new Date(upcomingMeeting.start_time).toLocaleString(undefined, {
+                                        weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',
+                                    })}
+                                </div>
+                                <div style={{fontSize:11,color:'#9ca3af',marginBottom:10}}>
+                                    With {upcomingMeeting.prospect_name || 'prospect'} · {upcomingMeeting.email}
+                                </div>
+                                <a
+                                    href={upcomingMeeting.zoom_join_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{
+                                        display:'inline-flex',
+                                        alignItems:'center',
+                                        gap:6,
+                                        background:'#2563EB',
+                                        borderRadius:999,
+                                        padding:'6px 12px',
+                                        color:'#fff',
+                                        fontSize:11,
+                                        fontWeight:600,
+                                        textDecoration:'none',
+                                    }}
+                                >
+                                    <Video size={12} /> Join demo
+                                </a>
+                            </div>
+                        )}
 
                         {/* Lead quality panel */}
                         <div style={{background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:14,padding:'16px 18px',marginTop:4}}>
-                            <div style={{fontSize:10,fontWeight:700,color:'#3f3f46',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:"'JetBrains Mono',monospace",marginBottom:12}}>Lead Quality</div>
+                            <div style={{fontSize:10,fontWeight:700,color:'#b8c2d4',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:"'JetBrains Mono',monospace",marginBottom:12}}>Lead Quality</div>
                             <div style={{display:'flex',flexDirection:'column',gap:9}}>
                                 {[
                                     { label:'Score',         value:`${total}/100`,                                          color },
                                     { label:'Priority',      value:total>=75?'High':total>=50?'Medium':'Low',               color:total>=75?'#4ade80':total>=50?'#fb923c':'#f87171' },
                                     { label:'Stage',         value:lead.pipeline_stage||'New Lead',                         color:stageStyle.color },
-                                    { label:'Call Outcome',  value:lead.call_outcome||'Not called',                         color:currentOutcome?currentOutcome.color:'#3f3f46' },
+                                    { label:'Call Outcome',  value:lead.call_outcome||'Not called',                         color:currentOutcome?currentOutcome.color:'#b8c2d4' },
                                 ].map(s => (
                                     <div key={s.label} style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                                        <span style={{fontSize:12,color:'#52525b'}}>{s.label}</span>
+                                        <span style={{fontSize:12,color:'#c4c4cc'}}>{s.label}</span>
                                         <span style={{fontSize:12,fontWeight:700,color:s.color,fontFamily:"'JetBrains Mono',monospace"}}>{s.value}</span>
                                     </div>
                                 ))}

@@ -1,0 +1,3 @@
+job_num,niche,city,status,attempt,total_found,no_site_found,inserted,dupes,over_cap,duration_s,timestamp,notes
+1,Food Trucks,"Los Angeles, CA",success,1,100,48,6,42,0,923.9,2026-03-15T21:12:45.533099,"48 no-site, +6 saved"
+2,Food Trucks,"San Diego, CA",success,1,102,21,8,13,0,940.1,2026-03-15T21:29:46.173938,"21 no-site, +8 saved"

@@ -1,0 +1,2 @@
+job_num,niche,city,status,attempt,total_found,no_site_found,inserted,dupes,over_cap,duration_s,timestamp,notes
+1,HVAC,CA,success,1,16,0,0,0,0,149.0,2026-03-15T20:47:08.623732,"0 no-site, +0 saved"

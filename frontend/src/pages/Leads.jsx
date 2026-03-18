@@ -10,7 +10,7 @@ import {
   ChevronDown, ChevronRight, Star,
 } from 'lucide-react'
 import AppNav from '../components/AppNav'
-import { API } from '../utils/api'
+import { API, getAuthHeaders } from '../utils/api'
 
 // ─── Large city list ──────────────────────────────────────────────────────────
 
@@ -386,7 +386,7 @@ function BatchResults({ batchId, onClose }) {
   const [leads, setLeads] = useState([])
   useEffect(() => {
     if (!batchId) return
-    fetch(`${API}/batches/${batchId}/leads`, { credentials: 'include' })
+    fetch(`${API}/batches/${batchId}/leads`, { credentials: 'include', headers: getAuthHeaders() })
       .then(r => r.json()).then(d => { setData(d.batch); setLeads(d.leads || []) }).catch(() => {})
   }, [batchId])
   const changeStage = (id, stage) => setLeads(prev => prev.map(l => l.id === id ? { ...l, pipeline_stage: stage } : l))
@@ -545,7 +545,7 @@ export default function Leads() {
   const [dupWarning, setDupWarning]     = useState(null)
 
   const fetchBatches = useCallback(() => {
-    fetch(`${API}/batches`, { credentials: 'include' })
+    fetch(`${API}/batches`, { credentials: 'include', headers: getAuthHeaders() })
       .then(r => r.json())
       .then(data => {
         const arr = Array.isArray(data) ? data : []

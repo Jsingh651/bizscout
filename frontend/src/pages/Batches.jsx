@@ -12,7 +12,7 @@ import {
     getCachedBatchLeads, setCachedBatchLeads,
     patchCachedLead,
 } from '../utils/batchCache'
-import { API } from '../utils/api'
+import { API, getAuthHeaders } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_STYLE = {
@@ -521,7 +521,7 @@ export default function Batches() {
             if (!stale) return  // fresh — no network call needed
         }
         // No cache or stale — fetch in background (silently if we already showed cached data)
-        fetch(`${API}/batches`,{credentials:'include'})
+        fetch(`${API}/batches`,{credentials:'include',headers:getAuthHeaders()})
             .then(r=>r.json())
             .then(data=>{
                 const list = Array.isArray(data) ? data : []
@@ -543,7 +543,7 @@ export default function Batches() {
         } else {
             setLoadingDetail(true)
         }
-        fetch(`${API}/batches/${key}/leads`,{credentials:'include'})
+        fetch(`${API}/batches/${key}/leads`,{credentials:'include',headers:getAuthHeaders()})
             .then(r=>r.json())
             .then(data=>{
                 setCachedBatchLeads(key, data)
@@ -556,13 +556,13 @@ export default function Batches() {
     const handleStageChange = (leadId, stage) => {
         setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,pipeline_stage:stage}:l)}))
         patchCachedLead(leadId, { pipeline_stage: stage })
-        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({pipeline_stage:stage})}).catch(()=>{})
+        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({pipeline_stage:stage})}).catch(()=>{})
     }
 
     const handleCallOutcomeChange = (leadId, outcome) => {
         setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,call_outcome:outcome}:l)}))
         patchCachedLead(leadId, { call_outcome: outcome })
-        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({call_outcome:outcome})}).catch(()=>{})
+        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({call_outcome:outcome})}).catch(()=>{})
     }
     const handleFilterChange = (key,val) => setFilters(prev=>({...prev,[key]:val}))
     const clearFilters = () => setFilters({niche:null,city:null,score:null,opportunity:null,date:null})

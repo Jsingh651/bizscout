@@ -92,21 +92,26 @@ _run_migrations()
 app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.include_router(domains_router.router)
 
 ALLOWED_ORIGIN_REGEX = os.getenv(
     "ALLOWED_ORIGIN_REGEX",
     r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
 )
 
+# Also allow FRONTEND_URL directly so we don't rely solely on regex
+_frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
+_allow_origins = [_frontend_url] if _frontend_url else []
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[],
+    allow_origins=_allow_origins,
     allow_origin_regex=ALLOWED_ORIGIN_REGEX,
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+app.include_router(domains_router.router)
 
 app.include_router(leads.router)
 app.include_router(auth_router.router)

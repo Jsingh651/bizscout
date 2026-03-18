@@ -521,7 +521,7 @@ export default function Batches() {
             if (!stale) return  // fresh — no network call needed
         }
         // No cache or stale — fetch in background (silently if we already showed cached data)
-        fetch(`${API}/batches`,{credentials:'include',headers:getAuthHeaders()})
+        fetch(`${API}/batches/`,{credentials:'include',headers:getAuthHeaders()})
             .then(r=>r.json())
             .then(data=>{
                 const list = Array.isArray(data) ? data : []

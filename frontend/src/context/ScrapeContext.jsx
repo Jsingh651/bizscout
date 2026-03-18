@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
-import { API } from '../utils/api'
+import { API, getAuthHeaders } from '../utils/api'
 
 const ScrapeContext = createContext(null)
 
@@ -29,7 +29,7 @@ export function ScrapeProvider({ children }) {
 
     fetch(`${API}/scrape/start`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       credentials: 'include',
       body: JSON.stringify({
         query: query.value,
@@ -44,7 +44,7 @@ export function ScrapeProvider({ children }) {
 
   const stopScrape = useCallback(() => {
     if (!jobId) return
-    fetch(`${API}/scrape/stop/${jobId}`, { method: 'POST', credentials: 'include' }).catch(() => {})
+    fetch(`${API}/scrape/stop/${jobId}`, { method: 'POST', credentials: 'include', headers: getAuthHeaders() }).catch(() => {})
   }, [jobId])
 
   const dismissJob = useCallback(() => {
@@ -61,7 +61,7 @@ export function ScrapeProvider({ children }) {
     if (!jobId) return
 
     const poll = () => {
-      fetch(`${API}/scrape/status/${jobId}`, { credentials: 'include' })
+      fetch(`${API}/scrape/status/${jobId}`, { credentials: 'include', headers: getAuthHeaders() })
         .then(r => r.json())
         .then(data => {
           setJob(data)
@@ -71,7 +71,7 @@ export function ScrapeProvider({ children }) {
             if (fetchBatchesRef.current) fetchBatchesRef.current()
             // Find the new batch after a short delay
             setTimeout(() => {
-              fetch(`${API}/batches`, { credentials: 'include' })
+              fetch(`${API}/batches/`, { credentials: 'include', headers: getAuthHeaders() })
                 .then(r => r.json())
                 .then(arr => {
                   if (!Array.isArray(arr)) return

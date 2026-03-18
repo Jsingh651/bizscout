@@ -170,7 +170,15 @@ def build_driver(headless: bool = False, user_data_dir: Optional[str] = None) ->
         "intl.accept_languages": "en-US,en",
     })
 
-    if HAS_WEBDRIVER_MANAGER:
+    # Use system chromium on Railway/Linux, otherwise fall back to webdriver-manager
+    import shutil, os as _os
+    system_chrome = _os.getenv("CHROME_BIN") or shutil.which("chromium") or shutil.which("chromium-browser") or shutil.which("google-chrome")
+    system_driver = _os.getenv("CHROMEDRIVER_BIN") or shutil.which("chromedriver")
+    if system_chrome:
+        options.binary_location = system_chrome
+    if system_driver:
+        driver = webdriver.Chrome(service=ChromeService(system_driver), options=options)
+    elif HAS_WEBDRIVER_MANAGER:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
     else:
         driver = webdriver.Chrome(options=options)

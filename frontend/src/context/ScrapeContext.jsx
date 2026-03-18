@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 const ScrapeContext = createContext(null)
 
@@ -82,7 +81,7 @@ export function ScrapeProvider({ children }) {
                       b.location.toLowerCase() === scrapeLocation?.value?.toLowerCase()
                   )
                   if (match) {
-                    setCompletedBatchId(match.id)
+                    setCompletedBatchId(match.hid || match.id)
                     setShowResults(true)
                   }
                 })

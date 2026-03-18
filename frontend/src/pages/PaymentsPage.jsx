@@ -6,14 +6,8 @@ import {
   Search, X, ChevronRight, Copy, RefreshCw,
   CreditCard, BarChart2, Users, AlertTriangle,
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-
-function getAuthHeaders() {
-  const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+import AppNav from '../components/AppNav'
+import { API, getAuthHeaders } from '../utils/api'
 
 function fmt(n) {
   return `$${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 0 })}`
@@ -70,8 +64,11 @@ function PaymentBadge({ p }) {
   if (payment_failed) {
     return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: "'JetBrains Mono',monospace" }}><AlertTriangle size={9}/> Failed</span>
   }
-  if (final_paid || deposit_paid) {
-    return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', color: '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}><CheckCircle2 size={9}/> Paid</span>
+  if (final_paid) {
+    return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', color: '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}><CheckCircle2 size={9}/> Fully Paid</span>
+  }
+  if (deposit_paid) {
+    return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.3)', color: '#fb923c', fontFamily: "'JetBrains Mono',monospace" }}><Clock size={9}/> Building</span>
   }
   return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', color: '#a78bfa', fontFamily: "'JetBrains Mono',monospace" }}><Clock size={9}/> Pending</span>
 }
@@ -106,29 +103,36 @@ export default function PaymentsPage() {
   }
 
   // ── Computed stats ────────────────────────────────────────────────────────
-  const allPaid    = payments.filter(p => p.final_paid || p.deposit_paid)
-  const pending    = payments.filter(p => p.pay_url && !p.deposit_paid && !p.final_paid && !p.payment_failed)
+  const fullyPaid  = payments.filter(p => p.final_paid)
+  const building   = payments.filter(p => p.deposit_paid && !p.final_paid && !p.payment_failed)
+  const pending    = payments.filter(p => p.pay_url && !p.deposit_paid && !p.payment_failed)
   const noInvoice  = payments.filter(p => !p.pay_url)
   const failed     = payments.filter(p => p.payment_failed)
 
-  const totalCollected = allPaid.reduce((s, p) => s + parseFloat(p.setup_price || 0), 0)
-  const mrr            = allPaid.reduce((s, p) => s + parseFloat(p.monthly_price || 0), 0)
-  const pendingValue   = pending.reduce((s, p) => s + parseFloat(p.setup_price || 0), 0)
+  // Revenue collected = deposit amounts paid + final amounts paid
+  const totalCollected = payments.reduce((s, p) => {
+    const setup = parseFloat(p.setup_price || 0)
+    if (p.final_paid) return s + setup
+    if (p.deposit_paid) return s + parseFloat(p.deposit_amount || setup / 2)
+    return s
+  }, 0)
+  const mrr          = fullyPaid.reduce((s, p) => s + parseFloat(p.monthly_price || 0), 0)
+  const pendingValue = pending.reduce((s, p) => s + parseFloat(p.deposit_amount || parseFloat(p.setup_price || 0) / 2), 0)
 
   // ── Filter ────────────────────────────────────────────────────────────────
-  const FILTERS = ['All', 'Paid', 'Pending', 'Failed', 'No Invoice']
+  const FILTERS = ['All', 'Fully Paid', 'Building', 'Pending', 'Failed', 'No Invoice']
   const filtered = payments.filter(p => {
     const q = search.toLowerCase()
     const matchSearch = !q ||
       (p.client_name  || '').toLowerCase().includes(q) ||
       (p.client_email || '').toLowerCase().includes(q)
-    const isPaid = p.final_paid || p.deposit_paid
     const matchFilter =
-      filter === 'All'        ||
-      (filter === 'Paid'       && isPaid) ||
-      (filter === 'Pending'    && p.pay_url && !isPaid && !p.payment_failed) ||
-      (filter === 'Failed'     && p.payment_failed) ||
-      (filter === 'No Invoice' && !p.pay_url)
+      filter === 'All'          ||
+      (filter === 'Fully Paid'  && p.final_paid) ||
+      (filter === 'Building'    && p.deposit_paid && !p.final_paid && !p.payment_failed) ||
+      (filter === 'Pending'     && p.pay_url && !p.deposit_paid && !p.payment_failed) ||
+      (filter === 'Failed'      && p.payment_failed) ||
+      (filter === 'No Invoice'  && !p.pay_url)
     return matchSearch && matchFilter
   })
 
@@ -151,24 +155,7 @@ export default function PaymentsPage() {
       <ParticleCanvas />
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.3, backgroundImage: 'linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px)', backgroundSize: '72px 72px', maskImage: 'radial-gradient(ellipse 100% 55% at 50% 0%,black 0%,transparent 100%)' }} />
 
-      <nav style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 48px', height: 64, background: 'rgba(9,9,15,0.82)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#8b5cf6,#6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 900, color: '#fff' }}>B</div>
-            <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.5px', color: '#f4f4f5' }}>BizScout</span>
-          </div>
-          <div style={{ display: 'flex', gap: 24 }}>
-            <button className="nav-link" onClick={() => navigate('/leads')}>Leads</button>
-            <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
-            <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
-            <button className="nav-link" onClick={() => navigate('/analytics')}>Analytics</button>
-            <button className="nav-link" onClick={() => navigate('/meetings')}>Meetings</button>
-            <button className="nav-link" onClick={() => navigate('/contracts')}>Contracts</button>
-            <button className="nav-link active">Payments</button>
-          </div>
-        </div>
-        <NavbarDropdown />
-      </nav>
+      <AppNav />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: '48px 48px 80px' }}>
 
@@ -182,7 +169,7 @@ export default function PaymentsPage() {
             <div>
               <h1 style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)', fontWeight: 900, letterSpacing: '-1.5px', color: '#fafafa', marginBottom: 6 }}>Payments</h1>
               <p style={{ color: '#c4c4cc', fontSize: 15 }}>
-                {payments.length} clients · {allPaid.length} paid · {pending.length} pending
+                {payments.length} clients · {fullyPaid.length} fully paid · {building.length} building · {pending.length} pending
                 {failed.length > 0 && <span style={{ color: '#f87171', marginLeft: 8 }}>· {failed.length} failed</span>}
               </p>
             </div>
@@ -195,19 +182,20 @@ export default function PaymentsPage() {
 
         {/* Stat cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
-          <StatCard icon={DollarSign}   label="Total Collected"   value={fmt(totalCollected)} sub={`${allPaid.length} paid clients`}              accent="#4ade80" highlight />
-          <StatCard icon={TrendingUp}   label="Monthly Recurring" value={fmt(mrr)}            sub={`${allPaid.length} active subscriptions`}       accent="#8b5cf6" />
-          <StatCard icon={BarChart2}    label="Est. Annual (ARR)" value={fmt(mrr * 12)}       sub="MRR × 12"                                        accent="#a78bfa" />
-          <StatCard icon={AlertCircle}  label="Pending Revenue"   value={fmt(pendingValue)}   sub={`${pending.length} awaiting payment`}            accent="#fb923c" />
+          <StatCard icon={DollarSign}   label="Total Collected"   value={fmt(totalCollected)} sub={`${fullyPaid.length} fully paid · ${building.length} building`} accent="#4ade80" highlight />
+          <StatCard icon={TrendingUp}   label="Monthly Recurring" value={fmt(mrr)}            sub={`${fullyPaid.length} active subscriptions`}                      accent="#8b5cf6" />
+          <StatCard icon={BarChart2}    label="Est. Annual (ARR)" value={fmt(mrr * 12)}       sub="MRR × 12"                                                         accent="#a78bfa" />
+          <StatCard icon={AlertCircle}  label="Pending Revenue"   value={fmt(pendingValue)}   sub={`${pending.length} awaiting deposit`}                             accent="#fb923c" />
         </div>
 
         {/* Secondary stat tiles */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 32, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.14s both' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.14s both' }}>
           {[
-            { label: 'Paid',       value: allPaid.length,  color: '#4ade80', icon: CheckCircle2,  filterKey: 'Paid' },
-            { label: 'Pending',    value: pending.length,  color: '#a78bfa', icon: Clock,         filterKey: 'Pending' },
-            { label: 'Failed',     value: failed.length,   color: '#f87171', icon: AlertTriangle, filterKey: 'Failed' },
-            { label: 'No Invoice', value: noInvoice.length,color: '#b8c2d4', icon: CreditCard,    filterKey: 'No Invoice' },
+            { label: 'Fully Paid', value: fullyPaid.length,  color: '#4ade80', icon: CheckCircle2,  filterKey: 'Fully Paid' },
+            { label: 'Building',   value: building.length,   color: '#fb923c', icon: Clock,         filterKey: 'Building' },
+            { label: 'Pending',    value: pending.length,    color: '#a78bfa', icon: Clock,         filterKey: 'Pending' },
+            { label: 'Failed',     value: failed.length,     color: '#f87171', icon: AlertTriangle, filterKey: 'Failed' },
+            { label: 'No Invoice', value: noInvoice.length,  color: '#b8c2d4', icon: CreditCard,    filterKey: 'No Invoice' },
           ].map(s => (
             <div key={s.label} onClick={() => setFilter(s.filterKey)}
               style={{ background: failed.length > 0 && s.label === 'Failed' ? 'rgba(248,113,113,0.05)' : 'rgba(255,255,255,0.02)', border: `1px solid ${failed.length > 0 && s.label === 'Failed' ? 'rgba(248,113,113,0.2)' : 'rgba(255,255,255,0.05)'}`, borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'border-color 0.2s' }}
@@ -256,27 +244,32 @@ export default function PaymentsPage() {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(74,222,128,0.5),transparent)' }} />
 
             {/* Header row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1.4fr', gap: 16, padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
-              {['Client', 'Status', 'Setup', 'Monthly', 'Launch', 'Actions'].map(h => (
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.4fr 1fr 1fr 1.4fr', gap: 16, padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
+              {['Client', 'Status', 'Invoices', 'Monthly', 'Launch', 'Actions'].map(h => (
                 <div key={h} style={{ fontSize: 10, fontWeight: 700, color: '#b8c2d4', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: "'JetBrains Mono',monospace" }}>{h}</div>
               ))}
             </div>
 
             {filtered.map((p, i) => {
-              const hasFailed = !!p.payment_failed
-              const isPaid    = p.final_paid || p.deposit_paid
-              const state     = actionState[p.id] || {}
+              const hasFailed     = !!p.payment_failed
+              const depositPaid   = p.deposit_paid
+              const finalPaid     = p.final_paid
+              const depositAmt    = p.deposit_amount || parseFloat(p.setup_price || 0) / 2
+              const state         = actionState[p.id] || {}
+              const iconColor     = hasFailed ? '#f87171' : finalPaid ? '#4ade80' : depositPaid ? '#fb923c' : '#a78bfa'
+              const iconBg        = hasFailed ? 'rgba(248,113,113,0.1)' : finalPaid ? 'rgba(74,222,128,0.1)' : depositPaid ? 'rgba(251,146,60,0.1)' : 'rgba(139,92,246,0.08)'
+              const iconBorder    = hasFailed ? 'rgba(248,113,113,0.25)' : finalPaid ? 'rgba(74,222,128,0.25)' : depositPaid ? 'rgba(251,146,60,0.25)' : 'rgba(139,92,246,0.2)'
 
               return (
                 <div key={p.id}
-                  style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1.4fr', alignItems: 'center', gap: 16, padding: '14px 20px', borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', transition: 'background 0.15s', background: hasFailed ? 'rgba(248,113,113,0.02)' : 'transparent' }}
+                  style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.4fr 1fr 1fr 1.4fr', alignItems: 'center', gap: 16, padding: '14px 20px', borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', transition: 'background 0.15s', background: hasFailed ? 'rgba(248,113,113,0.02)' : 'transparent' }}
                   onMouseEnter={e => e.currentTarget.style.background = hasFailed ? 'rgba(248,113,113,0.04)' : 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background = hasFailed ? 'rgba(248,113,113,0.02)' : 'transparent'}>
 
                   {/* Client */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, background: hasFailed ? 'rgba(248,113,113,0.1)' : isPaid ? 'rgba(74,222,128,0.1)' : 'rgba(139,92,246,0.08)', border: `1px solid ${hasFailed ? 'rgba(248,113,113,0.25)' : isPaid ? 'rgba(74,222,128,0.25)' : 'rgba(139,92,246,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Users size={13} color={hasFailed ? '#f87171' : isPaid ? '#4ade80' : '#a78bfa'} strokeWidth={1.5} />
+                    <div style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, background: iconBg, border: `1px solid ${iconBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Users size={13} color={iconColor} strokeWidth={1.5} />
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#e4e4e7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.client_name || '—'}</div>
@@ -287,45 +280,69 @@ export default function PaymentsPage() {
                   {/* Status */}
                   <div>
                     <PaymentBadge p={p} />
+                  </div>
+
+                  {/* Invoices */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
+                      <span style={{ fontSize: 9, color: depositPaid ? '#4ade80' : '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>{depositPaid ? '✓' : '○'} Inv#1</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: depositPaid ? '#4ade80' : '#e4e4e7', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(depositAmt)}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span style={{ fontSize: 9, color: finalPaid ? '#4ade80' : '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>{finalPaid ? '✓' : '○'} Inv#2</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: finalPaid ? '#4ade80' : '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(p.final_amount || depositAmt)}</span>
+                    </div>
+                  </div>
+
+                  {/* Monthly */}
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: hasFailed ? '#f87171' : '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(p.monthly_price)}/mo</div>
+                    {p.stripe_subscription_id && finalPaid && !hasFailed && <div style={{ fontSize: 9, color: '#4ade80', marginTop: 2 }}>● Sub active</div>}
+                    {hasFailed && <div style={{ fontSize: 9, color: '#f87171', marginTop: 2 }}>● Payment failed</div>}
+                    {p.last_invoice_paid_at && !hasFailed && (
+                      <div style={{ fontSize: 9, color: '#b8c2d4', marginTop: 2, fontFamily: "'JetBrains Mono',monospace" }}>
+                        Last paid {fmtDate(p.last_invoice_paid_at)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Launch / Next Billing */}
+                  <div style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+                    <div style={{ fontSize: 11, color: '#c4c4cc' }}>{fmtDate(p.launch_date)}</div>
+                    {p.next_billing_date && finalPaid && !hasFailed && (
+                      <div style={{ fontSize: 9, color: '#a78bfa', marginTop: 3 }}>
+                        Next bill {fmtDate(p.next_billing_date)}
+                      </div>
+                    )}
+                    {hasFailed && p.last_failed_at && (
+                      <div style={{ fontSize: 9, color: '#f87171', marginTop: 3 }}>
+                        Failed {fmtDate(p.last_failed_at)}
+                      </div>
+                    )}
                     {hasFailed && p.last_failure_reason && (
-                      <div style={{ fontSize: 9, color: '#f87171', marginTop: 2, fontFamily: "'JetBrains Mono',monospace", maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={p.last_failure_reason}>
+                      <div style={{ fontSize: 9, color: '#fb923c', marginTop: 2, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={p.last_failure_reason}>
                         {p.last_failure_reason}
                       </div>
                     )}
                   </div>
 
-                  {/* Setup */}
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#e4e4e7', fontFamily: "'JetBrains Mono',monospace" }}>
-                    {fmt(p.setup_price)}
-                  </div>
-
-                  {/* Monthly */}
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(p.monthly_price)}/mo</div>
-                  </div>
-
-                  {/* Launch */}
-                  <div style={{ fontSize: 11, color: '#c4c4cc', fontFamily: "'JetBrains Mono',monospace" }}>
-                    {fmtDate(p.launch_date)}
-                    {p.stripe_subscription_id && !hasFailed && (
-                      <div style={{ fontSize: 9, color: '#4ade80', marginTop: 3 }}>● Sub active</div>
-                    )}
-                    {hasFailed && (
-                      <div style={{ fontSize: 9, color: '#f87171', marginTop: 3 }}>● Payment failed</div>
-                    )}
-                  </div>
-
                   {/* Actions */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }} onClick={e => e.stopPropagation()}>
-                    {p.pay_url && !isPaid && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }} onClick={e => e.stopPropagation()}>
+                    {p.pay_url && !depositPaid && (
                       <button onClick={() => handleCopyLink(p.id, p.pay_url)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 7, padding: '5px 10px', color: state.copied ? '#4ade80' : '#a78bfa', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
-                        <Copy size={10} /> {state.copied ? 'Copied!' : 'Copy Link'}
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 7, padding: '4px 9px', color: state.copied ? '#4ade80' : '#a78bfa', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
+                        <Copy size={10} /> {state.copied ? 'Copied!' : 'Inv#1 Link'}
+                      </button>
+                    )}
+                    {p.final_pay_url && depositPaid && !finalPaid && (
+                      <button onClick={() => handleCopyLink(p.id, p.final_pay_url)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.25)', borderRadius: 7, padding: '4px 9px', color: state.copied ? '#4ade80' : '#fb923c', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
+                        <Copy size={10} /> {state.copied ? 'Copied!' : 'Inv#2 Link'}
                       </button>
                     )}
                     {p.lead_id && (
-                      <button onClick={() => navigate(`/leads/${p.lead_id}`)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '5px 10px', color: '#b8c2d4', fontSize: 11, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
+                      <button onClick={() => navigate(`/leads/${p.lead_hid || p.lead_id}`)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '4px 9px', color: '#b8c2d4', fontSize: 10, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
                         <ChevronRight size={10} /> View Lead
                       </button>
                     )}

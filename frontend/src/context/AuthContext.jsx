@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 const AuthContext = createContext(null)
 

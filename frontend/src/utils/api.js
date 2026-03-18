@@ -15,11 +15,29 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 
-function getAuthHeaders() {
+/** Named export so files can `import { API } from '../utils/api'` */
+export const API = BASE_URL
+
+export function getAuthHeaders() {
   const token =
     sessionStorage.getItem('access_token') ||
     localStorage.getItem('access_token')
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+/**
+ * Convenience fetch wrapper — attaches auth headers + credentials: 'include'.
+ * Use this when you need raw Response access (e.g. streaming, FormData uploads).
+ *
+ * For most JSON calls, prefer `api.get / api.post / ...` instead.
+ */
+export function authFetch(url, options = {}) {
+  const { headers = {}, ...rest } = options
+  return fetch(url, {
+    credentials: 'include',
+    ...rest,
+    headers: { ...getAuthHeaders(), ...headers },
+  })
 }
 
 function handleUnauthorized() {

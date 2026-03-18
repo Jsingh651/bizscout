@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, AlertTriangle, ExternalLink, Phone, Star, ChevronDown, CheckCircle2, Circle, StickyNote, X, Check } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
+import AppNav from '../components/AppNav'
 import ReactDOM from 'react-dom'
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_CONFIG = {
@@ -47,13 +47,13 @@ function NotesModal({ lead, onClose, onSave }) {
 
   const save = async () => {
     setSaving(true)
-    await fetch(`${API}/leads/${lead.id}`, {
+    await fetch(`${API}/leads/${lead.hid || lead.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ notes: text }),
     }).catch(() => {})
-    onSave(lead.id, text)
+    onSave(lead.hid || lead.id, text)
     setSaving(false)
     onClose()
   }
@@ -127,7 +127,7 @@ function StageDropdown({ lead, onChange }) {
           {STAGES.map(stage => {
             const c = STAGE_CONFIG[stage]; const active = stage === lead.pipeline_stage
             return (
-              <div key={stage} onClick={e=>{e.stopPropagation();onChange(lead.id,stage);setOpen(false)}}
+              <div key={stage} onClick={e=>{e.stopPropagation();onChange(lead.hid||lead.id,stage);setOpen(false)}}
                 style={{ padding:'7px 10px',borderRadius:6,fontSize:11,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:7,transition:'background 0.12s' }}
                 onMouseEnter={e=>{if(!active)e.currentTarget.style.background='rgba(255,255,255,0.04)'}}
                 onMouseLeave={e=>{if(!active)e.currentTarget.style.background='transparent'}}>
@@ -251,7 +251,7 @@ export default function Pipeline() {
       .then(async batches => {
         if (!Array.isArray(batches)) { setLoading(false); return }
         const arrays = await Promise.all(
-          batches.map(b => fetch(`${API}/batches/${b.id}/leads`,{credentials:'include'})
+          batches.map(b => fetch(`${API}/batches/${b.hid || b.id}/leads`,{credentials:'include'})
             .then(r=>r.json()).then(d=>d.leads||[]).catch(()=>[]))
         )
         setLeads(arrays.flat())
@@ -261,7 +261,7 @@ export default function Pipeline() {
   }, [])
 
   const handleStageChange = (leadId, stage) => {
-    setLeads(prev => prev.map(l => l.id===leadId ? {...l,pipeline_stage:stage} : l))
+    setLeads(prev => prev.map(l => (l.hid||l.id)===leadId ? {...l,pipeline_stage:stage} : l))
     fetch(`${API}/leads/${leadId}`,{
       method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',
       body:JSON.stringify({pipeline_stage:stage}),
@@ -269,7 +269,7 @@ export default function Pipeline() {
   }
 
   const handleNoteSave = (leadId, notes) => {
-    setLeads(prev => prev.map(l => l.id===leadId ? {...l,notes} : l))
+    setLeads(prev => prev.map(l => (l.hid||l.id)===leadId ? {...l,notes} : l))
   }
 
   const leadsByStage = STAGES.reduce((acc,s)=>{
@@ -300,23 +300,7 @@ export default function Pipeline() {
       <ParticleCanvas />
       <div style={{ position:'fixed',inset:0,zIndex:0,pointerEvents:'none',opacity:0.3,backgroundImage:'linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px)',backgroundSize:'72px 72px',maskImage:'radial-gradient(ellipse 100% 55% at 50% 0%,black 0%,transparent 100%)' }} />
 
-      {/* NAV */}
-      <nav style={{ position:'sticky',top:0,zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0 48px',height:64,background:'rgba(9,9,15,0.82)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display:'flex',alignItems:'center',gap:32 }}>
-          <div style={{ display:'flex',alignItems:'center',gap:10,cursor:'pointer' }} onClick={()=>navigate('/')}>
-            <div style={{ width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#8b5cf6,#6366f1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.7rem',fontWeight:900,color:'#fff' }}>B</div>
-            <span style={{ fontWeight:800,fontSize:'1rem',letterSpacing:'-0.5px',color:'#f4f4f5' }}>BizScout</span>
-          </div>
-          <div style={{ display:'flex',gap:24 }}>
-            <button className="nav-link" onClick={()=>navigate('/leads')}>Leads</button>
-            <button className="nav-link" onClick={()=>navigate('/batches')}>Batches</button>
-            <button className="nav-link active">Pipeline</button>
-            <button className="nav-link" onClick={()=>navigate('/analytics')}>Analytics</button>
-            <button className="nav-link" onClick={()=>navigate('/meetings')}>Meetings</button>
-          </div>
-        </div>
-        <NavbarDropdown />
-      </nav>
+      <AppNav />
 
       <div style={{ position:'relative',zIndex:1,padding:'40px 48px 80px' }}>
         {/* Header */}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -6,9 +6,13 @@ import {
     BarChart2, Users, Target, ChevronRight, Search,
     Circle, CheckCircle2, ChevronDown, Info, X, SlidersHorizontal,
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import AppNav from '../components/AppNav'
+import {
+    getCachedBatches, setCachedBatches,
+    getCachedBatchLeads, setCachedBatchLeads,
+    patchCachedLead,
+} from '../utils/batchCache'
+import { API } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_STYLE = {
@@ -192,7 +196,7 @@ function StageDropdown({ lead, onChange }) {
                     {STAGES.map(stage => {
                         const c = STAGE_STYLE[stage], active = stage === (lead.pipeline_stage || 'New Lead')
                         return (
-                            <div key={stage} onClick={e => { e.stopPropagation(); onChange(lead.id, stage); setOpen(false) }}
+                            <div key={stage} onClick={e => { e.stopPropagation(); onChange(lead.hid || lead.id, stage); setOpen(false) }}
                                 style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
                                 onMouseEnter={e => { if(!active) e.currentTarget.style.background='rgba(255,255,255,0.04)' }}
                                 onMouseLeave={e => { if(!active) e.currentTarget.style.background='transparent' }}>
@@ -253,7 +257,7 @@ function CallOutcomeDropdown({ lead, onChange }) {
                         const c = CALL_OUTCOME_COLORS[outcome]
                         const active = outcome === lead.call_outcome
                         return (
-                            <div key={outcome} onClick={e => { e.stopPropagation(); onChange(lead.id, outcome); setOpen(false) }}
+                            <div key={outcome} onClick={e => { e.stopPropagation(); onChange(lead.hid || lead.id, outcome); setOpen(false) }}
                                 style={{padding:'8px 12px',borderRadius:7,fontSize:12,cursor:'pointer',color:active?c.color:'#c4c4cc',background:active?c.bg:'transparent',fontFamily:"'JetBrains Mono',monospace",display:'flex',alignItems:'center',gap:8,transition:'background 0.15s',whiteSpace:'nowrap'}}
                                 onMouseEnter={e => { if(!active) e.currentTarget.style.background='rgba(255,255,255,0.04)' }}
                                 onMouseLeave={e => { if(!active) e.currentTarget.style.background='transparent' }}>
@@ -442,7 +446,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                         <div key={lead.id} style={{borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
                             <div
                                 style={{display:'grid',gridTemplateColumns:GRID,alignItems:'center',gap:16,padding:'14px 20px',background:isExpanded?'rgba(139,92,246,0.04)':'transparent',transition:'background 0.15s',cursor:'pointer'}}
-                                onClick={() => navigate(`/leads/${lead.id}`)}
+                                onClick={() => navigate(`/leads/${lead.hid || lead.id}`)}
                                 onMouseEnter={e=>{if(!isExpanded)e.currentTarget.style.background='rgba(255,255,255,0.02)'}}
                                 onMouseLeave={e=>{if(!isExpanded)e.currentTarget.style.background=isExpanded?'rgba(139,92,246,0.04)':'transparent'}}>
 
@@ -508,30 +512,58 @@ export default function Batches() {
     const [showFilters,setShowFilters]     = useState(false)
     const [filters,setFilters]             = useState({ niche:null, city:null, score:null, opportunity:null, date:null })
 
+    // ── Fetch batch list with stale-while-revalidate ──────────────────────────
     useEffect(()=>{
+        const { data: cached, stale } = getCachedBatches()
+        if (cached) {
+            setBatches(cached)
+            setLoading(false)
+            if (!stale) return  // fresh — no network call needed
+        }
+        // No cache or stale — fetch in background (silently if we already showed cached data)
         fetch(`${API}/batches`,{credentials:'include'})
             .then(r=>r.json())
-            .then(data=>{setBatches(Array.isArray(data)?data:[]);setLoading(false)})
+            .then(data=>{
+                const list = Array.isArray(data) ? data : []
+                setCachedBatches(list)
+                setBatches(list)
+                setLoading(false)
+            })
             .catch(()=>setLoading(false))
     },[])
 
-    const openBatch = id => {
-        setLoadingDetail(true)
-        fetch(`${API}/batches/${id}/leads`,{credentials:'include'})
+    // ── Open a batch — show cached leads instantly, refresh in background ─────
+    const openBatch = useCallback((id, hid) => {
+        const key = hid || id
+        const { data: cached, stale } = getCachedBatchLeads(key)
+        if (cached) {
+            setActiveBatch(cached)
+            setLoadingDetail(false)
+            if (!stale) return  // fresh — skip network
+        } else {
+            setLoadingDetail(true)
+        }
+        fetch(`${API}/batches/${key}/leads`,{credentials:'include'})
             .then(r=>r.json())
-            .then(data=>{setActiveBatch(data);setLoadingDetail(false)})
+            .then(data=>{
+                setCachedBatchLeads(key, data)
+                setActiveBatch(data)
+                setLoadingDetail(false)
+            })
             .catch(()=>setLoadingDetail(false))
-    }
+    }, [])
 
     const handleStageChange = (leadId, stage) => {
-        setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>l.id===leadId?{...l,pipeline_stage:stage}:l)}))
+        setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,pipeline_stage:stage}:l)}))
+        patchCachedLead(leadId, { pipeline_stage: stage })
         fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({pipeline_stage:stage})}).catch(()=>{})
     }
 
     const handleCallOutcomeChange = (leadId, outcome) => {
-    setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>l.id===leadId?{...l,call_outcome:outcome}:l)}))
-    fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({call_outcome:outcome})}).catch(()=>{})
-}
+        setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,call_outcome:outcome}:l)}))
+        patchCachedLead(leadId, { call_outcome: outcome })
+        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({call_outcome:outcome})}).catch(()=>{})
+    }
     const handleFilterChange = (key,val) => setFilters(prev=>({...prev,[key]:val}))
     const clearFilters = () => setFilters({niche:null,city:null,score:null,opportunity:null,date:null})
 
@@ -584,22 +616,7 @@ export default function Batches() {
             <div style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none',opacity:0.35,backgroundImage:'linear-gradient(rgba(139,92,246,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.045) 1px,transparent 1px)',backgroundSize:'72px 72px',maskImage:'radial-gradient(ellipse 100% 55% at 50% 0%,black 0%,transparent 100%)'}}/>
             <div style={{position:'fixed',top:-180,left:'50%',transform:'translateX(-50%)',width:900,height:500,zIndex:0,pointerEvents:'none',background:'radial-gradient(ellipse at center,rgba(139,92,246,0.09) 0%,transparent 70%)'}}/>
 
-            <nav style={{position:'sticky',top:0,zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0 48px',height:64,background:'rgba(9,9,15,0.82)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
-                <div style={{display:'flex',alignItems:'center',gap:32}}>
-                    <div style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer'}} onClick={()=>navigate('/')}>
-                        <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#8b5cf6,#6366f1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.7rem',fontWeight:900,color:'#fff'}}>B</div>
-                        <span style={{fontWeight:800,fontSize:'1rem',letterSpacing:'-0.5px',color:'#f4f4f5'}}>BizScout</span>
-                    </div>
-                    <div style={{display:'flex',gap:24}}>
-                        <button className="nav-link" onClick={()=>navigate('/leads')}>Leads</button>
-                        <button className="nav-link active">Batches</button>
-                        <button className="nav-link" onClick={()=>navigate('/pipeline')}>Pipeline</button>
-                        <button className="nav-link" onClick={()=>navigate('/analytics')}>Analytics</button>
-                        <button className="nav-link" onClick={()=>navigate('/meetings')}>Meetings</button>
-                    </div>
-                </div>
-                <NavbarDropdown/>
-            </nav>
+            <AppNav/>
 
             <div style={{position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px'}}>
                 {activeBatch ? (
@@ -662,7 +679,7 @@ export default function Batches() {
                             </div>
                         ) : (
                             <div className="f2" style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:16}}>
-                                {filteredBatches.map(b=><BatchCard key={b.id} batch={b} onClick={()=>openBatch(b.id)}/>)}
+                                {filteredBatches.map(b=><BatchCard key={b.id} batch={b} onClick={()=>openBatch(b.id, b.hid)}/>)}
                             </div>
                         )}
                     </>

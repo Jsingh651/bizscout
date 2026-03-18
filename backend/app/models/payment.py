@@ -21,10 +21,9 @@ class Payment(Base):
     # Pricing snapshot
     setup_price            = Column(Numeric, nullable=True)
     monthly_price          = Column(Numeric, nullable=True)
-    monthly_discount       = Column(Numeric, nullable=True, default=10)
 
     # Plan & status
-    payment_plan           = Column(String, nullable=True)   # 'full' | 'split'
+    payment_plan           = Column(String, nullable=True)   # 'full'
     deposit_paid           = Column(Boolean, default=False)
     deposit_paid_at        = Column(DateTime(timezone=True), nullable=True)
     final_paid             = Column(Boolean, default=False)
@@ -32,14 +31,27 @@ class Payment(Base):
 
     # Stripe
     payment_token          = Column(String, unique=True, index=True, nullable=True)
+    final_invoice_token    = Column(String, unique=True, index=True, nullable=True)
     stripe_customer_id     = Column(String, nullable=True)
     stripe_subscription_id = Column(String, nullable=True, index=True)
     payment_failed         = Column(Boolean, default=False)
     last_failed_at         = Column(DateTime(timezone=True), nullable=True)
     last_failure_reason    = Column(String, nullable=True)
 
+    # Client approval flow
+    approval_token      = Column(String, unique=True, index=True, nullable=True)
+    client_approved     = Column(Boolean, default=False)
+    client_approved_at  = Column(DateTime(timezone=True), nullable=True)
+    client_approved_sig = Column(Text, nullable=True)   # base64 signature image
+    website_url         = Column(String, nullable=True)  # the live site URL
+
+    # Monthly subscription tracking
+    last_invoice_paid_at   = Column(DateTime(timezone=True), nullable=True)
+    next_billing_date      = Column(DateTime(timezone=True), nullable=True)
+
     # Dates
-    launch_date            = Column(DateTime(timezone=True), nullable=True)
-    invoice_sent_at        = Column(DateTime(timezone=True), nullable=True)
-    created_at             = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at             = Column(DateTime(timezone=True), onupdate=func.now())
+    launch_date              = Column(DateTime(timezone=True), nullable=True)
+    invoice_sent_at          = Column(DateTime(timezone=True), nullable=True)
+    final_invoice_sent_at    = Column(DateTime(timezone=True), nullable=True)
+    created_at               = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at               = Column(DateTime(timezone=True), onupdate=func.now())

@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../context/AuthContext'
-import { Mail, Lock, User, Eye, EyeOff, AlertCircle, ArrowRight, Check, X, Shield, Clock, Star } from 'lucide-react'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { Mail, Lock, User, Eye, EyeOff, AlertCircle, ArrowRight, Check, X, Shield, Clock, Star, KeyRound } from 'lucide-react'
+import { API } from '../utils/api'
 
 function FullScreenCanvas() {
   const canvasRef = useRef(null)
@@ -499,6 +498,32 @@ export default function Register() {
                       <PasswordRule met={rules.number} label="One number" />
                     </div>
                   </div>
+                )}
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block', color: '#e4e4e7', fontSize: '0.68rem', fontWeight: '700',
+                  letterSpacing: '1.8px', marginBottom: '7px',
+                  fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase',
+                }}>Invite Code</label>
+                <div style={{ position: 'relative' }}>
+                  <KeyRound size={14} color="#e4e4e7" strokeWidth={1.5} style={{
+                    position: 'absolute', left: '15px', top: '50%',
+                    transform: 'translateY(-50%)', pointerEvents: 'none',
+                  }} />
+                  <input
+                    className={`auth-input ${errors.invite_code ? 'has-error' : ''}`}
+                    placeholder="Enter invite code"
+                    type="password"
+                    autoComplete="off"
+                    {...register('invite_code', { required: 'Invite code is required' })}
+                  />
+                </div>
+                {errors.invite_code && (
+                  <p style={{ color: '#f87171', fontSize: '0.73rem', marginTop: '5px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <AlertCircle size={11} strokeWidth={2} /> {errors.invite_code.message}
+                  </p>
                 )}
               </div>
 

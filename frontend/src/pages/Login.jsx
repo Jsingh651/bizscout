@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../context/AuthContext'
 import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight, MapPin, Zap, TrendingUp } from 'lucide-react'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 function FullScreenCanvas() {
   const canvasRef = useRef(null)

@@ -9,9 +9,8 @@ import {
   User, Mail, Lock, CheckCircle2, AlertCircle,
   ArrowLeft, Shield, Activity, Trash2, Eye, EyeOff,
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import AppNav from '../components/AppNav'
+import { API } from '../utils/api'
 
 function ParticleCanvas() {
   const ref = useRef(null)
@@ -208,25 +207,7 @@ export default function Profile() {
       {/* Glow */}
       <div style={{ position: 'fixed', top: -150, left: '50%', transform: 'translateX(-50%)', width: 800, height: 500, zIndex: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 70%)' }} />
 
-      {/* Nav */}
-      <nav style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '0 48px', height: 64,
-        background: 'rgba(9,9,15,0.82)', backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.04)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button className="back-btn" onClick={() => navigate('/leads')}>
-            <ArrowLeft size={13} /> Back
-          </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#8b5cf6,#6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 900, color: '#fff' }}>B</div>
-            <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.5px', color: '#f4f4f5' }}>BizScout</span>
-          </div>
-        </div>
-        <NavbarDropdown />
-      </nav>
+      <AppNav />
 
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto', padding: '48px 48px 80px' }}>

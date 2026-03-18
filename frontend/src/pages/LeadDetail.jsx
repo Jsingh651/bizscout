@@ -7,15 +7,14 @@ import {
     Info, Building2, PhoneCall, PhoneOff, PhoneMissed,
     ThumbsUp, ThumbsDown, CalendarClock, DollarSign, Copy, Zap,
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
+import AppNav from '../components/AppNav'
 import LeadContracts from '../components/LeadContracts'
 import InvoiceModal from '../components/InvoiceModal'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import '../styles/datepicker-overrides.css'
 import ReactDOM from 'react-dom'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_STYLE = {
@@ -163,7 +162,7 @@ function CallLog({ lead, onOutcomeSet }) {
     const [saving, setSaving] = useState(null)
     const setOutcome = async (key) => {
         setSaving(key)
-        await fetch(`${API}/leads/${lead.id}`, {
+        await fetch(`${API}/leads/${lead.hid || lead.id}`, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
             body: JSON.stringify({ call_outcome: key }),
         }).catch(() => {})
@@ -214,7 +213,7 @@ function NotesEditor({ lead, onSave }) {
     const [saved, setSaved]   = useState(false)
     const save = async () => {
         setSaving(true)
-        await fetch(`${API}/leads/${lead.id}`, {
+        await fetch(`${API}/leads/${lead.hid || lead.id}`, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
             body: JSON.stringify({ notes: text }),
         }).catch(() => {})
@@ -290,42 +289,77 @@ function ScoreRing({ score }) {
 }
 
 // ─── Payment Status Card ──────────────────────────────────────────────────────
-function PaymentStatusCard({ status, contract, onRefresh }) {
-    const [copied, setCopied]           = useState(false)
-    const [sending, setSending]         = useState(false)
-    const [sendSuccess, setSendSuccess] = useState('')
-
-    const depositPaid = status?.deposit_paid   || false
-    const finalPaid   = status?.final_paid     || false
-    const plan        = status?.payment_plan   || null
-    const hasFailed   = status?.payment_failed || false
-    const isSplit     = plan === 'split'
-    const showFinal   = isSplit && depositPaid && !finalPaid
-
-    const phase = hasFailed ? 'failed'
-        : finalPaid ? 'paid'
-        : depositPaid && isSplit ? 'building'
-        : depositPaid ? 'paid'
-        : 'pending'
-
-    const phaseConfig = {
-        failed:   { color:'#f87171', bg:'rgba(248,113,113,0.06)', border:'rgba(248,113,113,0.2)',  label:'Payment Failed' },
-        paid:     { color:'#4ade80', bg:'rgba(74,222,128,0.06)',  border:'rgba(74,222,128,0.18)',  label: isSplit ? 'Fully Paid' : 'Paid — Active' },
-        building: { color:'#fb923c', bg:'rgba(251,146,60,0.06)',  border:'rgba(251,146,60,0.18)',  label:'Deposit Paid — Building' },
-        pending:  { color:'#a78bfa', bg:'rgba(139,92,246,0.06)', border:'rgba(139,92,246,0.18)', label:'Invoice Sent — Awaiting' },
-    }
-    const pc = phaseConfig[phase]
-
-    const copyLink = () => {
-        if (!status?.pay_url) return
-        navigator.clipboard.writeText(status.pay_url)
+function CopyLinkRow({ url, label }) {
+    const [copied, setCopied] = useState(false)
+    const copy = () => {
+        navigator.clipboard.writeText(url)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
     }
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 9, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace", textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{label}</div>
+                <div style={{ fontSize: 10, color: '#a78bfa', fontFamily: "'JetBrains Mono',monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 6, padding: '4px 7px' }}>
+                    {url}
+                </div>
+            </div>
+            <button onClick={copy} style={{ flexShrink: 0, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 7, padding: '5px 8px', color: copied ? '#4ade80' : '#a78bfa', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif", whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Copy size={9} />{copied ? 'Copied' : 'Copy'}
+            </button>
+        </div>
+    )
+}
+
+function PaymentStatusCard({ status, contract, onRefresh }) {
+    const [sending, setSending]               = useState(false)
+    const [sendMsg, setSendMsg]               = useState('')
+    const [syncing, setSyncing]               = useState(false)
+    const [showApprovalForm, setShowApprovalForm] = useState(false)
+    const [websiteUrl, setWebsiteUrl]             = useState('')
+    const [approvalSending, setApprovalSending]   = useState(false)
+
+    const handleSync = async () => {
+        setSyncing(true); setSendMsg('')
+        try {
+            const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
+            const headers = token ? { Authorization: `Bearer ${token}` } : {}
+            const res = await fetch(`${API}/payments/sync-status/${contract.id}`, { method: 'POST', credentials: 'include', headers })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.detail)
+            setSendMsg(data.synced ? 'Payment status synced from Stripe!' : 'Already up to date.')
+            if (data.synced && onRefresh) onRefresh()
+        } catch (e) { setSendMsg(`Error: ${e.message}`) }
+        finally { setSyncing(false) }
+    }
+
+    const depositPaid = status?.deposit_paid   || false
+    const finalPaid   = status?.final_paid     || false
+    const hasFailed   = status?.payment_failed || false
+    const depositAmt  = status?.deposit_amount || 0
+    const finalAmt    = status?.final_amount   || 0
+    const monthly     = status?.monthly_price  || 0
+
+    // Overall phase label
+    const phase = hasFailed ? 'failed'
+        : finalPaid   ? 'complete'
+        : depositPaid ? 'building'
+        : 'deposit_pending'
+
+    const phaseConfig = {
+        failed:          { color:'#f87171', bg:'rgba(248,113,113,0.06)', border:'rgba(248,113,113,0.2)',  label:'Payment Failed'         },
+        complete:        { color:'#4ade80', bg:'rgba(74,222,128,0.06)',  border:'rgba(74,222,128,0.18)',  label:'Fully Paid — Active'    },
+        building:        { color:'#fb923c', bg:'rgba(251,146,60,0.06)',  border:'rgba(251,146,60,0.18)',  label:'Deposit Paid — Building'},
+        deposit_pending: { color:'#a78bfa', bg:'rgba(139,92,246,0.06)', border:'rgba(139,92,246,0.18)', label:'Invoice #1 Sent'        },
+    }
+    const pc = phaseConfig[phase]
+
+    const canSendFinal = depositPaid && !finalPaid && !status?.final_invoice_sent_at
+    const finalSent    = !!status?.final_invoice_sent_at && !finalPaid
 
     const handleSendFinal = async () => {
-        if (!window.confirm(`Send final invoice (${fmt(status.deposit_amount)} + monthly) to ${contract?.client_name}?`)) return
-        setSending(true); setSendSuccess('')
+        if (!contract?.id) { setSendMsg('Error: no contract found'); return }
+        setSending(true); setSendMsg('')
         try {
             const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
             const headers = token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
@@ -335,15 +369,53 @@ function PaymentStatusCard({ status, contract, onRefresh }) {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.detail)
-            setSendSuccess(`Final invoice sent! ${fmt(data.final_amt)} + ${fmt(data.disc_mo)}/mo`)
+            setSendMsg(`Invoice #2 sent! ${fmt(finalAmt)} + ${fmt(monthly)}/mo`)
             if (onRefresh) onRefresh()
-        } catch (e) { setSendSuccess(`Error: ${e.message}`) }
+        } catch (e) { setSendMsg(`Error: ${e.message}`) }
         finally { setSending(false) }
+    }
+
+    const handleResendFinal = async () => {
+        setSending(true); setSendMsg('')
+        try {
+            const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
+            const headers = token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
+            const res = await fetch(`${API}/payments/send-final-invoice`, {
+                method: 'POST', credentials: 'include', headers,
+                body: JSON.stringify({ contract_id: contract.id }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.detail)
+            setSendMsg('Invoice #2 resent!')
+            if (onRefresh) onRefresh()
+        } catch (e) { setSendMsg(`Error: ${e.message}`) }
+        finally { setSending(false) }
+    }
+
+    const handleSendApproval = async () => {
+        if (!websiteUrl.trim()) { setSendMsg('Error: enter the website URL first'); return }
+        if (!contract?.id) { setSendMsg('Error: no contract found'); return }
+        setApprovalSending(true); setSendMsg('')
+        try {
+            const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
+            const headers = token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
+            const res = await fetch(`${API}/payments/send-approval`, {
+                method: 'POST', credentials: 'include', headers,
+                body: JSON.stringify({ contract_id: contract.id, website_url: websiteUrl.trim() })
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.detail)
+            setSendMsg('Approval email sent! Client will review and sign.')
+            setShowApprovalForm(false)
+            if (onRefresh) onRefresh()
+        } catch(e) { setSendMsg(`Error: ${e.message}`) }
+        finally { setApprovalSending(false) }
     }
 
     return (
         <div style={{ background: pc.bg, border: `1px solid ${pc.border}`, borderRadius: 14, padding: '14px 16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                     <DollarSign size={12} color={pc.color} strokeWidth={1.5} />
                     <span style={{ fontSize: 11, fontWeight: 700, color: pc.color, fontFamily: "'JetBrains Mono',monospace", textTransform: 'uppercase', letterSpacing: '0.08em' }}>Payment Status</span>
@@ -353,61 +425,135 @@ function PaymentStatusCard({ status, contract, onRefresh }) {
                 </span>
             </div>
 
+            {/* Payment failure alert */}
             {hasFailed && (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.15)', borderRadius: 9, padding: '10px 12px', marginBottom: 12 }}>
                     <AlertCircle size={13} color="#f87171" style={{ flexShrink: 0, marginTop: 1 }} />
                     <div>
                         <div style={{ fontSize: 12, fontWeight: 700, color: '#f87171', marginBottom: 2 }}>Monthly payment failed</div>
                         {status.last_failure_reason && <div style={{ fontSize: 11, color: '#c4c4cc' }}>{status.last_failure_reason}</div>}
-                        {status.last_failed_at && (
-                            <div style={{ fontSize: 10, color: '#b8c2d4', marginTop: 3, fontFamily: "'JetBrains Mono',monospace" }}>
-                                {new Date(status.last_failed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                        )}
-                        <div style={{ fontSize: 11, color: '#c4c4cc', marginTop: 4 }}>
-                            Stripe will retry automatically. Consider reaching out to {contract?.client_name} to update their card.
-                        </div>
+                        {status.last_failed_at && <div style={{ fontSize: 10, color: '#b8c2d4', marginTop: 3, fontFamily: "'JetBrains Mono',monospace" }}>{new Date(status.last_failed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
                     </div>
                 </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
-                {[
-                    { label: 'Plan',    value: plan === 'full' ? 'Full Payment' : plan === 'split' ? 'Split Payment' : '—', color: '#a78bfa' },
-                    { label: 'Deposit', value: depositPaid ? `✓ ${fmt(status.deposit_amount)}` : `Pending ${fmt(status.deposit_amount)}`, color: depositPaid ? '#4ade80' : '#fb923c' },
-                    ...(isSplit ? [{ label: 'Final', value: finalPaid ? `✓ ${fmt(status.deposit_amount)}` : `Pending ${fmt(status.deposit_amount)}`, color: finalPaid ? '#4ade80' : '#b8c2d4' }] : []),
-                    ...(status?.launch_date ? [{ label: 'Launch', value: new Date(status.launch_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), color: '#c4c4cc' }] : []),
-                    ...(status?.monthly_year1 ? [{ label: 'Yr-1 Rate', value: `${fmt(status.monthly_year1)}/mo`, color: '#4ade80' }] : []),
-                ].map(row => (
-                    <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 11, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>{row.label}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: row.color, fontFamily: "'JetBrains Mono',monospace" }}>{row.value}</span>
+            {/* Invoice #1 row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: depositPaid ? 'rgba(74,222,128,0.06)' : 'rgba(255,255,255,0.02)', border: `1px solid ${depositPaid ? 'rgba(74,222,128,0.2)' : 'rgba(255,255,255,0.06)'}`, borderRadius: 8, marginBottom: 6 }}>
+                <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: depositPaid ? '#4ade80' : '#fb923c', fontFamily: "'JetBrains Mono',monospace" }}>
+                        {depositPaid ? '✓' : '○'} Invoice #1 — Deposit
                     </div>
-                ))}
+                    {status?.invoice_sent_at && <div style={{ fontSize: 9, color: '#b8c2d4', marginTop: 2, fontFamily: "'JetBrains Mono',monospace" }}>Sent {new Date(status.invoice_sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: depositPaid ? '#4ade80' : '#fb923c', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(depositAmt)}</div>
+                    {depositPaid && status?.deposit_paid_at && <div style={{ fontSize: 9, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>Paid {new Date(status.deposit_paid_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
+                </div>
             </div>
 
-            {status?.pay_url && phase !== 'paid' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: showFinal ? 10 : 0 }}>
-                    <div style={{ flex: 1, fontSize: 10, color: '#a78bfa', fontFamily: "'JetBrains Mono',monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 7, padding: '5px 8px' }}>
-                        {status.pay_url}
+            {/* Invoice #2 row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: finalPaid ? 'rgba(74,222,128,0.06)' : depositPaid ? 'rgba(251,146,60,0.04)' : 'rgba(255,255,255,0.01)', border: `1px solid ${finalPaid ? 'rgba(74,222,128,0.2)' : depositPaid ? 'rgba(251,146,60,0.18)' : 'rgba(255,255,255,0.04)'}`, borderRadius: 8, marginBottom: 10 }}>
+                <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: finalPaid ? '#4ade80' : depositPaid ? '#fb923c' : '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>
+                        {finalPaid ? '✓' : depositPaid ? '○' : '🔒'} Invoice #2 — Final + Monthly
                     </div>
-                    <button onClick={copyLink} style={{ flexShrink: 0, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 7, padding: '5px 8px', color: copied ? '#4ade80' : '#a78bfa', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif", whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <Copy size={9} />{copied ? 'Copied' : 'Copy'}
-                    </button>
+                    {status?.final_invoice_sent_at && !finalPaid && <div style={{ fontSize: 9, color: '#b8c2d4', marginTop: 2, fontFamily: "'JetBrains Mono',monospace" }}>Sent {new Date(status.final_invoice_sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
+                    {!depositPaid && <div style={{ fontSize: 9, color: '#b8c2d4', marginTop: 2 }}>Unlocks after deposit is paid</div>}
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: finalPaid ? '#4ade80' : depositPaid ? '#fb923c' : '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>{fmt(finalAmt)}</div>
+                    <div style={{ fontSize: 9, color: '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}>+ {fmt(monthly)}/mo</div>
+                    {finalPaid && status?.final_paid_at && <div style={{ fontSize: 9, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>Paid {new Date(status.final_paid_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
+                </div>
+            </div>
+
+            {/* Launch date + monthly info */}
+            {status?.launch_date && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <span style={{ fontSize: 10, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>Launch Date</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#c4c4cc', fontFamily: "'JetBrains Mono',monospace" }}>{new Date(status.launch_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                </div>
+            )}
+            {status?.stripe_subscription_id && finalPaid && !hasFailed && (
+                <div style={{ fontSize: 9, color: '#4ade80', fontFamily: "'JetBrains Mono',monospace", marginBottom: 10 }}>● Subscription active</div>
+            )}
+
+            {/* Pay links */}
+            {status?.pay_url && !depositPaid && <CopyLinkRow url={status.pay_url} label="Invoice #1 — Deposit Link" />}
+            {status?.final_pay_url && !finalPaid && <CopyLinkRow url={status.final_pay_url} label="Invoice #2 — Final Payment Link" />}
+
+            {/* Client Approval Section */}
+            {depositPaid && !status?.client_approved && !finalPaid && (
+                <div style={{ marginTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 10 }}>
+                    {!showApprovalForm ? (
+                        <button onClick={() => setShowApprovalForm(true)}
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'rgba(5,150,105,0.1)', border: '1px solid rgba(5,150,105,0.3)', borderRadius: 9, padding: '8px 14px', color: '#34d399', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
+                            ✓ Send for Client Approval
+                        </button>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <input
+                                value={websiteUrl}
+                                onChange={e => setWebsiteUrl(e.target.value)}
+                                placeholder="https://clientsite.com"
+                                style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '8px 10px', color: '#e2e8f0', fontSize: 11, fontFamily: "'JetBrains Mono',monospace", outline: 'none' }}
+                            />
+                            <div style={{ display: 'flex', gap: 6 }}>
+                                <button onClick={() => setShowApprovalForm(false)}
+                                    style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '7px', color: '#94a3b8', fontSize: 11, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
+                                    Cancel
+                                </button>
+                                <button onClick={handleSendApproval} disabled={approvalSending}
+                                    style={{ flex: 2, background: 'linear-gradient(135deg,#059669,#047857)', border: 'none', borderRadius: 8, padding: '7px', color: '#fff', fontSize: 11, fontWeight: 700, cursor: approvalSending ? 'not-allowed' : 'pointer', fontFamily: "'Outfit',sans-serif", opacity: approvalSending ? 0.7 : 1 }}>
+                                    {approvalSending ? 'Sending...' : 'Send Approval Email'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {showFinal && (
+            {/* Already approved badge */}
+            {status?.client_approved && !finalPaid && (
+                <div style={{ marginTop: 8, fontSize: 10, color: '#34d399', fontFamily: "'JetBrains Mono',monospace", display: 'flex', alignItems: 'center', gap: 4 }}>
+                    ✓ Client approved on {new Date(status.client_approved_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </div>
+            )}
+
+            {/* Send Final Invoice button */}
+            {canSendFinal && !status?.client_approved && (
+                <div style={{ fontSize: 10, color: '#fbbf24', marginBottom: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                    ⚠ Client hasn't approved yet — recommended before sending Invoice #2
+                </div>
+            )}
+            {canSendFinal && (
                 <button onClick={handleSendFinal} disabled={sending}
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'linear-gradient(135deg,#fb923c,#f97316)', border: 'none', borderRadius: 9, padding: '9px 14px', color: '#fff', fontSize: 12, fontWeight: 700, cursor: sending ? 'not-allowed' : 'pointer', fontFamily: "'Outfit',sans-serif", opacity: sending ? 0.7 : 1 }}>
+                    style={{ width: '100%', marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'linear-gradient(135deg,#fb923c,#f97316)', border: 'none', borderRadius: 9, padding: '9px 14px', color: '#fff', fontSize: 12, fontWeight: 700, cursor: sending ? 'not-allowed' : 'pointer', fontFamily: "'Outfit',sans-serif", opacity: sending ? 0.7 : 1 }}>
                     <Zap size={12} />
-                    {sending ? 'Sending...' : `Send Final Invoice (${fmt(status.deposit_amount)} + monthly)`}
+                    {sending ? 'Sending...' : `Send Invoice #2 — ${fmt(finalAmt)} + ${fmt(monthly)}/mo`}
                 </button>
             )}
 
-            {sendSuccess && (
-                <div style={{ marginTop: 8, fontSize: 11, color: sendSuccess.startsWith('Error') ? '#f87171' : '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}>
-                    {sendSuccess}
+            {/* Resend Final Invoice button */}
+            {finalSent && (
+                <button onClick={handleResendFinal} disabled={sending}
+                    style={{ width: '100%', marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.3)', borderRadius: 9, padding: '9px 14px', color: '#fb923c', fontSize: 12, fontWeight: 700, cursor: sending ? 'not-allowed' : 'pointer', fontFamily: "'Outfit',sans-serif", opacity: sending ? 0.7 : 1 }}>
+                    <Zap size={12} />
+                    {sending ? 'Resending...' : 'Resend Invoice #2'}
+                </button>
+            )}
+
+            {/* Sync from Stripe button — shown when deposit not yet marked paid */}
+            {!depositPaid && (
+                <button onClick={handleSync} disabled={syncing}
+                    style={{ width: '100%', marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 9, padding: '8px 14px', color: '#818cf8', fontSize: 11, fontWeight: 600, cursor: syncing ? 'not-allowed' : 'pointer', fontFamily: "'Outfit',sans-serif", opacity: syncing ? 0.7 : 1 }}>
+                    {syncing ? 'Checking Stripe...' : '↻ Sync payment status from Stripe'}
+                </button>
+            )}
+
+            {sendMsg && (
+                <div style={{ marginTop: 8, fontSize: 11, color: sendMsg.startsWith('Error') ? '#f87171' : '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}>
+                    {sendMsg}
                 </div>
             )}
         </div>
@@ -546,25 +692,7 @@ export default function LeadDetail() {
             <ParticleCanvas />
             <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.3, backgroundImage: 'linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px)', backgroundSize: '72px 72px', maskImage: 'radial-gradient(ellipse 100% 55% at 50% 0%,black 0%,transparent 100%)' }} />
 
-            {/* NAV */}
-            <nav style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 48px', height: 64, background: 'rgba(9,9,15,0.82)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-                        <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#8b5cf6,#6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 900, color: '#fff' }}>B</div>
-                        <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.5px', color: '#f4f4f5' }}>BizScout</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 24 }}>
-                        <button className="nav-link" onClick={() => navigate('/leads')}>Leads</button>
-                        <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
-                        <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
-                        <button className="nav-link" onClick={() => navigate('/analytics')}>Analytics</button>
-                        <button className="nav-link" onClick={() => navigate('/meetings')}>Meetings</button>
-                        <button className="nav-link" onClick={() => navigate('/contracts')}>Contracts</button>
-                        <button className="nav-link" onClick={() => navigate('/payments')}>Payments</button>
-                    </div>
-                </div>
-                <NavbarDropdown />
-            </nav>
+            <AppNav />
 
             <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: '40px 48px 80px' }}>
 

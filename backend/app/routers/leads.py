@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Cookie, Header
+from fastapi import APIRouter, Depends, HTTPException, Cookie, Header, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.lead import Lead
 from app.models.user import User
+from app.dependencies import get_current_user
 from app.services.auth import decode_token
+from app.utils.hashids_util import encode_id, decode_id
+from app.limiter import limiter
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
@@ -62,25 +65,6 @@ _SERVICE_AGREEMENT_HTML = """<!DOCTYPE html>
 </html>"""
 
 
-def _get_current_user(
-    db: Session = Depends(get_db),
-    access_token: Optional[str] = Cookie(default=None),
-    authorization: Optional[str] = Header(default=None),
-) -> User:
-    token = access_token
-    if not token and authorization and authorization.startswith("Bearer "):
-        token = authorization[7:].strip()
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = db.query(User).filter(User.id == int(payload["sub"])).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
 class LeadCreate(BaseModel):
     name: str
     city: str
@@ -102,17 +86,44 @@ class LeadUpdate(BaseModel):
 
 
 @router.get("/")
-def get_leads(db: Session = Depends(get_db)):
-    return db.query(Lead).all()
+@limiter.limit("200/minute")
+def get_leads(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    leads = db.query(Lead).all()
+    return [
+        {
+            "id":                 lead.id,
+            "hid":                encode_id(lead.id),
+            "name":               lead.name,
+            "city":               lead.city,
+            "phone":              lead.phone,
+            "address":            lead.address,
+            "website_status":     lead.website_status,
+            "website_url":        lead.website_url,
+            "category":           lead.category,
+            "rating":             lead.rating,
+            "review_count":       lead.review_count,
+            "business_age_years": lead.business_age_years,
+            "score":              lead.score,
+            "pipeline_stage":     lead.pipeline_stage,
+            "notes":              lead.notes,
+            "call_outcome":       lead.call_outcome,
+            "call_outcome_at":    lead.call_outcome_at.isoformat() if lead.call_outcome_at else None,
+            "batch_id":           lead.batch_id,
+        }
+        for lead in leads
+    ]
 
 
 @router.get("/{lead_id}/contract", response_class=HTMLResponse)
 def get_lead_contract(
-    lead_id: int,
+    lead_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(_get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    real_id = decode_id(lead_id)
+    if real_id is None:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = db.query(Lead).filter(Lead.id == real_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     date_str = datetime.now(timezone.utc).strftime("%B %d, %Y")
@@ -135,12 +146,17 @@ def get_lead_contract(
 
 
 @router.get("/{lead_id}")
-def get_lead(lead_id: int, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+@limiter.limit("200/minute")
+def get_lead(request: Request, lead_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    real_id = decode_id(lead_id)
+    if real_id is None:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = db.query(Lead).filter(Lead.id == real_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     return {
         "id":                 lead.id,
+        "hid":                encode_id(lead.id),
         "name":               lead.name,
         "city":               lead.city,
         "phone":              lead.phone,
@@ -161,7 +177,8 @@ def get_lead(lead_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/")
-def create_lead(lead: LeadCreate, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def create_lead(request: Request, lead: LeadCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     new_lead = Lead(**lead.dict())
     db.add(new_lead)
     db.commit()
@@ -170,8 +187,12 @@ def create_lead(lead: LeadCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/{lead_id}")
-def update_lead(lead_id: int, body: LeadUpdate, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+@limiter.limit("200/minute")
+def update_lead(request: Request, lead_id: str, body: LeadUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    real_id = decode_id(lead_id)
+    if real_id is None:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = db.query(Lead).filter(Lead.id == real_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     if body.pipeline_stage is not None:

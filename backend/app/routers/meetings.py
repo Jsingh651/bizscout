@@ -6,13 +6,17 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 import requests
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.database import get_db, SessionLocal
 from app.models.lead import Lead
 from app.models.meeting import Meeting
+from app.models.user import User
+from app.dependencies import get_current_user
+from app.utils.hashids_util import decode_id, encode_id
+from app.limiter import limiter
 
 
 router = APIRouter(prefix="/meetings", tags=["meetings"])
@@ -331,7 +335,8 @@ def start_reminder_worker() -> None:
 
 
 @router.post("/", response_model=MeetingResponse)
-def create_meeting(body: MeetingCreate, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def create_meeting(request: Request, body: MeetingCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Schedule a Zoom meeting for a specific lead.
 
@@ -396,12 +401,16 @@ def create_meeting(body: MeetingCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/lead/{lead_id}", response_model=Optional[MeetingResponse])
-def next_meeting_for_lead(lead_id: int, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def next_meeting_for_lead(request: Request, lead_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Return the next upcoming meeting for a given lead, if any."""
+    real_id = decode_id(lead_id)
+    if real_id is None:
+        return None
     now = datetime.now(timezone.utc)
     meeting = (
         db.query(Meeting)
-        .filter(Meeting.lead_id == lead_id, Meeting.start_time >= now)
+        .filter(Meeting.lead_id == real_id, Meeting.start_time >= now)
         .order_by(Meeting.start_time.asc())
         .first()
     )
@@ -411,7 +420,8 @@ def next_meeting_for_lead(lead_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/upcoming")
-def upcoming_meetings(db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def upcoming_meetings(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Return all upcoming meetings (start_time >= now) with basic lead info.
     """
@@ -428,12 +438,14 @@ def upcoming_meetings(db: Session = Depends(get_db)):
         result.append({
             "id": meeting.id,
             "lead_id": meeting.lead_id,
+            "lead_hid": encode_id(meeting.lead_id) if meeting.lead_id else None,
             "prospect_name": meeting.prospect_name,
             "email": meeting.email,
             "start_time": meeting.start_time.isoformat(),
             "zoom_join_url": meeting.zoom_join_url,
             "lead": {
                 "id": lead.id,
+                "hid": encode_id(lead.id),
                 "name": lead.name,
                 "city": lead.city,
                 "phone": lead.phone,

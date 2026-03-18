@@ -1,14 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.batch import Batch
 from app.models.lead import Lead
+from app.models.user import User
+from app.dependencies import get_current_user
+from app.utils.hashids_util import encode_id, decode_id
+from app.limiter import limiter
 
 router = APIRouter(prefix="/batches", tags=["batches"])
 
 
 @router.get("/")
-def list_batches(db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def list_batches(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Return all batches with lead count and avg score."""
     batches = db.query(Batch).order_by(Batch.created_at.desc()).all()
     result = []
@@ -19,6 +24,7 @@ def list_batches(db: Session = Depends(get_db)):
         no_site   = sum(1 for l in leads if l.website_status == "NO WEBSITE")
         result.append({
             "id":         b.id,
+            "hid":        encode_id(b.id),
             "query":      b.query,
             "location":   b.location,
             "created_at": b.created_at.isoformat() if b.created_at else None,
@@ -30,15 +36,20 @@ def list_batches(db: Session = Depends(get_db)):
 
 
 @router.get("/{batch_id}/leads")
-def get_batch_leads(batch_id: int, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def get_batch_leads(request: Request, batch_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Return all leads belonging to a specific batch."""
-    batch = db.query(Batch).filter(Batch.id == batch_id).first()
+    real_id = decode_id(batch_id)
+    if real_id is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+
+    batch = db.query(Batch).filter(Batch.id == real_id).first()
     if not batch:
         raise HTTPException(status_code=404, detail="Batch not found")
 
     leads = (
         db.query(Lead)
-        .filter(Lead.batch_id == batch_id)
+        .filter(Lead.batch_id == real_id)
         .order_by(Lead.score.desc())
         .all()
     )
@@ -46,6 +57,7 @@ def get_batch_leads(batch_id: int, db: Session = Depends(get_db)):
     return {
         "batch": {
             "id":         batch.id,
+            "hid":        encode_id(batch.id),
             "query":      batch.query,
             "location":   batch.location,
             "created_at": batch.created_at.isoformat() if batch.created_at else None,
@@ -53,6 +65,7 @@ def get_batch_leads(batch_id: int, db: Session = Depends(get_db)):
         "leads": [
             {
                 "id":                 l.id,
+                "hid":                encode_id(l.id),
                 "name":               l.name,
                 "city":               l.city,
                 "phone":              l.phone,

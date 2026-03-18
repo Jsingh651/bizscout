@@ -1,8 +1,8 @@
 # FILE: backend/app/routers/auth.py
-# ACTION: REPLACE your entire existing auth.py with this
 
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Response, Cookie
+import os
+from fastapi import APIRouter, Depends, HTTPException, Response, Cookie, Request
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from app.database import get_db
@@ -11,6 +11,7 @@ from app.services.auth import (
     get_user_by_email, create_user, verify_password,
     create_access_token, decode_token, hash_password
 )
+from app.limiter import limiter
 import re
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -20,6 +21,7 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
     full_name: str = ""
+    invite_code: str = ""
 
 
 class LoginRequest(BaseModel):
@@ -58,7 +60,11 @@ def validate_password(password: str):
 
 
 @router.post("/register", response_model=LoginRegisterResponse)
-def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def register(request: Request, body: RegisterRequest, response: Response, db: Session = Depends(get_db)):
+    required_code = os.getenv("REGISTRATION_CODE", "")
+    if required_code and body.invite_code != required_code:
+        raise HTTPException(status_code=403, detail="Invalid invite code")
     errors = validate_password(body.password)
     if errors:
         raise HTTPException(status_code=400, detail=", ".join(errors))
@@ -66,23 +72,26 @@ def register(body: RegisterRequest, response: Response, db: Session = Depends(ge
         raise HTTPException(status_code=400, detail="Email already registered")
     user = create_user(db, body.email, body.password, body.full_name)
     token = create_access_token({"sub": str(user.id), "email": user.email})
+    secure = os.getenv("ENVIRONMENT", "development") == "production"
     response.set_cookie(
         key="access_token", value=token,
-        httponly=True, secure=False, samesite="lax",
+        httponly=True, secure=secure, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
     return {"user": user, "access_token": token}
 
 
 @router.post("/login", response_model=LoginRegisterResponse)
-def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def login(request: Request, body: LoginRequest, response: Response, db: Session = Depends(get_db)):
     user = get_user_by_email(db, body.email)
     if not user or not verify_password(body.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_access_token({"sub": str(user.id), "email": user.email})
+    secure = os.getenv("ENVIRONMENT", "development") == "production"
     response.set_cookie(
         key="access_token", value=token,
-        httponly=True, secure=False, samesite="lax",
+        httponly=True, secure=secure, samesite="lax",
         max_age=60 * 60 * 24 * 7,
     )
     return {"user": user, "access_token": token}

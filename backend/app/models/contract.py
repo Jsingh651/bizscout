@@ -40,6 +40,9 @@ class Contract(Base):
     # Audit trail
     client_ip           = Column(String, nullable=True)
 
+    # Contract type: 'design' (default) | 'satisfaction'
+    contract_type       = Column(String, nullable=True, default='design')
+
     # Fully signed HTML snapshot
     signed_html         = Column(Text, nullable=True)
 
@@ -49,14 +52,13 @@ class Contract(Base):
 
     # ── Stripe / Payment ──────────────────────────────────────────────────────
     payment_token           = Column(String, unique=True, index=True, nullable=True)
-    payment_plan            = Column(String, nullable=True)   # 'full' | 'split' | None
+    payment_plan            = Column(String, nullable=True)   # 'full' | None
     launch_date             = Column(DateTime(timezone=True), nullable=True)
     stripe_customer_id      = Column(String, nullable=True)
     stripe_subscription_id  = Column(String, nullable=True, index=True)
     deposit_paid            = Column(Boolean, default=False)
     final_paid              = Column(Boolean, default=False)
     invoice_sent_at         = Column(DateTime(timezone=True), nullable=True)
-    monthly_discount        = Column(Numeric, nullable=True, default=10)
 
     created_at          = Column(DateTime(timezone=True), server_default=func.now())
     updated_at          = Column(DateTime(timezone=True), onupdate=func.now())

@@ -8,12 +8,15 @@ import time
 import tempfile
 import threading
 from datetime import datetime
-from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
+from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.database import get_db, DATABASE_URL
 from app.models.lead import Lead
 from app.models.batch import Batch
+from app.models.user import User
+from app.dependencies import get_current_user
+from app.limiter import limiter
 
 router = APIRouter(prefix="/scrape", tags=["scrape"])
 
@@ -504,7 +507,8 @@ def run_scrape_job(job_id: str, query: str, location: str, no_website_only: bool
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
 @router.post("/start")
-def start_scrape(body: ScrapeRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+def start_scrape(request: Request, body: ScrapeRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     job_id = str(uuid.uuid4())
     jobs[job_id] = {
         "status": "queued",
@@ -524,7 +528,8 @@ def start_scrape(body: ScrapeRequest, background_tasks: BackgroundTasks, db: Ses
 
 
 @router.get("/status/{job_id}")
-def scrape_status(job_id: str):
+@limiter.limit("200/minute")
+def scrape_status(request: Request, job_id: str, current_user: User = Depends(get_current_user)):
     if job_id not in jobs:
         raise HTTPException(status_code=404, detail="Job not found")
     j = jobs[job_id].copy()
@@ -533,7 +538,8 @@ def scrape_status(job_id: str):
 
 
 @router.post("/stop/{job_id}")
-def stop_scrape(job_id: str):
+@limiter.limit("200/minute")
+def stop_scrape(request: Request, job_id: str, current_user: User = Depends(get_current_user)):
     if job_id not in jobs:
         raise HTTPException(status_code=404, detail="Job not found")
     if jobs[job_id].get("status") not in ("queued", "running"):

@@ -19,6 +19,7 @@ from app.database import get_db
 from app.models.user import User
 from app.models.lead import Lead
 from app.dependencies import get_current_user
+from app.utils.hashids_util import encode_id, decode_id
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
@@ -104,29 +105,142 @@ def _send_email(to: str, subject: str, html: str, pdf_bytes: Optional[bytes] = N
 
 
 def _client_signing_email(designer_name: str, client_name: str, sign_url: str) -> str:
-    return f"""
-<!DOCTYPE html><html><body style="margin:0;padding:0;font-family:-apple-system,sans-serif;background:#fff;color:#1a1a1a;">
-<div style="max-width:560px;margin:0 auto;padding:40px 24px;">
-  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
-    <div style="padding:24px;background:#0f0f14;text-align:center;">
-      <span style="font-size:18px;font-weight:800;color:#fff;">Web Design Agreement</span>
-    </div>
-    <div style="padding:28px 24px;">
-      <p style="margin:0 0 16px;font-size:16px;color:#111;">Hi {client_name or 'there'},</p>
-      <p style="margin:0 0 16px;font-size:14px;color:#4b5563;line-height:1.6;">
-        <strong>{designer_name}</strong> has sent you a web design agreement to review and sign.
-      </p>
-      <div style="text-align:center;margin:28px 0;">
-        <a href="{sign_url}" style="background:#8b5cf6;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:9px;display:inline-block;">
-          Review &amp; Sign Contract
-        </a>
-      </div>
-      <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">
-        <a href="{sign_url}" style="color:#8b5cf6;word-break:break-all;">{sign_url}</a>
-      </p>
-    </div>
-  </div>
-</div>
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Web Design Agreement — Action Required</title></head>
+<body style="margin:0;padding:0;background:#f4f4f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f7;padding:40px 16px;">
+<tr><td align="center">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+
+  <!-- Logo / Brand bar -->
+  <tr><td style="padding-bottom:24px;text-align:center;">
+    <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
+      <tr>
+        <td style="background:#1a1a2e;border-radius:10px;width:32px;height:32px;text-align:center;vertical-align:middle;">
+          <span style="font-size:15px;font-weight:900;color:#fff;line-height:32px;display:block;">✦</span>
+        </td>
+        <td style="padding-left:10px;font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.3px;vertical-align:middle;">{designer_name}</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- Main card -->
+  <tr><td style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.04);">
+
+    <!-- Accent top bar -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td style="height:4px;background:linear-gradient(90deg,#7c3aed,#4f46e5);font-size:0;line-height:0;">&nbsp;</td>
+      </tr>
+    </table>
+
+    <!-- Header -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="padding:32px 36px 24px;border-bottom:1px solid #f0f0f5;">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="background:#ede9fe;border-radius:10px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+              <span style="font-size:20px;line-height:44px;display:block;">📄</span>
+            </td>
+            <td style="padding-left:14px;vertical-align:middle;">
+              <div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;">Action Required</div>
+              <div style="font-size:20px;font-weight:800;color:#111827;letter-spacing:-0.5px;line-height:1.2;">Web Design Agreement</div>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <!-- Body -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="padding:28px 36px;">
+
+        <p style="margin:0 0 18px;font-size:16px;color:#111827;font-weight:600;">Hi {client_name or 'there'},</p>
+
+        <p style="margin:0 0 20px;font-size:14px;color:#4b5563;line-height:1.7;">
+          <strong style="color:#1f2937;">{designer_name}</strong> has prepared a Web Design &amp; Development Agreement for your new website project. Please review the contract carefully and add your electronic signature to get started.
+        </p>
+
+        <!-- Info box -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:24px;">
+          <tr><td style="padding:16px 20px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding:6px 0;border-bottom:1px solid #f3f4f6;">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="font-size:12px;color:#6b7280;">Document</td>
+                      <td align="right" style="font-size:12px;font-weight:600;color:#111827;">Web Design &amp; Development Agreement</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;border-bottom:1px solid #f3f4f6;">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="font-size:12px;color:#6b7280;">From</td>
+                      <td align="right" style="font-size:12px;font-weight:600;color:#111827;">{designer_name}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="font-size:12px;color:#6b7280;">For</td>
+                      <td align="right" style="font-size:12px;font-weight:600;color:#111827;">{client_name or '—'}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td></tr>
+        </table>
+
+        <!-- CTA Button -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+          <tr><td align="center">
+            <a href="{sign_url}" style="display:inline-block;background:#7c3aed;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 40px;border-radius:10px;letter-spacing:-0.2px;">
+              Review &amp; Sign Agreement →
+            </a>
+          </td></tr>
+        </table>
+
+        <p style="margin:0 0 6px;font-size:12px;color:#9ca3af;text-align:center;">Or paste this link in your browser:</p>
+        <p style="margin:0;font-size:11px;color:#7c3aed;text-align:center;word-break:break-all;">
+          <a href="{sign_url}" style="color:#7c3aed;text-decoration:none;">{sign_url}</a>
+        </p>
+
+      </td></tr>
+    </table>
+
+    <!-- Footer strip -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="padding:18px 36px;background:#fafafa;border-top:1px solid #f0f0f5;">
+        <p style="margin:0;font-size:11px;color:#9ca3af;line-height:1.6;text-align:center;">
+          This agreement was sent by <strong style="color:#6b7280;">{designer_name}</strong> via BizScout.
+          If you did not expect this email, you can safely ignore it.
+        </p>
+      </td></tr>
+    </table>
+
+  </td></tr>
+  <!-- /Main card -->
+
+  <!-- Bottom note -->
+  <tr><td style="padding:20px 0 0;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#9ca3af;">Secured with 256-bit encryption &nbsp;·&nbsp; BizScout</p>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+
 </body></html>"""
 
 
@@ -274,14 +388,17 @@ def create_contract(
 
 @router.get("/by-lead/{lead_id}")
 def get_contracts_for_lead(
-    lead_id: int,
+    lead_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    real_id = decode_id(lead_id)
+    if real_id is None:
+        return []
     Contract = _get_contract_model()
     contracts = (
         db.query(Contract)
-        .filter(Contract.lead_id == lead_id)
+        .filter(Contract.lead_id == real_id)
         .order_by(Contract.created_at.desc())
         .all()
     )
@@ -512,6 +629,7 @@ def _serialize(c):
     return {
         "id":                     c.id,
         "lead_id":                c.lead_id,
+        "lead_hid":               encode_id(c.lead_id) if c.lead_id else None,
         "designer_name":          c.designer_name,
         "designer_email":         c.designer_email,
         "client_name":            c.client_name,

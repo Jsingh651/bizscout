@@ -7,13 +7,7 @@ import {
 } from 'lucide-react'
 import { generateContractPDF } from '../utils/pdfUtils'
 import { buildContractHTML } from '../utils/contractTemplate'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-
-function getAuthHeaders() {
-  const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+import { API, getAuthHeaders } from '../utils/api'
 
 async function downloadContract(contract) {
   const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
@@ -48,7 +42,9 @@ async function downloadContract(contract) {
 }
 
 function PreviewModal({ contract, onClose }) {
-  const html = buildContractHTML(contract, contract.designer_sig_data || null, contract.client_sig_data || null)
+  const html = contract.contract_type === 'satisfaction'
+    ? (contract.signed_html || '<p>No content</p>')
+    : buildContractHTML(contract, contract.designer_sig_data || null, contract.client_sig_data || null)
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
   const url  = URL.createObjectURL(blob)
   useEffect(() => () => URL.revokeObjectURL(url), [])
@@ -137,7 +133,10 @@ function ContractRow({ contract, leadId }) {
           </div>
           <div style={{ flex:1,minWidth:0 }}>
             <div style={{ fontSize:13,fontWeight:600,color:'#e4e4e7',marginBottom:2 }}>
-              {contract.client_name || 'Contract'} — {contract.setup_price ? `$${Number(contract.setup_price).toLocaleString()}` : '—'} setup / {contract.monthly_price ? `$${Number(contract.monthly_price).toLocaleString()}/mo` : '—'}
+              {contract.contract_type === 'satisfaction'
+                ? `${contract.client_name || 'Client'} — Client Satisfaction Agreement`
+                : `${contract.client_name || 'Contract'} — ${contract.setup_price ? `$${Number(contract.setup_price).toLocaleString()}` : '—'} setup / ${contract.monthly_price ? `$${Number(contract.monthly_price).toLocaleString()}/mo` : '—'}`
+              }
             </div>
             <div style={{ fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace" }}>{date}</div>
           </div>

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CalendarClock, Phone, MapPin, User, Video, ArrowRight } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import AppNav from '../components/AppNav'
+import { API } from '../utils/api'
 
 export default function Meetings() {
   const navigate = useNavigate()
@@ -46,23 +45,7 @@ export default function Meetings() {
         .nav-link.active { color:#fafafa;font-weight:600; }
       `}</style>
 
-      {/* NAV */}
-      <nav style={{ position:'sticky',top:0,zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0 48px',height:64,background:'rgba(9,9,15,0.82)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display:'flex',alignItems:'center',gap:32 }}>
-          <div style={{ display:'flex',alignItems:'center',gap:10,cursor:'pointer' }} onClick={() => navigate('/')}>
-            <div style={{ width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#8b5cf6,#6366f1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.7rem',fontWeight:900,color:'#fff' }}>B</div>
-            <span style={{ fontWeight:800,fontSize:'1rem',letterSpacing:'-0.5px',color:'#f4f4f5' }}>BizScout</span>
-          </div>
-          <div style={{ display:'flex',gap:24 }}>
-            <button className="nav-link" onClick={() => navigate('/leads')}>Leads</button>
-            <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
-            <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
-            <button className="nav-link" onClick={() => navigate('/analytics')}>Analytics</button>
-            <button className="nav-link active">Meetings</button>
-          </div>
-        </div>
-        <NavbarDropdown />
-      </nav>
+      <AppNav />
 
       <div style={{ position:'relative',zIndex:1,maxWidth:960,margin:'0 auto',padding:'40px 48px 80px' }}>
         {/* Header */}
@@ -103,7 +86,7 @@ export default function Meetings() {
                     cursor:'pointer',
                     transition:'background 0.15s, border-color 0.15s',
                   }}
-                  onClick={() => navigate(`/leads/${m.lead_id}`)}
+                  onClick={() => navigate(`/leads/${m.lead_hid || m.lead_id}`)}
                   onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(139,92,246,0.3)' }}
                   onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.06)' }}
                 >
@@ -162,7 +145,7 @@ export default function Meetings() {
                       </a>
                     )}
                     <button
-                      onClick={e => { e.stopPropagation(); navigate(`/leads/${m.lead_id}`) }}
+                      onClick={e => { e.stopPropagation(); navigate(`/leads/${m.lead_hid || m.lead_id}`) }}
                       style={{
                         display:'inline-flex',
                         alignItems:'center',

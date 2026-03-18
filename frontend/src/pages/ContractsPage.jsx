@@ -4,16 +4,10 @@ import {
   FileText, CheckCircle2, Clock, PenLine, Send,
   Download, Search, DollarSign, ChevronRight, X
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
+import AppNav from '../components/AppNav'
 import { buildContractHTML } from '../utils/contractTemplate'
 import { generateContractPDF } from '../utils/pdfUtils'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-
-function getAuthHeaders() {
-  const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+import { API, getAuthHeaders } from '../utils/api'
 
 async function downloadContract(contract) {
   const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
@@ -172,24 +166,7 @@ export default function ContractsPage() {
       <ParticleCanvas/>
       <div style={{ position:'fixed',inset:0,zIndex:0,pointerEvents:'none',opacity:0.3,backgroundImage:'linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px)',backgroundSize:'72px 72px',maskImage:'radial-gradient(ellipse 100% 55% at 50% 0%,black 0%,transparent 100%)' }}/>
 
-      {/* NAV */}
-      <nav style={{ position:'sticky',top:0,zIndex:100,display:'flex',justifyContent:'space-between',alignItems:'center',padding:'0 48px',height:64,background:'rgba(9,9,15,0.82)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display:'flex',alignItems:'center',gap:32 }}>
-          <div style={{ display:'flex',alignItems:'center',gap:10,cursor:'pointer' }} onClick={() => navigate('/')}>
-            <div style={{ width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#8b5cf6,#6366f1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.7rem',fontWeight:900,color:'#fff' }}>B</div>
-            <span style={{ fontWeight:800,fontSize:'1rem',letterSpacing:'-0.5px',color:'#f4f4f5' }}>BizScout</span>
-          </div>
-          <div style={{ display:'flex',gap:24 }}>
-            <button className="nav-link" onClick={() => navigate('/leads')}>Leads</button>
-            <button className="nav-link" onClick={() => navigate('/batches')}>Batches</button>
-            <button className="nav-link" onClick={() => navigate('/pipeline')}>Pipeline</button>
-            <button className="nav-link" onClick={() => navigate('/analytics')}>Analytics</button>
-            <button className="nav-link" onClick={() => navigate('/meetings')}>Meetings</button>
-            <button className="nav-link active">Contracts</button>
-          </div>
-        </div>
-        <NavbarDropdown/>
-      </nav>
+      <AppNav/>
 
       <div style={{ position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px' }}>
 
@@ -276,7 +253,7 @@ export default function ContractsPage() {
               return (
                 <div key={c.id}
                   style={{ display:'grid',gridTemplateColumns:'2fr 1.2fr 1fr 1fr 0.8fr 1fr',alignItems:'center',gap:16,padding:'14px 20px',borderBottom:i<filtered.length-1?'1px solid rgba(255,255,255,0.04)':'none',transition:'background 0.15s',cursor:'pointer' }}
-                  onClick={() => navigate(`/leads/${c.lead_id}`)}
+                  onClick={() => navigate(`/leads/${c.lead_hid || c.lead_id}`)}
                   onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background='transparent'}>
 
@@ -339,7 +316,7 @@ export default function ContractsPage() {
                     {/* View lead */}
                     <button
                       title="View lead"
-                      onClick={() => navigate(`/leads/${c.lead_id}`)}
+                      onClick={() => navigate(`/leads/${c.lead_hid || c.lead_id}`)}
                       style={{ display:'flex',alignItems:'center',justifyContent:'center',width:28,height:28,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:7,color:'#b8c2d4',cursor:'pointer',transition:'all 0.15s' }}
                       onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.color='#e4e4e7' }}
                       onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.color='#b8c2d4' }}>

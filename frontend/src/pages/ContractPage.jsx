@@ -6,16 +6,10 @@ import {
   User, Mail, DollarSign, Calendar, Layout,
   CreditCard, Check, Loader2
 } from 'lucide-react'
-import NavbarDropdown from '../components/NavbarDropdown'
+import AppNav from '../components/AppNav'
 import { generateContractPDF } from '../utils/pdfUtils'
 import { buildContractHTML } from '../utils/contractTemplate'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-
-function getAuthHeaders() {
-  const token = sessionStorage.getItem('access_token') || localStorage.getItem('access_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+import { API, getAuthHeaders } from '../utils/api'
 
 // ─── Signature Canvas ─────────────────────────────────────────────────────────
 function SignatureCanvas({ onSave, onCancel, label = 'Draw your signature' }) {
@@ -210,7 +204,7 @@ export default function ContractPage() {
         headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         credentials: 'include',
         body: JSON.stringify({
-          lead_id:       parseInt(leadId),
+          lead_id:       lead ? lead.id : parseInt(leadId),
           designer_name: fields.designerName,
           designer_email:fields.designerEmail,
           client_email:  fields.clientEmail,
@@ -294,23 +288,7 @@ export default function ContractPage() {
         .nav-link:hover{color:#c4c4cc;}
       `}</style>
 
-      {/* Nav */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 48px', height: 64, background: 'rgba(9,9,15,0.88)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button onClick={() => navigate(`/leads/${leadId}`)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '6px 12px', color: '#c4c4cc', fontSize: 13, cursor: 'pointer', fontFamily: "'Outfit',sans-serif" }}>
-            <ArrowLeft size={13} /> Back to Lead
-          </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#8b5cf6,#6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 900, color: '#fff' }}>B</div>
-            <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.5px', color: '#f4f4f5' }}>BizScout</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <FileText size={14} color="#8b5cf6" />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#c4b5fd' }}>{lead?.name} — Contract</span>
-        </div>
-        <NavbarDropdown />
-      </nav>
+      <AppNav />
 
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 48px 80px' }}>
 

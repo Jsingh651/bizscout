@@ -3,8 +3,7 @@ import { useParams } from 'react-router-dom'
 import { PenLine, Check, RotateCcw, CheckCircle2, AlertCircle, Loader2, Download } from 'lucide-react'
 import { buildContractHTML } from '../utils/contractTemplate'
 import { generateContractPDF } from '../utils/pdfUtils'
-
-const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+import { API } from '../utils/api'
 
 // PDF generation handled by pdfUtils
 

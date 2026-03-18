@@ -282,7 +282,7 @@ export default function Analytics() {
 
       <AppNav />
 
-      <div style={{ position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px' }}>
+      <div className="page-content" style={{ position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px' }}>
 
         {/* Header */}
         <div style={{ marginBottom:36, animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
@@ -303,7 +303,7 @@ export default function Analytics() {
             {/* ── Revenue stat cards ──────────────────────────────────────── */}
             <div style={{ marginBottom:10,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
               <div style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:10,paddingLeft:2 }}>Revenue</div>
-              <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24 }}>
+              <div className="stat-grid-4" style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24 }}>
                 <StatCard icon={DollarSign}  label="Total Setup Collected"  value={fmt(totalSetup)}    sub={`${signedContracts.length} signed contracts`} accent="#4ade80" delay={0.08} />
                 <StatCard icon={TrendingUp}  label="Monthly Recurring (MRR)" value={fmt(mrr)}          sub="active clients/mo"                             accent="#8b5cf6" delay={0.12} />
                 <StatCard icon={BarChart2}   label="Est. Annual (ARR)"       value={fmt(arr)}          sub="MRR × 12"                                      accent="#a78bfa" delay={0.16} />
@@ -314,7 +314,7 @@ export default function Analytics() {
             {/* ── Lead stat cards ─────────────────────────────────────────── */}
             <div style={{ marginBottom:10,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.06s both' }}>
               <div style={{ fontSize:10,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace",textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:10,paddingLeft:2 }}>Lead Intelligence</div>
-              <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24 }}>
+              <div className="stat-grid-4" style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24 }}>
                 <StatCard icon={Users}     label="Total Leads"   value={totalLeads}          sub={`${batches.length} batches`}      accent="#8b5cf6" delay={0.22} />
                 <StatCard icon={Target}    label="No Website"    value={noSiteLeads.length}  sub={`${noSitePct}% of all leads`}     accent="#f87171" delay={0.26} />
                 <StatCard icon={BarChart2} label="Avg Score"     value={avgScore}            sub="across all leads"                 accent="#4ade80" delay={0.30} />
@@ -323,7 +323,7 @@ export default function Analytics() {
             </div>
 
             {/* ── Monthly revenue chart + Recent contracts ─────────────────── */}
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
+            <div className="two-col" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
 
               <div className="card" style={{ animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.36s both' }}>
                 <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(74,222,128,0.5),transparent)' }} />
@@ -355,7 +355,7 @@ export default function Analytics() {
             </div>
 
             {/* ── Pipeline funnel + Score distribution ────────────────────── */}
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
+            <div className="two-col" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
 
               <div className="card" style={{ animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.44s both' }}>
                 <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent)' }} />
@@ -397,7 +397,7 @@ export default function Analytics() {
             </div>
 
             {/* ── Top niches + Opportunity niches ─────────────────────────── */}
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
+            <div className="two-col" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16 }}>
               <div className="card" style={{ animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.52s both' }}>
                 <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent)' }} />
                 <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:20 }}>
@@ -433,7 +433,7 @@ export default function Analytics() {
             </div>
 
             {/* ── City breakdown + Recent batches ─────────────────────────── */}
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16 }}>
+            <div className="two-col" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16 }}>
               <div className="card" style={{ animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.58s both' }}>
                 <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(251,146,60,0.5),transparent)' }} />
                 <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:20 }}>

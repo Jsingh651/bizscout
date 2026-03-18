@@ -157,7 +157,7 @@ export default function PaymentsPage() {
 
       <AppNav />
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: '48px 48px 80px' }}>
+      <div className="page-content" style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: '48px 48px 80px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: 32, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
@@ -181,7 +181,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+        <div className="stat-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
           <StatCard icon={DollarSign}   label="Total Collected"   value={fmt(totalCollected)} sub={`${fullyPaid.length} fully paid · ${building.length} building`} accent="#4ade80" highlight />
           <StatCard icon={TrendingUp}   label="Monthly Recurring" value={fmt(mrr)}            sub={`${fullyPaid.length} active subscriptions`}                      accent="#8b5cf6" />
           <StatCard icon={BarChart2}    label="Est. Annual (ARR)" value={fmt(mrr * 12)}       sub="MRR × 12"                                                         accent="#a78bfa" />
@@ -189,7 +189,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Secondary stat tiles */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.14s both' }}>
+        <div className="stat-grid-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.14s both' }}>
           {[
             { label: 'Fully Paid', value: fullyPaid.length,  color: '#4ade80', icon: CheckCircle2,  filterKey: 'Fully Paid' },
             { label: 'Building',   value: building.length,   color: '#fb923c', icon: Clock,         filterKey: 'Building' },
@@ -211,7 +211,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Search + filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.18s both' }}>
+        <div className="search-filter-bar" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.18s both' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, background: 'rgba(255,255,255,0.03)', border: `1px solid ${focused ? 'rgba(139,92,246,0.5)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 9, padding: '0 14px', height: 38, transition: 'border-color 0.2s' }}>
             <Search size={13} color="#b8c2d4" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by client name or email..."
@@ -240,7 +240,8 @@ export default function PaymentsPage() {
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', paddingTop: 60, fontSize: 13, color: '#b8c2d4', fontFamily: "'JetBrains Mono',monospace" }}>— No results —</div>
         ) : (
-          <div style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden', position: 'relative', animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.22s both' }}>
+          <div className="table-scroll" style={{ animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.22s both' }}>
+          <div style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden', position: 'relative', minWidth: 700 }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(74,222,128,0.5),transparent)' }} />
 
             {/* Header row */}
@@ -360,6 +361,7 @@ export default function PaymentsPage() {
                 MRR: {fmt(mrr)}/mo · ARR: {fmt(mrr * 12)}/yr
               </span>
             </div>
+          </div>
           </div>
         )}
       </div>

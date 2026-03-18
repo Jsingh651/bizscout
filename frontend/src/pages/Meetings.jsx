@@ -47,7 +47,7 @@ export default function Meetings() {
 
       <AppNav />
 
-      <div style={{ position:'relative',zIndex:1,maxWidth:960,margin:'0 auto',padding:'40px 48px 80px' }}>
+      <div className="page-content" style={{ position:'relative',zIndex:1,maxWidth:960,margin:'0 auto',padding:'40px 48px 80px' }}>
         {/* Header */}
         <div style={{ marginBottom:28,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
           <div style={{ display:'inline-flex',alignItems:'center',gap:7,background:'rgba(139,92,246,0.08)',border:'1px solid rgba(139,92,246,0.18)',borderRadius:6,padding:'4px 12px',marginBottom:14 }}>

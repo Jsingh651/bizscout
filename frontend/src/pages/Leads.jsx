@@ -608,7 +608,7 @@ export default function Leads() {
 
       <AppNav />
 
-      <div style={{ position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px',display:'grid',gridTemplateColumns:'1fr 300px',gap:32,alignItems:'start' }}>
+      <div className="page-content leads-layout" style={{ position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px',display:'grid',gridTemplateColumns:'1fr 300px',gap:32,alignItems:'start' }}>
         {/* LEFT */}
         <div>
           {/* Header */}

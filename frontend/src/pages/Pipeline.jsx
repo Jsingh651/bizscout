@@ -302,7 +302,7 @@ export default function Pipeline() {
 
       <AppNav />
 
-      <div style={{ position:'relative',zIndex:1,padding:'40px 48px 80px' }}>
+      <div className="page-content" style={{ position:'relative',zIndex:1,padding:'40px 48px 80px' }}>
         {/* Header */}
         <div style={{ marginBottom:28,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>
           <div style={{ display:'inline-flex',alignItems:'center',gap:7,background:'rgba(139,92,246,0.08)',border:'1px solid rgba(139,92,246,0.18)',borderRadius:6,padding:'4px 12px',marginBottom:14 }}>
@@ -337,7 +337,7 @@ export default function Pipeline() {
             </button>
           </div>
         ) : (
-          <div style={{ display:'flex',gap:12,overflowX:'auto',paddingBottom:20,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}>
+          <div className="kanban-board" style={{ display:'flex',gap:12,overflowX:'auto',paddingBottom:20,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both' }}>
             {STAGES.map(stage=>(
               <KanbanColumn
                 key={stage}

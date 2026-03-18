@@ -618,7 +618,7 @@ export default function Batches() {
 
             <AppNav/>
 
-            <div style={{position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px'}}>
+            <div className="page-content" style={{position:'relative',zIndex:1,maxWidth:1280,margin:'0 auto',padding:'48px 48px 80px'}}>
                 {activeBatch ? (
                     loadingDetail ? (
                         <div style={{display:'flex',justifyContent:'center',paddingTop:80}}>

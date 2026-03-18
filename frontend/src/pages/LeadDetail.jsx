@@ -637,8 +637,8 @@ export default function LeadDetail() {
         setDemoEmailError('')
         setDemoLoading(true)
         setDemoStatus(null)
-        fetch(`${API}/meetings`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        fetch(`${API}/meetings/`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include',
             body: JSON.stringify({ lead_id: lead.id, prospect_name: demoName.trim(), email: demoEmail, start_time: demoTime.toISOString(), duration_minutes: 30 }),
         })
             .then(r => r.json().then(data => ({ ok: r.ok, data })))

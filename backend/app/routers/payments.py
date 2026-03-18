@@ -12,10 +12,8 @@ Payment flow:
 import os
 import secrets
 import stripe
-import smtplib
 from datetime import datetime, timezone, timedelta
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from app.utils.email import send_email as _send_resend
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Header
@@ -118,35 +116,8 @@ def _serialize(p) -> dict:
 
 # ─── Email ────────────────────────────────────────────────────────────────────
 
-def _smtp_cfg():
-    return {
-        "host":     os.getenv("SMTP_HOST"),
-        "port":     int(os.getenv("SMTP_PORT", "587")),
-        "user":     os.getenv("SMTP_USER"),
-        "password": os.getenv("SMTP_PASSWORD"),
-        "from":     os.getenv("FROM_EMAIL") or os.getenv("SMTP_USER"),
-    }
-
-
 def _send_raw(to: str, subject: str, html: str) -> bool:
-    cfg = _smtp_cfg()
-    if not cfg["host"] or not cfg["user"] or not cfg["password"]:
-        print("[payments] SMTP not configured — skipping email")
-        return False
-    msg = MIMEMultipart("mixed")
-    msg["Subject"] = subject
-    msg["From"]    = cfg["from"]
-    msg["To"]      = to
-    msg.attach(MIMEText(html, "html"))
-    try:
-        with smtplib.SMTP(cfg["host"], cfg["port"]) as server:
-            server.starttls()
-            server.login(cfg["user"], cfg["password"])
-            server.sendmail(cfg["from"], [to], msg.as_string())
-        return True
-    except Exception as e:
-        print(f"[payments] email error: {e}")
-        return False
+    return _send_resend(to, subject, html)
 
 
 def _email_shell(accentColor: str, accentLight: str, badgeText: str, icon: str, subject_line: str, designer_name: str, client_name: str, body_rows: str, cta_url: str, cta_label: str, footer_note: str) -> str:

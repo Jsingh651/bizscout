@@ -1,8 +1,6 @@
 import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from datetime import datetime, timezone, timedelta
+from app.utils.email import send_email as _send_resend
 from typing import Optional
 
 import requests
@@ -216,61 +214,21 @@ def _invite_email_html(prospect_name: str, meeting_topic: str, start_time: datet
 
 
 def _send_invite_email(to_email: str, prospect_name: str, meeting_topic: str, start_time: datetime, join_url: str) -> None:
-    """Send the Zoom invite email via SMTP. If SMTP is not configured, does nothing."""
-    host = os.getenv("SMTP_HOST")
-    user = os.getenv("SMTP_USER")
-    password = os.getenv("SMTP_PASSWORD")
-    from_email = os.getenv("FROM_EMAIL") or user
-    port = int(os.getenv("SMTP_PORT", "587"))
-
-    if not host or not user or not password or not join_url:
+    """Send the Zoom invite email via Resend."""
+    if not join_url:
         return
-
     html = _invite_email_html(prospect_name, meeting_topic, start_time, join_url)
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Your demo meeting: {meeting_topic}"
-    msg["From"] = from_email
-    msg["To"] = to_email
-    msg.attach(MIMEText(html, "html"))
-
-    try:
-        with smtplib.SMTP(host, port) as server:
-            server.starttls()
-            server.login(user, password)
-            server.sendmail(from_email, [to_email], msg.as_string())
-    except Exception:
-        pass
+    _send_resend(to_email, f"Your demo meeting: {meeting_topic}", html)
 
 
 def _send_reminder_email(to_email: str, prospect_name: str, meeting_topic: str, start_time: datetime, join_url: str) -> bool:
     """Send a 10-minute reminder email. Returns True if sent, False otherwise."""
-    host = os.getenv("SMTP_HOST")
-    user = os.getenv("SMTP_USER")
-    password = os.getenv("SMTP_PASSWORD")
-    if not host or not user or not password or not join_url or not to_email:
+    if not join_url or not to_email:
         return False
-    from_email = os.getenv("FROM_EMAIL") or user
-    port = int(os.getenv("SMTP_PORT", "587"))
-
-    # Ensure start_time is timezone-aware for template formatting
     if start_time.tzinfo is None:
         start_time = start_time.replace(tzinfo=timezone.utc)
     html = _invite_email_html(prospect_name, meeting_topic, start_time, join_url)
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Reminder: your demo starts soon – {meeting_topic}"
-    msg["From"] = from_email
-    msg["To"] = to_email
-    msg.attach(MIMEText(html, "html"))
-
-    try:
-        with smtplib.SMTP(host, port) as server:
-            server.starttls()
-            server.login(user, password)
-            server.sendmail(from_email, [to_email], msg.as_string())
-        return True
-    except Exception:
-        return False
+    return _send_resend(to_email, f"Reminder: your demo starts soon – {meeting_topic}", html)
 
 
 def start_reminder_worker() -> None:

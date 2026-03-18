@@ -1,13 +1,9 @@
 import os
 import re
 import secrets
-import smtplib
 import base64
 import requests as http_requests
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+from app.utils.email import send_email as _send_resend
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -67,41 +63,9 @@ def _supabase_upload(path: str, data: bytes, content_type: str = "application/pd
 
 # ─── Email helpers ─────────────────────────────────────────────────────────────
 
-def _smtp_cfg():
-    return {
-        "host":       os.getenv("SMTP_HOST"),
-        "port":       int(os.getenv("SMTP_PORT", "587")),
-        "user":       os.getenv("SMTP_USER"),
-        "password":   os.getenv("SMTP_PASSWORD"),
-        "from_email": os.getenv("FROM_EMAIL") or os.getenv("SMTP_USER"),
-    }
-
 
 def _send_email(to: str, subject: str, html: str, pdf_bytes: Optional[bytes] = None, pdf_filename: str = "contract.pdf"):
-    cfg = _smtp_cfg()
-    if not cfg["host"] or not cfg["user"] or not cfg["password"]:
-        print("[contracts] SMTP not configured — skipping email")
-        return False
-    msg = MIMEMultipart("mixed")
-    msg["Subject"] = subject
-    msg["From"]    = cfg["from_email"]
-    msg["To"]      = to
-    msg.attach(MIMEText(html, "html"))
-    if pdf_bytes:
-        part = MIMEBase("application", "pdf", name=pdf_filename)
-        part.set_payload(pdf_bytes)
-        encoders.encode_base64(part)
-        part.add_header("Content-Disposition", "attachment", filename=pdf_filename)
-        msg.attach(part)
-    try:
-        with smtplib.SMTP(cfg["host"], cfg["port"]) as server:
-            server.starttls()
-            server.login(cfg["user"], cfg["password"])
-            server.sendmail(cfg["from_email"], [to], msg.as_string())
-        return True
-    except Exception as e:
-        print(f"[contracts] email error: {e}")
-        return False
+    return _send_resend(to, subject, html)
 
 
 def _client_signing_email(designer_name: str, client_name: str, sign_url: str) -> str:

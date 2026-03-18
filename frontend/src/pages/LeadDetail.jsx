@@ -14,7 +14,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import '../styles/datepicker-overrides.css'
 import ReactDOM from 'react-dom'
-import { API } from '../utils/api'
+import { API, getAuthHeaders } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_STYLE = {
@@ -163,7 +163,7 @@ function CallLog({ lead, onOutcomeSet }) {
     const setOutcome = async (key) => {
         setSaving(key)
         await fetch(`${API}/leads/${lead.hid || lead.id}`, {
-            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+            method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include',
             body: JSON.stringify({ call_outcome: key }),
         }).catch(() => {})
         onOutcomeSet(key)
@@ -214,7 +214,7 @@ function NotesEditor({ lead, onSave }) {
     const save = async () => {
         setSaving(true)
         await fetch(`${API}/leads/${lead.hid || lead.id}`, {
-            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+            method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include',
             body: JSON.stringify({ notes: text }),
         }).catch(() => {})
         onSave(text)
@@ -593,7 +593,7 @@ export default function LeadDetail() {
     }
 
     useEffect(() => {
-        fetch(`${API}/leads/${id}`, { credentials: 'include' })
+        fetch(`${API}/leads/${id}`, { credentials: 'include', headers: getAuthHeaders() })
             .then(r => { if (!r.ok) throw new Error(); return r.json() })
             .then(data => { setLead(data); setLoading(false) })
             .catch(() => { setNotFound(true); setLoading(false) })
@@ -601,7 +601,7 @@ export default function LeadDetail() {
 
     useEffect(() => {
         if (!id) return
-        fetch(`${API}/meetings/lead/${id}`, { credentials: 'include' })
+        fetch(`${API}/meetings/lead/${id}`, { credentials: 'include', headers: getAuthHeaders() })
             .then(r => r.ok ? r.json() : null)
             .then(data => setUpcomingMeeting(data || null))
             .catch(() => {})
@@ -626,7 +626,7 @@ export default function LeadDetail() {
 
     const handleStageChange = stage => {
         setLead(prev => ({ ...prev, pipeline_stage: stage }))
-        fetch(`${API}/leads/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ pipeline_stage: stage }) }).catch(() => {})
+        fetch(`${API}/leads/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include', body: JSON.stringify({ pipeline_stage: stage }) }).catch(() => {})
     }
     const handleNotesSave  = notes        => setLead(prev => ({ ...prev, notes }))
     const handleOutcomeSet = call_outcome => setLead(prev => ({ ...prev, call_outcome, call_outcome_at: new Date().toISOString() }))

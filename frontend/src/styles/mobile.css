@@ -155,6 +155,15 @@
 }
 
 /* ── Search + filter bar wrapping on mobile ──────────────────────────────── */
+/* ── Scan form button full width on mobile ────────────────────────────────── */
+@media (max-width: 640px) {
+  .scan-btn { width: 100% !important; justify-content: center !important; }
+  /* Remove sticky from leads sidebar on mobile */
+  .leads-sidebar-sticky { position: static !important; }
+  /* Stack scan form action row */
+  .scan-action-row { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+}
+
 @media (max-width: 640px) {
   /* Stack search + filters vertically */
   .search-filter-bar {

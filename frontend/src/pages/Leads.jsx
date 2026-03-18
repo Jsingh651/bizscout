@@ -419,7 +419,8 @@ function BatchResults({ batchId, onClose }) {
           </button>
         </div>
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, overflow: 'hidden', position: 'relative' }}>
+      <div className="table-scroll">
+      <div style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, overflow: 'hidden', position: 'relative', minWidth: 580 }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(74,222,128,0.4),transparent)' }} />
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.2fr 1.2fr 1fr', gap: 16, padding: '10px 18px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
           {['Business','Website','Score','Status','Phone'].map(h => (
@@ -460,6 +461,7 @@ function BatchResults({ batchId, onClose }) {
             view all batches <ArrowRight size={10} />
           </button>
         </div>
+      </div>
       </div>
     </div>
   )
@@ -647,7 +649,7 @@ export default function Leads() {
                     <div style={{ fontSize:13,color:'#b8c2d4' }}>Type to search any city or business niche</div>
                   </div>
                   <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
-                    <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12 }}>
+                    <div className="stat-grid-2" style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12 }}>
                       <div>
                         <div style={{ fontSize:10,fontWeight:700,color:'#b8c2d4',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'JetBrains Mono',monospace",marginBottom:7 }}>Business Niche</div>
                         <Select options={NICHES_RAW} styles={selectStyles} placeholder="e.g. Food Trucks, Plumbing..." value={formQuery} onChange={setFormQuery} isClearable isSearchable filterOption={(opt, input) => input ? opt.label.toLowerCase().includes(input.toLowerCase()) : true} noOptionsMessage={() => 'No matching niches'} menuPortalTarget={document.body} menuPosition="fixed" />
@@ -657,7 +659,7 @@ export default function Leads() {
                         <Select options={CITIES_RAW} styles={selectStyles} placeholder="e.g. Sacramento, CA..." value={formLocation} onChange={setFormLocation} isClearable isSearchable filterOption={(opt, input) => input ? opt.label.toLowerCase().includes(input.toLowerCase()) : true} noOptionsMessage={() => 'No matching cities'} menuPortalTarget={document.body} menuPosition="fixed" />
                       </div>
                     </div>
-                    <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between' }}>
+                    <div className="scan-action-row" style={{ display:'flex',alignItems:'center',justifyContent:'space-between' }}>
                       <label style={{ display:'flex',alignItems:'center',gap:8,cursor:'pointer',userSelect:'none',fontSize:13,color:'#c4c4cc' }}>
                         <input type="checkbox" checked={noWebOnly} onChange={e => setNoWebOnly(e.target.checked)} style={{ accentColor:'#8b5cf6',width:14,height:14 }} />
                         No website leads only
@@ -696,7 +698,7 @@ export default function Leads() {
           </div>
 
           {/* Stats */}
-          <div className="f3" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12 }}>
+          <div className="f3 stat-grid-3" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12 }}>
             {[
               { icon: Users,    label:'Total Leads',  value:totalLeads,   accent:'#8b5cf6', sub: batches.length>0 ? `${batches.length} batches` : 'No searches yet' },
               { icon: Target,   label:'No Website',   value:totalNoSite,  accent:'#f87171', sub: totalLeads>0 ? `${Math.round(totalNoSite/totalLeads*100)}% of leads` : '—' },
@@ -718,7 +720,7 @@ export default function Leads() {
         </div>
 
         {/* RIGHT — batches sidebar */}
-        <div className="f2" style={{ position:'sticky',top:88 }}>
+        <div className="f2 leads-sidebar-sticky" style={{ position:'sticky',top:88 }}>
           <div style={{ background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:16,overflow:'hidden',position:'relative' }}>
             <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.4),transparent)' }} />
             <div style={{ padding:'16px 16px 8px' }}>

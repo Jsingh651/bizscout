@@ -427,7 +427,8 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                 </div>
             </div>
 
-            <div style={{background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:16,overflow:'hidden',position:'relative'}}>
+            <div className="table-scroll">
+            <div style={{background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:16,overflow:'hidden',position:'relative',minWidth:680}}>
                 <div style={{position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent)'}}/>
 
                 {/* Header */}
@@ -497,6 +498,7 @@ function BatchDetail({ batch, leads, onBack, onStageChange, onCallOutcomeChange 
                 <div style={{padding:'11px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'space-between'}}>
                     <span style={{fontSize:11,color:'#b8c2d4',fontFamily:"'JetBrains Mono',monospace"}}>Showing {filtered.length} of {leads.length} leads</span>
                 </div>
+            </div>
             </div>
         </div>
     )

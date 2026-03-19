@@ -625,4 +625,5 @@ def _serialize(c):
         "invoice_sent_at":        c.invoice_sent_at.isoformat() if getattr(c, "invoice_sent_at", None) else None,
         "stripe_customer_id":     getattr(c, "stripe_customer_id",     None),
         "stripe_subscription_id": getattr(c, "stripe_subscription_id", None),
+        "contract_type":          getattr(c, "contract_type",          None),
     }

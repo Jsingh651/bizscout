@@ -49,6 +49,15 @@
   color: #a78bfa;
 }
 
+/* ── Auth Split Layout ───────────────────────────────────────────────────── */
+.auth-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
 /* ── Page Layout ─────────────────────────────────────────────────────────── */
 .page-root {
   min-height: 100vh;
@@ -241,6 +250,15 @@
 
 /* ── ─── ─── ─── ─── TABLET 768–1024px ─── ─── ─── ─── ─── ─── ─── ─── ── */
 @media (max-width: 1024px) {
+  /* Auth pages: hide left panel, center form */
+  .auth-left-panel { display: none !important; }
+  .auth-split-layout { grid-template-columns: 1fr !important; }
+  .auth-right-panel {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 80px 24px 60px !important;
+  }
+
   .page-content { padding: 28px 28px 48px !important; }
 
   .stat-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }

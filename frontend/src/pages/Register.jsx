@@ -270,16 +270,87 @@ export default function Register() {
         <button className="nav-back" onClick={() => navigate('/')}>← BizScout</button>
       </div>
 
-      {/* Centered form layout */}
-      <div style={{
+      {/* Split layout */}
+      <div className="auth-split-layout" style={{
         position: 'relative', zIndex: 1,
         minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '80px 24px 60px',
+        display: 'grid', gridTemplateColumns: '1fr 1fr',
       }}>
-        <div className="right-content" style={{ width: '100%', maxWidth: '390px' }}>
+
+        {/* LEFT */}
+        <div className="left-content auth-left-panel" style={{
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'center', padding: '120px 96px 80px 160px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '64px' }}>
+            <div style={{
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: '900', fontSize: '0.9rem', color: '#fff',
+              boxShadow: '0 4px 20px rgba(139,92,246,0.4)',
+            }}>B</div>
+            <span style={{ fontWeight: '800', fontSize: '1.1rem', color: '#fafafa', letterSpacing: '-0.5px' }}>BizScout</span>
+          </div>
+
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '7px',
+            background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.18)',
+            borderRadius: '6px', padding: '5px 12px', marginBottom: '24px',
+            width: 'fit-content',
+          }}>
+            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#8b5cf6', animation: 'pulse 1.5s infinite' }} />
+            <span style={{ color: '#a78bfa', fontSize: '0.64rem', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', fontFamily: 'JetBrains Mono, monospace' }}>
+              Join BizScout
+            </span>
+          </div>
+
+          <h2 style={{
+            fontSize: 'clamp(2rem, 3vw, 3rem)', fontWeight: '900',
+            letterSpacing: '-2.5px', lineHeight: 1.06, color: '#fafafa', marginBottom: '18px',
+          }}>
+            Your pipeline starts<br />
+            <span style={{
+              background: 'linear-gradient(90deg, #a78bfa, #818cf8)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>with one search</span>
+          </h2>
+
+          <p style={{ color: '#e4e4e7', fontSize: '0.9rem', lineHeight: 1.8, maxWidth: '320px', marginBottom: '48px' }}>
+            Thousands of local businesses need a website. BizScout finds them, scores them, and helps you close them.
+          </p>
+
+          <div style={{
+            padding: '22px 24px',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            borderRadius: '14px',
+            backdropFilter: 'blur(12px)',
+            display: 'flex', flexDirection: 'column', gap: '14px',
+            width: 'fit-content', minWidth: '280px',
+          }}>
+            {perks.map(({ icon: Icon, text }) => (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '28px', height: '28px', borderRadius: '7px', flexShrink: 0,
+                  background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.14)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon size={12} color="#8b5cf6" strokeWidth={1.5} />
+                </div>
+                <span style={{ color: '#e4e4e7', fontSize: '0.83rem', lineHeight: 1.4 }}>{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="right-content auth-right-panel" style={{
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '100px 60px 60px',
+        }}>
+        <div style={{ width: '100%', maxWidth: '390px' }}>
 
             <div style={{ marginBottom: '30px' }}>
               <p style={{

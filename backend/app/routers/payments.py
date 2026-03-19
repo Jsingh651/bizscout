@@ -779,11 +779,6 @@ def create_checkout_session(body: CreateSessionRequest, db: Session = Depends(ge
 
         launch_str = p.launch_date.strftime("%B %d, %Y") if p.launch_date else "TBD"
 
-        # One-time deposit payment — no subscription yet
-        # Split deposit into two line items so Stripe left panel shows a detailed breakdown
-        design_amt = round(deposit_amount * 0.5, 2)
-        dev_amt    = deposit_amount - design_amt  # avoids rounding drift
-
         session = s.checkout.Session.create(
             payment_method_types        = ["card"],
             mode                        = "payment",
@@ -794,26 +789,12 @@ def create_checkout_session(body: CreateSessionRequest, db: Session = Depends(ge
                 {
                     "price_data": {
                         "currency":    "usd",
-                        "unit_amount": int(design_amt * 100),
+                        "unit_amount": int(deposit_amount * 100),
                         "product_data": {
-                            "name":        "Custom Website Design",
+                            "name":        f"Website Design & Development — 50% Deposit",
                             "description": (
-                                f"Wireframes, visual design, branding, and UI/UX for {p.client_name or 'your site'}. "
-                                f"By {p.designer_name or 'your designer'}. Part of your 50% deposit (Invoice #1 of 2)."
-                            ),
-                        },
-                    },
-                    "quantity": 1,
-                },
-                {
-                    "price_data": {
-                        "currency":    "usd",
-                        "unit_amount": int(dev_amt * 100),
-                        "product_data": {
-                            "name":        "Custom Website Development",
-                            "description": (
-                                f"Full build, integrations, revisions, testing, and launch preparation. "
-                                f"Planned launch: {launch_str}. Final invoice follows when site is ready."
+                                f"Invoice #1 of 2 for {p.client_name or 'your site'}. "
+                                f"Planned launch: {launch_str}. Final invoice sent when site is ready."
                             ),
                         },
                     },

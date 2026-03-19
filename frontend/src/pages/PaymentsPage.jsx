@@ -59,13 +59,16 @@ function StatCard({ icon: Icon, label, value, sub, accent, highlight }) {
 }
 
 function PaymentBadge({ p }) {
-  const { deposit_paid, final_paid, payment_failed } = p
+  const { deposit_paid, final_paid, payment_failed, client_approved } = p
 
   if (payment_failed) {
     return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: "'JetBrains Mono',monospace" }}><AlertTriangle size={9}/> Failed</span>
   }
   if (final_paid) {
     return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', color: '#4ade80', fontFamily: "'JetBrains Mono',monospace" }}><CheckCircle2 size={9}/> Fully Paid</span>
+  }
+  if (client_approved) {
+    return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.3)', color: '#34d399', fontFamily: "'JetBrains Mono',monospace" }}><CheckCircle2 size={9}/> Built</span>
   }
   if (deposit_paid) {
     return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.3)', color: '#fb923c', fontFamily: "'JetBrains Mono',monospace" }}><Clock size={9}/> Building</span>
@@ -104,7 +107,8 @@ export default function PaymentsPage() {
 
   // ── Computed stats ────────────────────────────────────────────────────────
   const fullyPaid  = payments.filter(p => p.final_paid)
-  const building   = payments.filter(p => p.deposit_paid && !p.final_paid && !p.payment_failed)
+  const built      = payments.filter(p => p.client_approved && !p.final_paid && !p.payment_failed)
+  const building   = payments.filter(p => p.deposit_paid && !p.client_approved && !p.final_paid && !p.payment_failed)
   const pending    = payments.filter(p => p.pay_url && !p.deposit_paid && !p.payment_failed)
   const noInvoice  = payments.filter(p => !p.pay_url)
   const failed     = payments.filter(p => p.payment_failed)
@@ -120,7 +124,7 @@ export default function PaymentsPage() {
   const pendingValue = pending.reduce((s, p) => s + parseFloat(p.deposit_amount || parseFloat(p.setup_price || 0) / 2), 0)
 
   // ── Filter ────────────────────────────────────────────────────────────────
-  const FILTERS = ['All', 'Fully Paid', 'Building', 'Pending', 'Failed', 'No Invoice']
+  const FILTERS = ['All', 'Fully Paid', 'Built', 'Building', 'Pending', 'Failed', 'No Invoice']
   const filtered = payments.filter(p => {
     const q = search.toLowerCase()
     const matchSearch = !q ||
@@ -129,7 +133,8 @@ export default function PaymentsPage() {
     const matchFilter =
       filter === 'All'          ||
       (filter === 'Fully Paid'  && p.final_paid) ||
-      (filter === 'Building'    && p.deposit_paid && !p.final_paid && !p.payment_failed) ||
+      (filter === 'Built'       && p.client_approved && !p.final_paid && !p.payment_failed) ||
+      (filter === 'Building'    && p.deposit_paid && !p.client_approved && !p.final_paid && !p.payment_failed) ||
       (filter === 'Pending'     && p.pay_url && !p.deposit_paid && !p.payment_failed) ||
       (filter === 'Failed'      && p.payment_failed) ||
       (filter === 'No Invoice'  && !p.pay_url)

@@ -341,16 +341,20 @@ function PaymentStatusCard({ status, contract, onRefresh }) {
     const monthly     = status?.monthly_price  || 0
 
     // Overall phase label
+    const clientApproved = status?.client_approved || false
+
     const phase = hasFailed ? 'failed'
-        : finalPaid   ? 'complete'
-        : depositPaid ? 'building'
+        : finalPaid      ? 'complete'
+        : clientApproved ? 'built'
+        : depositPaid    ? 'building'
         : 'deposit_pending'
 
     const phaseConfig = {
-        failed:          { color:'#f87171', bg:'rgba(248,113,113,0.06)', border:'rgba(248,113,113,0.2)',  label:'Payment Failed'         },
-        complete:        { color:'#4ade80', bg:'rgba(74,222,128,0.06)',  border:'rgba(74,222,128,0.18)',  label:'Fully Paid — Active'    },
-        building:        { color:'#fb923c', bg:'rgba(251,146,60,0.06)',  border:'rgba(251,146,60,0.18)',  label:'Deposit Paid — Building'},
-        deposit_pending: { color:'#a78bfa', bg:'rgba(139,92,246,0.06)', border:'rgba(139,92,246,0.18)', label:'Invoice #1 Sent'        },
+        failed:          { color:'#f87171', bg:'rgba(248,113,113,0.06)', border:'rgba(248,113,113,0.2)',  label:'Payment Failed'          },
+        complete:        { color:'#4ade80', bg:'rgba(74,222,128,0.06)',  border:'rgba(74,222,128,0.18)',  label:'Fully Paid — Active'     },
+        built:           { color:'#34d399', bg:'rgba(52,211,153,0.06)',  border:'rgba(52,211,153,0.18)',  label:'Built — Ready to Invoice'},
+        building:        { color:'#fb923c', bg:'rgba(251,146,60,0.06)',  border:'rgba(251,146,60,0.18)',  label:'Deposit Paid — Building' },
+        deposit_pending: { color:'#a78bfa', bg:'rgba(139,92,246,0.06)', border:'rgba(139,92,246,0.18)',  label:'Invoice #1 Sent'         },
     }
     const pc = phaseConfig[phase]
 
@@ -615,9 +619,11 @@ export default function LeadDetail() {
             .then(r => r.ok ? r.json() : [])
             .then(data => {
                 if (!Array.isArray(data) || data.length === 0) return
-                const signed   = data.find(c => c.client_signed)
-                const partial  = data.find(c => c.designer_signed)
-                const contract = signed || partial || data[0]
+                const web      = data.filter(c => c.contract_type !== 'satisfaction')
+                const pool     = web.length > 0 ? web : data
+                const signed   = pool.find(c => c.client_signed)
+                const partial  = pool.find(c => c.designer_signed)
+                const contract = signed || partial || pool[0]
                 setInvoiceContract(contract)
                 if (contract?.id) fetchPaymentStatus(contract.id)
             })

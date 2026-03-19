@@ -98,7 +98,8 @@ export default function InvoiceModal({ contract, onClose }) {
       onClick={onClose}
     >
       <div
-        style={{ width:520,maxHeight:'92vh',overflowY:'auto',background:'#111118',border:'1px solid rgba(255,255,255,0.1)',borderRadius:18,overflow:'hidden',boxShadow:'0 40px 80px rgba(0,0,0,0.8)',position:'relative' }}
+        className="invoice-modal-inner"
+        style={{ position:'relative' }}
         onClick={e => e.stopPropagation()}
       >
         <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.6),transparent)',zIndex:1 }} />

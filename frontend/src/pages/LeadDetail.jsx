@@ -742,7 +742,7 @@ export default function LeadDetail() {
                 </div>
 
                 {/* Two column grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20, alignItems: 'start' }}>
+                <div className="leads-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20, alignItems: 'start' }}>
 
                     {/* LEFT */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -751,7 +751,7 @@ export default function LeadDetail() {
                         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '22px 24px', animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both', position: 'relative', overflow: 'hidden' }}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(139,92,246,0.4),transparent)' }} />
                             <div className="sec-title">Business Info</div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                            <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                                 {[
                                     { label: 'Business Name', value: lead.name,                icon: Building2 },
                                     { label: 'Category',      value: lead.category || '—',      icon: Tag       },

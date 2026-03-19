@@ -163,7 +163,7 @@ export default function SignContractPage() {
         <span style={{ fontSize: 13, color: '#c4c4cc' }}>Web Design &amp; Development Agreement — Please review and sign below</span>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 32px 80px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 28, alignItems: 'start' }}>
+      <div className="sign-contract-grid">
 
         {/* Contract preview */}
         <div style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' }}>

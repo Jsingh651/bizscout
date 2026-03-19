@@ -386,13 +386,8 @@
 
 
         {/* ── HERO ── */}
-        <section style={{
-          position: 'relative', zIndex: 1,
-          padding: '160px 52px 120px',
-          maxWidth: '1200px', margin: '0 auto',
-          display: 'grid', gridTemplateColumns: '1fr 1fr',
-          gap: '80px', alignItems: 'center',
-        }}>
+        <section className="hero-section">
+        <div className="home-hero" style={{ alignItems: 'center' }}>
           {/* Left */}
           <div>
             <div className="f1" style={{
@@ -428,12 +423,12 @@
               Scrape Google Maps, score every lead with AI, and manage your entire sales pipeline — automated from start to close.
             </p>
 
-            <div className="f4" style={{ display: 'flex', gap: '12px', marginBottom: '48px' }}>
+            <div className="f4 hero-cta-row" style={{ marginBottom: '48px' }}>
               <button className="cta-btn" onClick={() => navigate('/leads')}>Start for free →</button>
               <button className="ghost-btn" onClick={() => navigate('/leads')}>View leads</button>
             </div>
 
-            <div className="f5" style={{ display: 'flex', gap: '32px' }}>
+            <div className="f5 hero-stats">
               {[['124k+','Businesses indexed'],['89k+','Without websites'],['420+','Cities covered']].map(([val, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#a78bfa', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '-1px' }}>{val}</div>
@@ -467,12 +462,13 @@
 
             <LivePanel />
           </div>
+        </div>
         </section>
 
         <div className="divider" style={{ maxWidth: '1200px', margin: '0 auto' }} />
 
         {/* ── HOW IT WORKS ── */}
-        <section style={{ position: 'relative', zIndex: 1, padding: '120px 52px', maxWidth: '1200px', margin: '0 auto' }}>
+        <section className="home-section">
           <div style={{ marginBottom: '64px' }}>
             <div style={{ fontSize: '0.68rem', color: '#cfcfd6', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '16px' }}>How it works</div>
             <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: '800', letterSpacing: '-2px', color: '#fafafa' }}>
@@ -480,7 +476,7 @@
               <span style={{ color: '#6366f1' }}>in minutes, not weeks</span>
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2px' }}>
+          <div className="home-steps">
             {STEPS.map((s) => {
               const Icon = s.icon
               return (
@@ -500,7 +496,7 @@
         <div className="divider" style={{ maxWidth: '1200px', margin: '0 auto' }} />
 
         {/* ── FEATURES ── */}
-        <section style={{ position: 'relative', zIndex: 1, padding: '120px 52px', maxWidth: '1200px', margin: '0 auto' }}>
+        <section className="home-section">
           <div style={{ marginBottom: '64px' }}>
         <div style={{ fontSize: '0.68rem', color: '#cfcfd6', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '16px' }}>Features</div>
             <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: '800', letterSpacing: '-2px', color: '#fafafa' }}>
@@ -508,7 +504,7 @@
               <span style={{ color: '#6366f1' }}>to close more deals</span>
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div className="home-features">
             {FEATURES.map(f => {
               const Icon = f.icon
               return (

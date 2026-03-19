@@ -150,7 +150,7 @@ function ContractRow({ contract, leadId }) {
 
         {expanded && (
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.05)',padding:'14px 16px',background:'rgba(255,255,255,0.01)' }}>
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:14 }}>
+            <div className="contract-detail-grid">
               {[
                 { label:'Setup Fee',    value:contract.setup_price    ? `$${Number(contract.setup_price).toLocaleString()}`         : '—' },
                 { label:'Monthly',      value:contract.monthly_price  ? `$${Number(contract.monthly_price).toLocaleString()}/mo`    : '—' },

@@ -210,7 +210,7 @@ export default function Profile() {
       <AppNav />
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto', padding: '48px 48px 80px' }}>
+      <div className="page-content" style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto', padding: '48px 48px 80px' }}>
 
         {/* Hero */}
         <div className="fade1" style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
@@ -239,10 +239,10 @@ export default function Profile() {
         </div>
 
         {/* Layout */}
-        <div className="fade2" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+        <div className="fade2 profile-layout" style={{ gap: 24 }}>
 
           {/* Sidebar */}
-          <div style={{ width: 200, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div className="profile-sidebar" style={{ width: 200, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
             {TABS.map(tab => (
               <button key={tab.id} className={`tab-btn${activeTab === tab.id ? ' active' : ''}`}
                 onClick={() => setActiveTab(tab.id)}>

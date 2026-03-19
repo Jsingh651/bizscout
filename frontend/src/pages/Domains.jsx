@@ -305,7 +305,7 @@ export default function Domains() {
 
       <AppNav />
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 900, margin: '0 auto', padding: '48px 48px 80px' }}>
+      <div className="page-content" style={{ position: 'relative', zIndex: 1, maxWidth: 900, margin: '0 auto', padding: '48px 48px 80px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: 36, animation: 'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}>

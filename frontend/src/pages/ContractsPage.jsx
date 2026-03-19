@@ -186,7 +186,7 @@ export default function ContractsPage() {
 
         {/* Stats */}
         {totalContracts > 0 && (
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+          <div className="stat-grid-4" style={{ gap:12,marginBottom:28,animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <StatCard icon={FileText}     label="Total"        value={totalContracts} accent="#8b5cf6"/>
             <StatCard icon={CheckCircle2} label="Fully Signed" value={fullySigned}    accent="#4ade80" sub={`${totalContracts?Math.round((fullySigned/totalContracts)*100):0}% close rate`}/>
             <StatCard icon={Clock}        label="Awaiting"     value={awaitingClient} accent="#fb923c"/>
@@ -233,7 +233,7 @@ export default function ContractsPage() {
             — No contracts match your filters —
           </div>
         ) : (
-          <div style={{ background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:16,overflow:'hidden',position:'relative',animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
+          <div className="table-scroll" style={{ animation:'fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}><div style={{ background:'rgba(255,255,255,0.015)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:16,overflow:'hidden',position:'relative',minWidth:640 }}>
             <div style={{ position:'absolute',top:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent)' }}/>
 
             {/* Header row */}
@@ -332,7 +332,7 @@ export default function ContractsPage() {
                 Showing {filtered.length} of {contracts.length} contracts
               </span>
             </div>
-          </div>
+          </div></div>
         )}
       </div>
     </div>

@@ -302,7 +302,7 @@ export default function ContractPage() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 28, alignItems: 'start' }}>
+        <div className="sign-contract-grid" style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 28, alignItems: 'start' }}>
 
           {/* ── LEFT: Form ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

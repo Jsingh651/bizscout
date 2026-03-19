@@ -1,4 +1,4 @@
-/* ── Mobile Navigation ──────────────────────────────────────────────────────── */
+/* ── Mobile Navigation ────────────────────────────────────────────────────── */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -49,7 +49,7 @@
   color: #a78bfa;
 }
 
-/* ── Page Layout ────────────────────────────────────────────────────────────── */
+/* ── Page Layout ─────────────────────────────────────────────────────────── */
 .page-root {
   min-height: 100vh;
   background: #09090f;
@@ -64,7 +64,7 @@
   z-index: 1;
 }
 
-/* ── Stat Grids ─────────────────────────────────────────────────────────────── */
+/* ── Stat Grids ──────────────────────────────────────────────────────────── */
 .stat-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -89,13 +89,13 @@
   gap: 12px;
 }
 
-/* ── Table Scroll ───────────────────────────────────────────────────────────── */
+/* ── Table Scroll ────────────────────────────────────────────────────────── */
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── Two-col layouts ─────────────────────────────────────────────────────────  */
+/* ── Two-col layouts ─────────────────────────────────────────────────────── */
 .two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -108,7 +108,7 @@
   gap: 20px;
 }
 
-/* ── Kanban ──────────────────────────────────────────────────────────────────  */
+/* ── Kanban ──────────────────────────────────────────────────────────────── */
 .kanban-board {
   display: flex;
   gap: 12px;
@@ -117,8 +117,148 @@
   padding-bottom: 8px;
 }
 
-/* ── ─── ─── ─── ─── ─── ─── ─── MOBILE ─── ─── ─── ─── ─── ─── ─── ─── ─── */
-@media (max-width: 768px) {
+/* ── Home Page Layouts ───────────────────────────────────────────────────── */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.home-section {
+  position: relative;
+  z-index: 1;
+  padding: 120px 52px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  position: relative;
+  z-index: 1;
+  padding: 160px 52px 120px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+/* ── Profile Layout ──────────────────────────────────────────────────────── */
+.profile-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ── Sign Contract Layout ────────────────────────────────────────────────── */
+.sign-contract-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
+}
+
+/* ── Search / Filter Bars ────────────────────────────────────────────────── */
+.search-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Stats Row (Pipeline, etc.) ──────────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+/* ── Contract Detail Grid ────────────────────────────────────────────────── */
+.contract-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* ── Page Header Row ─────────────────────────────────────────────────────── */
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── Meeting Card ────────────────────────────────────────────────────────── */
+.meeting-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Invoice Modal inner ─────────────────────────────────────────────────── */
+.invoice-modal-inner {
+  width: 520px;
+  max-width: 95vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #111118;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+/* ── ─── ─── ─── ─── TABLET 768–1024px ─── ─── ─── ─── ─── ─── ─── ─── ── */
+@media (max-width: 1024px) {
+  .page-content { padding: 28px 28px 48px !important; }
+
+  .stat-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }
+  .stat-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+
+  .sidebar-layout { grid-template-columns: 220px 1fr !important; }
+
+  .home-hero { gap: 40px !important; }
+  .hero-section { padding: 100px 32px 80px !important; }
+  .home-section { padding: 80px 32px !important; }
+  .home-steps { grid-template-columns: repeat(2, 1fr) !important; }
+  .home-features { grid-template-columns: repeat(2, 1fr) !important; }
+
+  .sign-contract-grid { grid-template-columns: 1fr 300px !important; padding: 24px 24px 60px !important; }
+}
+
+/* ── ─── ─── ─── ─── MOBILE < 768px ─── ─── ─── ─── ─── ─── ─── ─── ─── ─ */
+@media (max-width: 767px) {
   /* Nav */
   .mobile-menu-btn { display: flex !important; }
   .desktop-nav-links { display: none !important; }
@@ -138,33 +278,90 @@
   .sidebar-layout { grid-template-columns: 1fr !important; }
   .leads-layout { grid-template-columns: 1fr !important; }
 
-  /* Kanban: horizontal scroll already works */
+  /* Profile layout stack */
+  .profile-layout {
+    flex-direction: column !important;
+  }
+  .profile-sidebar {
+    width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .profile-sidebar .tab-btn {
+    width: auto !important;
+    flex: 1 !important;
+    min-width: 100px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Home page hero */
+  .home-hero { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .hero-section { padding: 80px 16px 48px !important; }
+  .hero-stats { flex-wrap: wrap !important; gap: 16px !important; }
+  .hero-cta-row { flex-direction: column !important; }
+  .hero-cta-row > button { width: 100% !important; justify-content: center !important; }
+
+  /* Home sections */
+  .home-section { padding: 60px 16px !important; }
+  .home-steps { grid-template-columns: 1fr 1fr !important; }
+  .home-features { grid-template-columns: 1fr !important; }
+
+  /* Sign contract → single column */
+  .sign-contract-grid { grid-template-columns: 1fr !important; padding: 16px 16px 48px !important; }
+  .sign-contract-grid > *:nth-child(2) { position: static !important; }
+
+  /* Kanban: horizontal scroll */
   .kanban-board { gap: 8px; }
+  .kanban-board > * { min-width: 220px !important; flex-shrink: 0 !important; }
 
   /* Tables: horizontal scroll */
   .table-scroll { border-radius: 12px; }
 
-  /* Hide non-essential columns on mobile */
+  /* Hide non-essential columns */
   .hide-mobile { display: none !important; }
 
-  /* Full width buttons */
+  /* Full-width utility */
   .mobile-full { width: 100% !important; }
 
-  /* Reduce heading sizes */
+  /* Heading size reduction */
   .page-title { font-size: 22px !important; }
+
+  /* Search/filter bar stack */
+  .search-filter-bar { flex-direction: column !important; align-items: stretch !important; }
+  .filter-chips { flex-wrap: wrap !important; gap: 6px !important; }
+
+  /* Stats row wrap */
+  .stats-row { flex-wrap: wrap !important; gap: 10px !important; }
+
+  /* Header row */
+  .page-header-row { gap: 12px !important; }
+
+  /* Invoice modal full-width */
+  .invoice-modal-inner { width: 95vw !important; max-height: 90vh !important; }
+
+  /* Contract detail grid → 2-col */
+  .contract-detail-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Meeting card wrap on tiny screens */
+  .meeting-card { flex-wrap: wrap !important; }
+  .meeting-card > *:last-child { margin-left: 46px !important; }
+
+  /* Tap targets — minimum 44px */
+  .mobile-menu-btn { min-width: 44px !important; min-height: 44px !important; }
+  .mobile-nav-link { min-height: 44px !important; }
+
+  /* Filter buttons tap-friendly */
+  .filter-btn { min-height: 38px !important; padding: 6px 12px !important; }
 }
 
-/* ── Search + filter bar wrapping on mobile ──────────────────────────────── */
-/* ── Scan form button full width on mobile ────────────────────────────────── */
+/* ── Scan form / action rows ─────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .scan-btn { width: 100% !important; justify-content: center !important; }
-  /* Remove sticky from leads sidebar on mobile */
   .leads-sidebar-sticky { position: static !important; }
-  /* Stack scan form action row */
   .scan-action-row { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
-}
 
-@media (max-width: 640px) {
   /* Stack search + filters vertically */
   .search-filter-bar {
     flex-direction: column !important;
@@ -174,7 +371,7 @@
     flex-wrap: wrap !important;
     gap: 6px !important;
   }
-  /* Kanban columns min width so they scroll */
+  /* Kanban column min-width for scroll */
   .kanban-board > * {
     min-width: 220px !important;
     flex-shrink: 0 !important;
@@ -187,8 +384,13 @@
   }
 }
 
+/* ── Smallest screens < 480px ────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .stat-grid-4 { grid-template-columns: 1fr !important; }
   .stat-grid-3 { grid-template-columns: 1fr !important; }
+  .stat-grid-5 { grid-template-columns: 1fr 1fr !important; }
   .page-content { padding: 12px 12px 24px !important; }
+  .home-steps { grid-template-columns: 1fr !important; }
+  .contract-detail-grid { grid-template-columns: 1fr !important; }
+  .sign-contract-grid { padding: 12px 12px 40px !important; }
 }

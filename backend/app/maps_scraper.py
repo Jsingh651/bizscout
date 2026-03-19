@@ -178,7 +178,14 @@ def build_driver(headless: bool = False, user_data_dir: Optional[str] = None) ->
 
     # Use system chromium on Railway/Linux, otherwise fall back to webdriver-manager
     import shutil, os as _os
-    system_chrome = _os.getenv("CHROME_BIN") or shutil.which("chromium") or shutil.which("chromium-browser") or shutil.which("google-chrome")
+    MAC_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    system_chrome = (
+        _os.getenv("CHROME_BIN")
+        or shutil.which("chromium")
+        or shutil.which("chromium-browser")
+        or shutil.which("google-chrome")
+        or (MAC_CHROME if _os.path.exists(MAC_CHROME) else None)
+    )
     system_driver = _os.getenv("CHROMEDRIVER_BIN") or shutil.which("chromedriver")
     if system_chrome:
         options.binary_location = system_chrome

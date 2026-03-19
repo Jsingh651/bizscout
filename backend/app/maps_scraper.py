@@ -135,6 +135,12 @@ HIGH_URGENCY_NICHES = {
 # ─── DRIVER SETUP ─────────────────────────────────────────────────────────────
 
 def build_driver(headless: bool = False, user_data_dir: Optional[str] = None) -> webdriver.Chrome:
+    import os as _os2
+    # On Railway/server (no DISPLAY), force headless automatically
+    if not headless and not _os2.environ.get("DISPLAY") and _os2.environ.get("RAILWAY_ENVIRONMENT"):
+        headless = True
+        log.info("Server environment detected — enabling headless mode")
+
     options = Options()
     if headless:
         options.add_argument("--headless=new")

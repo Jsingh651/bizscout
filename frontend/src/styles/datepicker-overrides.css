@@ -1,0 +1,126 @@
+/* Override react-datepicker to match BizScout dark theme. Import after react-datepicker.css */
+
+.biz-datepicker-input {
+  width: 100%;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0 10px;
+  color: #e4e4e7;
+  font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+}
+
+.biz-datepicker-input::placeholder {
+  color: #b8c2d4;
+}
+
+/* Popper = dropdown calendar (rendered in portal) */
+.biz-datepicker-popper.react-datepicker-popper {
+  z-index: 99999;
+}
+
+.biz-datepicker-popper .react-datepicker {
+  background: #111118 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9) !important;
+  color: #e4e4e7 !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+.biz-datepicker-popper .react-datepicker__header {
+  background: #111118 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 12px 0 8px !important;
+}
+
+.biz-datepicker-popper .react-datepicker__current-month,
+.biz-datepicker-popper .react-datepicker-time__header {
+  color: #e4e4e7 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.biz-datepicker-popper .react-datepicker__day-names {
+  margin-top: 8px;
+}
+
+.biz-datepicker-popper .react-datepicker__day-name {
+  color: #c4c4cc !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+.biz-datepicker-popper .react-datepicker__month-container {
+  padding: 0 12px 12px;
+}
+
+.biz-datepicker-popper .react-datepicker__day {
+  color: #c4c4cc !important;
+  border-radius: 8px !important;
+}
+
+.biz-datepicker-popper .react-datepicker__day:hover {
+  background: rgba(139, 92, 246, 0.25) !important;
+  color: #e4e4e7 !important;
+}
+
+.biz-datepicker-popper .react-datepicker__day--selected,
+.biz-datepicker-popper .react-datepicker__day--keyboard-selected {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+  color: #fff !important;
+}
+
+.biz-datepicker-popper .react-datepicker__day--today {
+  font-weight: 700;
+  color: #fb923c !important;
+}
+
+.biz-datepicker-popper .react-datepicker__day--disabled {
+  color: #b8c2d4 !important;
+}
+
+.biz-datepicker-popper .react-datepicker__navigation {
+  top: 12px;
+}
+
+.biz-datepicker-popper .react-datepicker__navigation-icon::before {
+  border-color: #c4c4cc !important;
+}
+
+.biz-datepicker-popper .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #a78bfa !important;
+}
+
+/* Time list */
+.biz-datepicker-popper .react-datepicker__time-container {
+  border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.biz-datepicker-popper .react-datepicker__time-box {
+  width: 85px !important;
+}
+
+.biz-datepicker-popper .react-datepicker__time-list-item {
+  color: #c4c4cc !important;
+  padding: 8px 10px !important;
+}
+
+.biz-datepicker-popper .react-datepicker__time-list-item:hover {
+  background: rgba(139, 92, 246, 0.2) !important;
+  color: #e4e4e7 !important;
+}
+
+.biz-datepicker-popper .react-datepicker__time-list-item--selected {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+  color: #fff !important;
+}
+
+.biz-datepicker-popper .react-datepicker__header--time {
+  padding: 8px 10px !important;
+  color: #c4c4cc !important;
+  font-size: 11px !important;
+}

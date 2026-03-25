@@ -1,0 +1,414 @@
+/* ── Mobile Navigation ────────────────────────────────────────────────────── */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #e4e4e7;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.mobile-nav-drawer {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: rgba(9,9,15,0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 0;
+  z-index: 99;
+  flex-direction: column;
+}
+
+.mobile-nav-drawer.open {
+  display: flex;
+}
+
+.mobile-nav-link {
+  background: none;
+  border: none;
+  color: #b8c2d4;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 24px;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  background: rgba(139,92,246,0.08);
+  color: #a78bfa;
+}
+
+/* ── Auth Split Layout ───────────────────────────────────────────────────── */
+.auth-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Page Layout ─────────────────────────────────────────────────────────── */
+.page-root {
+  min-height: 100vh;
+  background: #09090f;
+  font-family: 'Outfit', sans-serif;
+}
+
+.page-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 40px 48px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Stat Grids ──────────────────────────────────────────────────────────── */
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stat-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+/* ── Table Scroll ────────────────────────────────────────────────────────── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Two-col layouts ─────────────────────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sidebar-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+}
+
+/* ── Kanban ──────────────────────────────────────────────────────────────── */
+.kanban-board {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+/* ── Home Page Layouts ───────────────────────────────────────────────────── */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.home-section {
+  position: relative;
+  z-index: 1;
+  padding: 120px 52px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  position: relative;
+  z-index: 1;
+  padding: 160px 52px 120px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+/* ── Profile Layout ──────────────────────────────────────────────────────── */
+.profile-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ── Sign Contract Layout ────────────────────────────────────────────────── */
+.sign-contract-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
+}
+
+/* ── Search / Filter Bars ────────────────────────────────────────────────── */
+.search-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Stats Row (Pipeline, etc.) ──────────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+/* ── Contract Detail Grid ────────────────────────────────────────────────── */
+.contract-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* ── Page Header Row ─────────────────────────────────────────────────────── */
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── Meeting Card ────────────────────────────────────────────────────────── */
+.meeting-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Invoice Modal inner ─────────────────────────────────────────────────── */
+.invoice-modal-inner {
+  width: 520px;
+  max-width: 95vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #111118;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+/* ── ─── ─── ─── ─── TABLET 768–1024px ─── ─── ─── ─── ─── ─── ─── ─── ── */
+@media (max-width: 1024px) {
+  /* Auth pages: hide left panel, center form */
+  .auth-left-panel { display: none !important; }
+  .auth-split-layout { grid-template-columns: 1fr !important; }
+  .auth-right-panel {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 80px 24px 60px !important;
+  }
+
+  .page-content { padding: 28px 28px 48px !important; }
+
+  .stat-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }
+  .stat-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+
+  .sidebar-layout { grid-template-columns: 220px 1fr !important; }
+
+  .home-hero { gap: 40px !important; }
+  .hero-section { padding: 100px 32px 80px !important; }
+  .home-section { padding: 80px 32px !important; }
+  .home-steps { grid-template-columns: repeat(2, 1fr) !important; }
+  .home-features { grid-template-columns: repeat(2, 1fr) !important; }
+
+  .sign-contract-grid { grid-template-columns: 1fr 300px !important; padding: 24px 24px 60px !important; }
+}
+
+/* ── ─── ─── ─── ─── MOBILE < 768px ─── ─── ─── ─── ─── ─── ─── ─── ─── ─ */
+@media (max-width: 767px) {
+  /* Nav */
+  .mobile-menu-btn { display: flex !important; }
+  .desktop-nav-links { display: none !important; }
+  .nav-padding { padding: 0 16px !important; }
+
+  /* Page content */
+  .page-content { padding: 16px 16px 32px !important; }
+
+  /* Stat grids → 2 columns on mobile */
+  .stat-grid-4 { grid-template-columns: 1fr 1fr !important; }
+  .stat-grid-5 { grid-template-columns: 1fr 1fr !important; }
+  .stat-grid-3 { grid-template-columns: 1fr 1fr !important; }
+  .stat-grid-2 { grid-template-columns: 1fr !important; }
+
+  /* Two-col → stack */
+  .two-col { grid-template-columns: 1fr !important; }
+  .sidebar-layout { grid-template-columns: 1fr !important; }
+  .leads-layout { grid-template-columns: 1fr !important; }
+
+  /* Profile layout stack */
+  .profile-layout {
+    flex-direction: column !important;
+  }
+  .profile-sidebar {
+    width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .profile-sidebar .tab-btn {
+    width: auto !important;
+    flex: 1 !important;
+    min-width: 100px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Home page hero */
+  .home-hero { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .hero-section { padding: 80px 16px 48px !important; }
+  .hero-stats { flex-wrap: wrap !important; gap: 16px !important; }
+  .hero-cta-row { flex-direction: column !important; }
+  .hero-cta-row > button { width: 100% !important; justify-content: center !important; }
+
+  /* Home sections */
+  .home-section { padding: 60px 16px !important; }
+  .home-steps { grid-template-columns: 1fr 1fr !important; }
+  .home-features { grid-template-columns: 1fr !important; }
+
+  /* Sign contract → single column */
+  .sign-contract-grid { grid-template-columns: 1fr !important; padding: 16px 16px 48px !important; }
+  .sign-contract-grid > *:nth-child(2) { position: static !important; }
+
+  /* Kanban: horizontal scroll */
+  .kanban-board { gap: 8px; }
+  .kanban-board > * { min-width: 220px !important; flex-shrink: 0 !important; }
+
+  /* Tables: horizontal scroll */
+  .table-scroll { border-radius: 12px; }
+
+  /* Hide non-essential columns */
+  .hide-mobile { display: none !important; }
+
+  /* Full-width utility */
+  .mobile-full { width: 100% !important; }
+
+  /* Heading size reduction */
+  .page-title { font-size: 22px !important; }
+
+  /* Search/filter bar stack */
+  .search-filter-bar { flex-direction: column !important; align-items: stretch !important; }
+  .filter-chips { flex-wrap: wrap !important; gap: 6px !important; }
+
+  /* Stats row wrap */
+  .stats-row { flex-wrap: wrap !important; gap: 10px !important; }
+
+  /* Header row */
+  .page-header-row { gap: 12px !important; }
+
+  /* Invoice modal full-width */
+  .invoice-modal-inner { width: 95vw !important; max-height: 90vh !important; }
+
+  /* Contract detail grid → 2-col */
+  .contract-detail-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Meeting card wrap on tiny screens */
+  .meeting-card { flex-wrap: wrap !important; }
+  .meeting-card > *:last-child { margin-left: 46px !important; }
+
+  /* Tap targets — minimum 44px */
+  .mobile-menu-btn { min-width: 44px !important; min-height: 44px !important; }
+  .mobile-nav-link { min-height: 44px !important; }
+
+  /* Filter buttons tap-friendly */
+  .filter-btn { min-height: 38px !important; padding: 6px 12px !important; }
+}
+
+/* ── Scan form / action rows ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .scan-btn { width: 100% !important; justify-content: center !important; }
+  .leads-sidebar-sticky { position: static !important; }
+  .scan-action-row { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+
+  /* Stack search + filters vertically */
+  .search-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .filter-chips {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  /* Kanban column min-width for scroll */
+  .kanban-board > * {
+    min-width: 220px !important;
+    flex-shrink: 0 !important;
+  }
+  /* Header action buttons stack */
+  .header-actions {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── Smallest screens < 480px ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .stat-grid-4 { grid-template-columns: 1fr !important; }
+  .stat-grid-3 { grid-template-columns: 1fr !important; }
+  .stat-grid-5 { grid-template-columns: 1fr 1fr !important; }
+  .page-content { padding: 12px 12px 24px !important; }
+  .home-steps { grid-template-columns: 1fr !important; }
+  .contract-detail-grid { grid-template-columns: 1fr !important; }
+  .sign-contract-grid { padding: 12px 12px 40px !important; }
+}

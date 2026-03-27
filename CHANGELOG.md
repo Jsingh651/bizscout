@@ -8,3 +8,4 @@
 - stripe webhook (2026-04-03)
 - batch pagination (2026-04-03)
 - login redirect (2026-04-03)
+- navbar z-index (2026-04-04)

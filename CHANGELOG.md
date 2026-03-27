@@ -7,3 +7,4 @@
 - contract token check (2026-04-02)
 - stripe webhook (2026-04-03)
 - batch pagination (2026-04-03)
+- login redirect (2026-04-03)

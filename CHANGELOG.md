@@ -10,3 +10,4 @@
 - login redirect (2026-04-03)
 - navbar z-index (2026-04-04)
 - scrape job cleanup (2026-04-04)
+- duplicate leads by phone (2026-04-04)

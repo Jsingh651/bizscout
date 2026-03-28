@@ -13,3 +13,4 @@
 - duplicate leads by phone (2026-04-04)
 - pdf filename (2026-04-05)
 - analytics empty state (2026-04-05)
+- password validation (2026-04-05)

@@ -17,3 +17,4 @@
 - auth headers on scrape (2026-04-06)
 - meetings trailing slash (2026-04-06)
 - mobile table scroll (2026-04-06)
+- deposit line item (2026-04-07)

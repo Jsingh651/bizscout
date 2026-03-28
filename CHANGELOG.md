@@ -16,3 +16,4 @@
 - password validation (2026-04-05)
 - auth headers on scrape (2026-04-06)
 - meetings trailing slash (2026-04-06)
+- mobile table scroll (2026-04-06)

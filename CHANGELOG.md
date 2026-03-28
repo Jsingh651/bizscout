@@ -18,3 +18,4 @@
 - meetings trailing slash (2026-04-06)
 - mobile table scroll (2026-04-06)
 - deposit line item (2026-04-07)
+- contract_type serializer (2026-04-07)

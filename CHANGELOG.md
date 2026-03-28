@@ -14,3 +14,4 @@
 - pdf filename (2026-04-05)
 - analytics empty state (2026-04-05)
 - password validation (2026-04-05)
+- auth headers on scrape (2026-04-06)

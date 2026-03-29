@@ -22,3 +22,4 @@
 - mac chrome path (2026-04-07)
 - nixpacks chrome deps (2026-04-08)
 - register form validation (2026-04-08)
+- batch loading in prod (2026-04-08)

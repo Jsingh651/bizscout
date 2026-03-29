@@ -19,3 +19,4 @@
 - mobile table scroll (2026-04-06)
 - deposit line item (2026-04-07)
 - contract_type serializer (2026-04-07)
+- mac chrome path (2026-04-07)

@@ -24,3 +24,4 @@
 - register form validation (2026-04-08)
 - batch loading in prod (2026-04-08)
 - jsx in login page (2026-04-09)
+- api error handling (2026-04-09)

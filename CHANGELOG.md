@@ -31,3 +31,4 @@
 - pipeline cards (2026-04-10)
 - auth page layout (2026-04-11)
 - mobile nav (2026-04-11)
+- analytics cards (2026-04-11)

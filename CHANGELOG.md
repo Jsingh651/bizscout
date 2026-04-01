@@ -34,3 +34,4 @@
 - analytics cards (2026-04-11)
 - deployment section (2026-04-12)
 - env var table (2026-04-12)
+- pin bcrypt (2026-04-12)

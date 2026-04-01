@@ -35,3 +35,4 @@
 - deployment section (2026-04-12)
 - env var table (2026-04-12)
 - pin bcrypt (2026-04-12)
+- bump vite patch (2026-04-13)

@@ -41,3 +41,4 @@
 - score breakdown (2026-04-14)
 - mobile responsive pass (2026-04-14)
 - brevo email api (2026-04-14)
+- built contract status (2026-04-15)

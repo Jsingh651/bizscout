@@ -39,3 +39,4 @@
 - call outcome buttons (2026-04-13)
 - no-website filter (2026-04-13)
 - score breakdown (2026-04-14)
+- mobile responsive pass (2026-04-14)

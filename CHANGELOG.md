@@ -45,3 +45,4 @@
 - auth panel on desktop (2026-04-15)
 - batch cache (2026-04-15)
 - lazy analytics load (2026-04-16)
+- invoice email subject (2026-04-16)

@@ -42,3 +42,4 @@
 - mobile responsive pass (2026-04-14)
 - brevo email api (2026-04-14)
 - built contract status (2026-04-15)
+- auth panel on desktop (2026-04-15)

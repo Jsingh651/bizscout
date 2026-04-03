@@ -44,3 +44,4 @@
 - built contract status (2026-04-15)
 - auth panel on desktop (2026-04-15)
 - batch cache (2026-04-15)
+- lazy analytics load (2026-04-16)

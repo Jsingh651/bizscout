@@ -50,3 +50,4 @@
 - meeting sort order (2026-04-17)
 - contract draft badge (2026-04-17)
 - payment redirect (2026-04-17)
+- domain check timeout (2026-04-18)

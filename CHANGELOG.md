@@ -49,3 +49,4 @@
 - lead notes autosave (2026-04-16)
 - meeting sort order (2026-04-17)
 - contract draft badge (2026-04-17)
+- payment redirect (2026-04-17)

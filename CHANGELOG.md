@@ -46,3 +46,4 @@
 - batch cache (2026-04-15)
 - lazy analytics load (2026-04-16)
 - invoice email subject (2026-04-16)
+- lead notes autosave (2026-04-16)

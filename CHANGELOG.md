@@ -47,3 +47,4 @@
 - lazy analytics load (2026-04-16)
 - invoice email subject (2026-04-16)
 - lead notes autosave (2026-04-16)
+- meeting sort order (2026-04-17)

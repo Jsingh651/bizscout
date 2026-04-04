@@ -53,3 +53,4 @@
 - domain check timeout (2026-04-18)
 - contract print layout (2026-04-18)
 - payment buttons (2026-04-18)
+- zoom setup steps (2026-04-19)

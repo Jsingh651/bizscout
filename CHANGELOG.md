@@ -51,3 +51,4 @@
 - contract draft badge (2026-04-17)
 - payment redirect (2026-04-17)
 - domain check timeout (2026-04-18)
+- contract print layout (2026-04-18)

@@ -61,3 +61,4 @@
 - empty scrape results (2026-04-20)
 - hero spacing (2026-04-21)
 - cookie secure flag (2026-04-21)
+- pipeline memoization (2026-04-21)

@@ -60,3 +60,4 @@
 - export batch csv (2026-04-20)
 - empty scrape results (2026-04-20)
 - hero spacing (2026-04-21)
+- cookie secure flag (2026-04-21)

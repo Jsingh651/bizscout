@@ -68,3 +68,4 @@
 - simplify nixpacks chrome (2026-04-23)
 - show deposit as single line item (2026-04-23)
 - restore auth left panel (2026-04-23)
+- responsive tablet layout (2026-04-24)

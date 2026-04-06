@@ -70,3 +70,4 @@
 - restore auth left panel (2026-04-23)
 - responsive tablet layout (2026-04-24)
 - meetings auth headers (2026-04-24)
+- contract signing flow (2026-04-24)

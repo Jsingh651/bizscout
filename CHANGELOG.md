@@ -65,3 +65,4 @@
 - chromedriver on railway (2026-04-22)
 - filter batches by date (2026-04-22)
 - lead detail table wrap (2026-04-22)
+- simplify nixpacks chrome (2026-04-23)

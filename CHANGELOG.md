@@ -63,3 +63,4 @@
 - cookie secure flag (2026-04-21)
 - pipeline memoization (2026-04-21)
 - chromedriver on railway (2026-04-22)
+- filter batches by date (2026-04-22)

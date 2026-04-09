@@ -80,3 +80,4 @@
 - scrape context (2026-04-27)
 - zoom invite email template (2026-04-27)
 - login gradient (2026-04-27)
+- pipeline closed-won label (2026-04-28)

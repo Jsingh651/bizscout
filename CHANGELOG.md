@@ -88,3 +88,4 @@
 - navbar mobile menu (2026-04-29)
 - contract pdf generation (2026-04-30)
 - reduce scrape poll interval (2026-04-30)
+- lead stage update (2026-04-30)

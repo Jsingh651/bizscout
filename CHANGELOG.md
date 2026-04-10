@@ -87,3 +87,4 @@
 - vite api url env (2026-04-29)
 - navbar mobile menu (2026-04-29)
 - contract pdf generation (2026-04-30)
+- reduce scrape poll interval (2026-04-30)

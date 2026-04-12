@@ -99,3 +99,4 @@
 - cors middleware order (2026-05-03)
 - built status on contracts (2026-05-03)
 - invoice modal close (2026-05-04)
+- lead detail score bar (2026-05-04)

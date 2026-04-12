@@ -95,3 +95,4 @@
 - analytics funnel chart (2026-05-02)
 - email util to brevo (2026-05-02)
 - lead phone formatting (2026-05-02)
+- eslint config update (2026-05-03)

@@ -97,3 +97,4 @@
 - lead phone formatting (2026-05-02)
 - eslint config update (2026-05-03)
 - cors middleware order (2026-05-03)
+- built status on contracts (2026-05-03)

@@ -103,3 +103,4 @@
 - register email validation (2026-05-04)
 - stripe webhook setup (2026-05-05)
 - domain availability cache (2026-05-05)
+- leads list virtualization prep (2026-05-05)

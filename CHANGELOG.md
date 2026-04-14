@@ -105,3 +105,4 @@
 - domain availability cache (2026-05-05)
 - leads list virtualization prep (2026-05-05)
 - meeting reminder timing (2026-05-06)
+- payments page layout (2026-05-06)

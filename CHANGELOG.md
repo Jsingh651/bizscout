@@ -112,3 +112,4 @@
 - lead score display (2026-05-07)
 - pipeline drag state (2026-05-08)
 - meeting timezone (2026-05-08)
+- contract token check (2026-05-08)

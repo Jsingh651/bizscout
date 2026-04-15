@@ -110,3 +110,4 @@
 - production deploy prep (2026-05-07)
 - cors on auth routes (2026-05-07)
 - lead score display (2026-05-07)
+- pipeline drag state (2026-05-08)

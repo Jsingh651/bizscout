@@ -120,3 +120,4 @@
 - scrape job cleanup (2026-05-10)
 - duplicate leads by phone (2026-05-10)
 - pdf filename (2026-05-11)
+- analytics empty state (2026-05-11)

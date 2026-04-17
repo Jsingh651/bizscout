@@ -130,3 +130,4 @@
 - mac chrome path (2026-05-13)
 - nixpacks chrome deps (2026-05-14)
 - register form validation (2026-05-14)
+- batch loading in prod (2026-05-14)

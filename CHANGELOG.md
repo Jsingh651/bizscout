@@ -123,3 +123,4 @@
 - analytics empty state (2026-05-11)
 - password validation (2026-05-11)
 - auth headers on scrape (2026-05-12)
+- meetings trailing slash (2026-05-12)

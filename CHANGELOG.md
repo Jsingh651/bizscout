@@ -129,3 +129,4 @@
 - contract_type serializer (2026-05-13)
 - mac chrome path (2026-05-13)
 - nixpacks chrome deps (2026-05-14)
+- register form validation (2026-05-14)

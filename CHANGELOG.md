@@ -125,3 +125,4 @@
 - auth headers on scrape (2026-05-12)
 - meetings trailing slash (2026-05-12)
 - mobile table scroll (2026-05-12)
+- deposit line item (2026-05-13)

@@ -134,3 +134,4 @@
 - jsx in login page (2026-05-15)
 - api error handling (2026-05-15)
 - auth cookie logic (2026-05-15)
+- pipeline constants (2026-05-16)

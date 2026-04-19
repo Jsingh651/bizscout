@@ -140,3 +140,4 @@
 - auth page layout (2026-05-17)
 - mobile nav (2026-05-17)
 - analytics cards (2026-05-17)
+- deployment section (2026-05-18)

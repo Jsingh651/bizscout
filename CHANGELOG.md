@@ -138,3 +138,4 @@
 - leads table spacing (2026-05-16)
 - pipeline cards (2026-05-16)
 - auth page layout (2026-05-17)
+- mobile nav (2026-05-17)

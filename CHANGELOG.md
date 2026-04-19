@@ -137,3 +137,4 @@
 - pipeline constants (2026-05-16)
 - leads table spacing (2026-05-16)
 - pipeline cards (2026-05-16)
+- auth page layout (2026-05-17)

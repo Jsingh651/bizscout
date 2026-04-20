@@ -141,3 +141,4 @@
 - mobile nav (2026-05-17)
 - analytics cards (2026-05-17)
 - deployment section (2026-05-18)
+- env var table (2026-05-18)

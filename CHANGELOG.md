@@ -144,3 +144,4 @@
 - env var table (2026-05-18)
 - pin bcrypt (2026-05-18)
 - bump vite patch (2026-05-19)
+- call outcome buttons (2026-05-19)

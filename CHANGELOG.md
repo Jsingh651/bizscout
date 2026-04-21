@@ -151,3 +151,4 @@
 - brevo email api (2026-05-20)
 - built contract status (2026-05-21)
 - auth panel on desktop (2026-05-21)
+- batch cache (2026-05-21)

@@ -148,3 +148,4 @@
 - no-website filter (2026-05-19)
 - score breakdown (2026-05-20)
 - mobile responsive pass (2026-05-20)
+- brevo email api (2026-05-20)

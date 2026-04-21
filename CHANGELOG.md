@@ -150,3 +150,4 @@
 - mobile responsive pass (2026-05-20)
 - brevo email api (2026-05-20)
 - built contract status (2026-05-21)
+- auth panel on desktop (2026-05-21)

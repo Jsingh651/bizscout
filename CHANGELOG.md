@@ -146,3 +146,4 @@
 - bump vite patch (2026-05-19)
 - call outcome buttons (2026-05-19)
 - no-website filter (2026-05-19)
+- score breakdown (2026-05-20)

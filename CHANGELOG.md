@@ -161,3 +161,4 @@
 - domain check timeout (2026-05-24)
 - contract print layout (2026-05-24)
 - payment buttons (2026-05-24)
+- zoom setup steps (2026-05-25)

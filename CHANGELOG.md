@@ -164,3 +164,4 @@
 - zoom setup steps (2026-05-25)
 - update lockfile (2026-05-25)
 - stripe checkout flow (2026-05-25)
+- second invoice button (2026-05-26)

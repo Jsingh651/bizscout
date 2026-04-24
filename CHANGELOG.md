@@ -167,3 +167,4 @@
 - second invoice button (2026-05-26)
 - export batch csv (2026-05-26)
 - empty scrape results (2026-05-26)
+- hero spacing (2026-05-27)

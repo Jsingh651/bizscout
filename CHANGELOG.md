@@ -166,3 +166,4 @@
 - stripe checkout flow (2026-05-25)
 - second invoice button (2026-05-26)
 - export batch csv (2026-05-26)
+- empty scrape results (2026-05-26)

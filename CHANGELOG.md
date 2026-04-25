@@ -170,3 +170,4 @@
 - hero spacing (2026-05-27)
 - cookie secure flag (2026-05-27)
 - pipeline memoization (2026-05-27)
+- chromedriver on railway (2026-05-28)

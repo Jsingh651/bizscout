@@ -172,3 +172,4 @@
 - pipeline memoization (2026-05-27)
 - chromedriver on railway (2026-05-28)
 - filter batches by date (2026-05-28)
+- lead detail table wrap (2026-05-28)

@@ -177,3 +177,4 @@
 - show deposit as single line item (2026-05-29)
 - restore auth left panel (2026-05-29)
 - responsive tablet layout (2026-05-30)
+- meetings auth headers (2026-05-30)

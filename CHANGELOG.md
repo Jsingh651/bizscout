@@ -174,3 +174,4 @@
 - filter batches by date (2026-05-28)
 - lead detail table wrap (2026-05-28)
 - simplify nixpacks chrome (2026-05-29)
+- show deposit as single line item (2026-05-29)

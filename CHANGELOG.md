@@ -179,3 +179,4 @@
 - responsive tablet layout (2026-05-30)
 - meetings auth headers (2026-05-30)
 - contract signing flow (2026-05-30)
+- datepicker theme (2026-05-31)

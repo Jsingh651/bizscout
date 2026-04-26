@@ -182,3 +182,4 @@
 - datepicker theme (2026-05-31)
 - scrape stop saves leads (2026-05-31)
 - api route table (2026-05-31)
+- profile delete account (2026-06-01)

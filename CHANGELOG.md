@@ -185,3 +185,4 @@
 - profile delete account (2026-06-01)
 - payments list page (2026-06-01)
 - batch avg score display (2026-06-01)
+- scrape context (2026-06-02)

@@ -183,3 +183,4 @@
 - scrape stop saves leads (2026-05-31)
 - api route table (2026-05-31)
 - profile delete account (2026-06-01)
+- payments list page (2026-06-01)

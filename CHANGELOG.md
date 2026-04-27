@@ -186,3 +186,4 @@
 - payments list page (2026-06-01)
 - batch avg score display (2026-06-01)
 - scrape context (2026-06-02)
+- zoom invite email template (2026-06-02)

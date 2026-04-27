@@ -184,3 +184,4 @@
 - api route table (2026-05-31)
 - profile delete account (2026-06-01)
 - payments list page (2026-06-01)
+- batch avg score display (2026-06-01)

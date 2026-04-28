@@ -192,3 +192,4 @@
 - railway procfile tweak (2026-06-03)
 - hashids token length (2026-06-03)
 - approval page flow (2026-06-04)
+- vite api url env (2026-06-04)

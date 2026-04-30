@@ -198,3 +198,4 @@
 - reduce scrape poll interval (2026-06-05)
 - lead stage update (2026-06-05)
 - supabase setup (2026-06-06)
+- payment webhook idempotency (2026-06-06)

@@ -199,3 +199,4 @@
 - lead stage update (2026-06-05)
 - supabase setup (2026-06-06)
 - payment webhook idempotency (2026-06-06)
+- batch card layout (2026-06-06)

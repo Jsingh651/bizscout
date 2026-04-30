@@ -197,3 +197,4 @@
 - contract pdf generation (2026-06-05)
 - reduce scrape poll interval (2026-06-05)
 - lead stage update (2026-06-05)
+- supabase setup (2026-06-06)

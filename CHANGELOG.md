@@ -203,3 +203,4 @@
 - analytics funnel chart (2026-06-07)
 - email util to brevo (2026-06-07)
 - lead phone formatting (2026-06-07)
+- eslint config update (2026-06-08)

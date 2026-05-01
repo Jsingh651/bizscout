@@ -202,3 +202,4 @@
 - batch card layout (2026-06-06)
 - analytics funnel chart (2026-06-07)
 - email util to brevo (2026-06-07)
+- lead phone formatting (2026-06-07)

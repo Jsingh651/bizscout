@@ -205,3 +205,4 @@
 - lead phone formatting (2026-06-07)
 - eslint config update (2026-06-08)
 - cors middleware order (2026-06-08)
+- built status on contracts (2026-06-08)

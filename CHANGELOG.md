@@ -211,3 +211,4 @@
 - register email validation (2026-06-09)
 - stripe webhook setup (2026-06-10)
 - domain availability cache (2026-06-10)
+- leads list virtualization prep (2026-06-10)

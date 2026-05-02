@@ -210,3 +210,4 @@
 - lead detail score bar (2026-06-09)
 - register email validation (2026-06-09)
 - stripe webhook setup (2026-06-10)
+- domain availability cache (2026-06-10)

@@ -208,3 +208,4 @@
 - built status on contracts (2026-06-08)
 - invoice modal close (2026-06-09)
 - lead detail score bar (2026-06-09)
+- register email validation (2026-06-09)

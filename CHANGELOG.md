@@ -214,3 +214,4 @@
 - leads list virtualization prep (2026-06-10)
 - meeting reminder timing (2026-06-11)
 - payments page layout (2026-06-11)
+- contract client sign token (2026-06-11)

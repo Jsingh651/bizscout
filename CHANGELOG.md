@@ -213,3 +213,4 @@
 - domain availability cache (2026-06-10)
 - leads list virtualization prep (2026-06-10)
 - meeting reminder timing (2026-06-11)
+- payments page layout (2026-06-11)

@@ -217,3 +217,4 @@
 - contract client sign token (2026-06-11)
 - production deploy prep (2026-06-12)
 - cors on auth routes (2026-06-12)
+- lead score display (2026-06-12)

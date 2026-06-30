@@ -36,6 +36,12 @@ backend/app/checkpoints/
 .env.*
 backend/.env
 frontend/.env
+# ...but keep the committed templates
+!.env.example
+!**/.env.example
+
+### Test / virtualenv artifacts
+.venv-test/
 
 ### Build artifacts / coverage
 coverage/

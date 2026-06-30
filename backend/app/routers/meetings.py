@@ -324,6 +324,7 @@ def create_meeting(request: Request, body: MeetingCreate, db: Session = Depends(
     join_url = zoom_data.get("join_url")
 
     m = Meeting(
+        user_id=current_user.id,
         lead_id=body.lead_id,
         prospect_name=body.prospect_name.strip() or None,
         email=str(body.email),
@@ -368,7 +369,11 @@ def next_meeting_for_lead(request: Request, lead_id: str, db: Session = Depends(
     now = datetime.now(timezone.utc)
     meeting = (
         db.query(Meeting)
-        .filter(Meeting.lead_id == real_id, Meeting.start_time >= now)
+        .filter(
+            Meeting.lead_id == real_id,
+            Meeting.user_id == current_user.id,
+            Meeting.start_time >= now,
+        )
         .order_by(Meeting.start_time.asc())
         .first()
     )
@@ -387,7 +392,7 @@ def upcoming_meetings(request: Request, db: Session = Depends(get_db), current_u
     meetings = (
         db.query(Meeting, Lead)
         .join(Lead, Lead.id == Meeting.lead_id)
-        .filter(Meeting.start_time >= now)
+        .filter(Meeting.start_time >= now, Meeting.user_id == current_user.id)
         .order_by(Meeting.start_time.asc())
         .all()
     )

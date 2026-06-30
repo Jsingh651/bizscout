@@ -7,7 +7,8 @@ AI-powered local business lead intelligence platform for website sales automatio
 
 ## What the Website Does (Current)
 
-- **Auth (cookie session)** — Register, login, logout, `me`, update profile (name + password). Frontend protects routes via `AuthContext`.
+- **Auth (JWT)** — Register, login, logout, `me`, update profile (name + password). Tokens are accepted via the `Authorization: Bearer` header **or** an httpOnly cookie, so auth works on same-origin and cross-site (Vercel ↔ Railway) deployments alike. Frontend protects routes via `AuthContext`.
+- **Multi-tenant by design** — Every account works the **same shared lead pool** but keeps its **own private pipeline** (stage, notes, call outcome) per lead. See [Multi-tenant data model](#multi-tenant-data-model).
 - **Lead scraper (Google Maps)** — Start a background scrape by **niche + city** with optional **“no website only”** filter. Live status shows progress, ETA, and streaming “found companies”. Stopping early still saves leads to the DB.
 - **Lead scoring (0–100)** — Rule-based score combining 7 signals: website status, rating, review count, business age, category urgency, phone present, address present. Lead Detail shows a visual score breakdown.
 - **Batches** — Each scrape run is grouped into a batch (query + location) with lead count, average score, and “no website” count.
@@ -24,6 +25,37 @@ AI-powered local business lead intelligence platform for website sales automatio
 - **Analytics** — Combined dashboard for leads, batches, and contracts (total leads, “no website” share, score distribution, pipeline funnel, and contract revenue stats).
 
 ---
+
+## Multi-tenant data model
+
+BizScout is multi-tenant over a **single shared lead pool**. The scraped `leads`
+table is global — every account sees the same businesses — but each account's
+CRM activity is private.
+
+- **Private pipeline** — A user's stage, notes and call outcome for a lead live
+  in `lead_pipeline`, keyed on `(user_id, lead_id)`. One rep marking a lead
+  "Not Interested" leaves it untouched and "New Lead" for everyone else.
+- **Global rejection** — When **more than 5 distinct users** mark the same lead
+  "Not Interested", the business is a confirmed dead end. It is retired from the
+  shared pool for everyone and a snapshot is written to `rejected_leads`.
+- **Global success** — When a user reaches **"Closed Won"** (the business bought
+  a site), the lead is retired for everyone and credited to that user in
+  `successful_leads`. A sold business no longer needs outreach.
+- Retired leads are soft-archived (`leads.is_archived`) so signed contracts and
+  invoices that reference them stay valid; they disappear from every list and
+  detail view.
+- **Contracts, invoices/Stripe, and meetings** carry a `user_id` and are scoped
+  to the account that created them.
+
+### Row-level security
+
+The per-user tables (`lead_pipeline`, `contracts`, `payments`, `meetings`) have
+Postgres **row-level-security** policies that restrict rows to the authenticated
+user via an `app.current_user_id` session variable set on every request
+(`get_current_user`). Application-layer `WHERE user_id = :me` filters are the
+primary, test-covered guarantee; RLS is defense-in-depth for any direct database
+access. RLS is enabled automatically on Postgres and skipped on SQLite (used for
+local dev/tests).
 
 ## Feature List (Done vs Planned)
 

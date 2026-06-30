@@ -429,7 +429,7 @@
             </div>
 
             <div className="f5 hero-stats">
-              {[['124k+','Businesses indexed'],['89k+','Without websites'],['420+','Cities covered']].map(([val, label]) => (
+              {[['280k+','Businesses indexed'],['89k+','Without websites'],['43','Cities covered']].map(([val, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#a78bfa', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '-1px' }}>{val}</div>
                   <div style={{ fontSize: '0.7rem', color: '#b4b4bbff', textTransform: 'uppercase', letterSpacing: '1.5px', marginTop: '4px' }}>{label}</div>

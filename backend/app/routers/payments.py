@@ -659,6 +659,7 @@ def send_invoice(
     p = db.query(Payment).filter(Payment.contract_id == body.contract_id).first()
     if not p:
         p = Payment(
+            user_id       = current_user.id,
             contract_id   = c.id,
             lead_id       = c.lead_id,
             client_name   = c.client_name,
@@ -1070,7 +1071,11 @@ def get_payment_status_by_contract(
     current_user: User = Depends(get_current_user),
 ):
     Payment = _get_payment_model()
-    p = db.query(Payment).filter(Payment.contract_id == contract_id).first()
+    p = (
+        db.query(Payment)
+        .filter(Payment.contract_id == contract_id, Payment.user_id == current_user.id)
+        .first()
+    )
     if not p:
         raise HTTPException(status_code=404, detail="No payment record for this contract.")
     return _serialize(p)
@@ -1083,7 +1088,12 @@ def get_payments_by_lead(
     current_user: User = Depends(get_current_user),
 ):
     Payment = _get_payment_model()
-    payments = db.query(Payment).filter(Payment.lead_id == lead_id).order_by(Payment.created_at.desc()).all()
+    payments = (
+        db.query(Payment)
+        .filter(Payment.lead_id == lead_id, Payment.user_id == current_user.id)
+        .order_by(Payment.created_at.desc())
+        .all()
+    )
     return [_serialize(p) for p in payments]
 
 
@@ -1097,7 +1107,11 @@ def sync_payment_status(
     Useful when the webhook didn't fire (e.g. local dev without Stripe CLI)."""
     s = _stripe()
     Payment = _get_payment_model()
-    p = db.query(Payment).filter(Payment.contract_id == contract_id).first()
+    p = (
+        db.query(Payment)
+        .filter(Payment.contract_id == contract_id, Payment.user_id == current_user.id)
+        .first()
+    )
     if not p:
         raise HTTPException(status_code=404, detail="No payment record for this contract.")
 
@@ -1147,7 +1161,12 @@ def get_all_payments(
     current_user: User = Depends(get_current_user),
 ):
     Payment = _get_payment_model()
-    payments = db.query(Payment).order_by(Payment.created_at.desc()).all()
+    payments = (
+        db.query(Payment)
+        .filter(Payment.user_id == current_user.id)
+        .order_by(Payment.created_at.desc())
+        .all()
+    )
     return [_serialize(p) for p in payments]
 
 

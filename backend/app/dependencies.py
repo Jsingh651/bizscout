@@ -1,5 +1,6 @@
 from fastapi import Depends, HTTPException, Cookie, Header, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from typing import Optional
 from app.database import get_db
 from app.models.user import User
@@ -43,5 +44,15 @@ def get_current_user(
     user = db.query(User).filter(User.id == int(payload["sub"])).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+
+    # Bind this DB session to the user so Postgres row-level-security policies
+    # (see _setup_row_level_security) resolve to their rows. Session-scoped so it
+    # survives commits within a request. No-op / harmless on SQLite.
+    if db.bind is not None and db.bind.dialect.name == "postgresql":
+        try:
+            db.execute(text("SELECT set_config('app.current_user_id', :uid, false)"),
+                       {"uid": str(user.id)})
+        except Exception:
+            pass
 
     return user

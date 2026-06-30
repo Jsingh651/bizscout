@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { MapPin, AlertTriangle, ExternalLink, Phone, Star, ChevronDown, CheckCircle2, Circle, StickyNote, X, Check } from 'lucide-react'
 import AppNav from '../components/AppNav'
 import ReactDOM from 'react-dom'
-import { API } from '../utils/api'
+import { API, getAuthHeaders } from '../utils/api'
 
 const STAGES = ['New Lead', 'Contacted', 'Interested', 'Proposal Sent', 'Closed Won', 'Closed Lost']
 const STAGE_CONFIG = {
@@ -263,9 +263,15 @@ export default function Pipeline() {
   const handleStageChange = (leadId, stage) => {
     setLeads(prev => prev.map(l => (l.hid||l.id)===leadId ? {...l,pipeline_stage:stage} : l))
     fetch(`${API}/leads/${leadId}`,{
-      method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'include',
+      method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',
       body:JSON.stringify({pipeline_stage:stage}),
-    }).catch(()=>{})
+    })
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        // "Closed Won" retires the lead from the shared pool for everyone — drop it.
+        if (data && data.removed) setLeads(prev => prev.filter(l => (l.hid||l.id)!==leadId))
+      })
+      .catch(()=>{})
   }
 
   const handleNoteSave = (leadId, notes) => {

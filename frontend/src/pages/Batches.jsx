@@ -555,16 +555,22 @@ export default function Batches() {
             .catch(()=>setLoadingDetail(false))
     }, [])
 
+    // Drop a lead from the batch view once the API reports it left the shared pool.
+    const dropLead = (leadId) =>
+        setActiveBatch(prev=>({...prev,leads:prev.leads.filter(l=>(l.hid||l.id)!==leadId)}))
+
     const handleStageChange = (leadId, stage) => {
         setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,pipeline_stage:stage}:l)}))
         patchCachedLead(leadId, { pipeline_stage: stage })
-        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({pipeline_stage:stage})}).catch(()=>{})
+        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({pipeline_stage:stage})})
+            .then(r=>(r.ok?r.json():null)).then(d=>{ if(d&&d.removed) dropLead(leadId) }).catch(()=>{})
     }
 
     const handleCallOutcomeChange = (leadId, outcome) => {
         setActiveBatch(prev=>({...prev,leads:prev.leads.map(l=>(l.hid||l.id)===leadId?{...l,call_outcome:outcome}:l)}))
         patchCachedLead(leadId, { call_outcome: outcome })
-        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({call_outcome:outcome})}).catch(()=>{})
+        fetch(`${API}/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json',...getAuthHeaders()},credentials:'include',body:JSON.stringify({call_outcome:outcome})})
+            .then(r=>(r.ok?r.json():null)).then(d=>{ if(d&&d.removed) dropLead(leadId) }).catch(()=>{})
     }
     const handleFilterChange = (key,val) => setFilters(prev=>({...prev,[key]:val}))
     const clearFilters = () => setFilters({niche:null,city:null,score:null,opportunity:null,date:null})

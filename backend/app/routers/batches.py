@@ -3,8 +3,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.batch import Batch
 from app.models.lead import Lead
+from app.models.lead_pipeline import LeadPipeline
 from app.models.user import User
 from app.dependencies import get_current_user
+from app.routers.leads import _serialize_lead
 from app.utils.hashids_util import encode_id, decode_id
 from app.limiter import limiter
 
@@ -18,7 +20,7 @@ def list_batches(request: Request, db: Session = Depends(get_db), current_user: 
     batches = db.query(Batch).order_by(Batch.created_at.desc()).all()
     result = []
     for b in batches:
-        leads     = db.query(Lead).filter(Lead.batch_id == b.id).all()
+        leads     = db.query(Lead).filter(Lead.batch_id == b.id, Lead.is_archived.isnot(True)).all()
         count     = len(leads)
         avg_score = round(sum(l.score or 0 for l in leads) / count, 1) if count else 0
         no_site   = sum(1 for l in leads if l.website_status == "NO WEBSITE")
@@ -47,9 +49,13 @@ def get_batch_leads(request: Request, batch_id: str, db: Session = Depends(get_d
     if not batch:
         raise HTTPException(status_code=404, detail="Batch not found")
 
-    leads = (
-        db.query(Lead)
-        .filter(Lead.batch_id == real_id)
+    rows = (
+        db.query(Lead, LeadPipeline)
+        .outerjoin(
+            LeadPipeline,
+            (LeadPipeline.lead_id == Lead.id) & (LeadPipeline.user_id == current_user.id),
+        )
+        .filter(Lead.batch_id == real_id, Lead.is_archived.isnot(True))
         .order_by(Lead.score.desc())
         .all()
     )
@@ -62,26 +68,5 @@ def get_batch_leads(request: Request, batch_id: str, db: Session = Depends(get_d
             "location":   batch.location,
             "created_at": batch.created_at.isoformat() if batch.created_at else None,
         },
-        "leads": [
-            {
-                "id":                 l.id,
-                "hid":                encode_id(l.id),
-                "name":               l.name,
-                "city":               l.city,
-                "phone":              l.phone,
-                "address":            l.address,
-                "website_status":     l.website_status,
-                "website_url":        l.website_url,
-                "category":           l.category,
-                "rating":             l.rating,
-                "review_count":       l.review_count,
-                "business_age_years": l.business_age_years,
-                "score":              l.score,
-                "pipeline_stage":     l.pipeline_stage,
-                "notes":              l.notes,
-                "call_outcome":       l.call_outcome,
-                "call_outcome_at":    l.call_outcome_at.isoformat() if l.call_outcome_at else None,
-            }
-            for l in leads
-        ],
+        "leads": [_serialize_lead(l, p) for l, p in rows],
     }

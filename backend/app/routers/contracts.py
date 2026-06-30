@@ -330,6 +330,7 @@ def create_contract(
         raise HTTPException(status_code=404, detail="Lead not found")
 
     contract = Contract(
+        user_id           = current_user.id,
         lead_id           = body.lead_id,
         designer_name     = body.designer_name.strip(),
         designer_email    = body.designer_email,
@@ -362,7 +363,7 @@ def get_contracts_for_lead(
     Contract = _get_contract_model()
     contracts = (
         db.query(Contract)
-        .filter(Contract.lead_id == real_id)
+        .filter(Contract.lead_id == real_id, Contract.user_id == current_user.id)
         .order_by(Contract.created_at.desc())
         .all()
     )
@@ -375,7 +376,12 @@ def get_all_contracts(
     current_user: User = Depends(get_current_user),
 ):
     Contract = _get_contract_model()
-    contracts = db.query(Contract).order_by(Contract.created_at.desc()).all()
+    contracts = (
+        db.query(Contract)
+        .filter(Contract.user_id == current_user.id)
+        .order_by(Contract.created_at.desc())
+        .all()
+    )
     return [_serialize(c) for c in contracts]
 
 

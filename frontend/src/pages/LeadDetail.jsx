@@ -162,11 +162,15 @@ function CallLog({ lead, onOutcomeSet }) {
     const [saving, setSaving] = useState(null)
     const setOutcome = async (key) => {
         setSaving(key)
-        await fetch(`${API}/leads/${lead.hid || lead.id}`, {
-            method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include',
-            body: JSON.stringify({ call_outcome: key }),
-        }).catch(() => {})
-        onOutcomeSet(key)
+        let data = null
+        try {
+            const r = await fetch(`${API}/leads/${lead.hid || lead.id}`, {
+                method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include',
+                body: JSON.stringify({ call_outcome: key }),
+            })
+            data = r.ok ? await r.json() : null
+        } catch { /* network error — keep optimistic UI */ }
+        onOutcomeSet(key, data)
         setSaving(null)
     }
     const current  = outcomeStyle(lead.call_outcome)
@@ -630,12 +634,22 @@ export default function LeadDetail() {
             .catch(() => {})
     }, [id])
 
+    // A lead can leave the shared pool globally (sold → Successful, or rejected
+    // by 5+ users). When the API signals that, send the user back to the list.
+    const handleLeadRemoved = () => navigate('/leads')
+
     const handleStageChange = stage => {
         setLead(prev => ({ ...prev, pipeline_stage: stage }))
-        fetch(`${API}/leads/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include', body: JSON.stringify({ pipeline_stage: stage }) }).catch(() => {})
+        fetch(`${API}/leads/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }, credentials: 'include', body: JSON.stringify({ pipeline_stage: stage }) })
+            .then(r => (r.ok ? r.json() : null))
+            .then(data => { if (data && data.removed) handleLeadRemoved() })
+            .catch(() => {})
     }
-    const handleNotesSave  = notes        => setLead(prev => ({ ...prev, notes }))
-    const handleOutcomeSet = call_outcome => setLead(prev => ({ ...prev, call_outcome, call_outcome_at: new Date().toISOString() }))
+    const handleNotesSave  = notes => setLead(prev => ({ ...prev, notes }))
+    const handleOutcomeSet = (call_outcome, resp) => {
+        if (resp && resp.removed) { handleLeadRemoved(); return }
+        setLead(prev => ({ ...prev, call_outcome, call_outcome_at: new Date().toISOString() }))
+    }
 
     const handleScheduleDemo = () => {
         if (!demoName?.trim() || !demoEmail || !demoTime || !lead) return

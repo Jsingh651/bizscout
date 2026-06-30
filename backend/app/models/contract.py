@@ -6,6 +6,8 @@ class Contract(Base):
     __tablename__ = "contracts"
 
     id                  = Column(Integer, primary_key=True, index=True)
+    # Owning user — contracts (and their Stripe flow) are unique to the rep who created them
+    user_id             = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
     lead_id             = Column(Integer, ForeignKey("leads.id"), nullable=False, index=True)
 
     # Designer info

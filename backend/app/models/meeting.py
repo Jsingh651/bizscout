@@ -8,6 +8,8 @@ class Meeting(Base):
     __tablename__ = "meetings"
 
     id = Column(Integer, primary_key=True, index=True)
+    # Owning user — meetings are unique to the rep who booked them
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
     lead_id = Column(Integer, ForeignKey("leads.id"), nullable=False, index=True)
     prospect_name = Column(String, nullable=True)
     email = Column(String, nullable=False)

@@ -76,6 +76,12 @@ def _run_migrations():
                 conn.commit()
                 print("[migrations] added payments.next_billing_date")
 
+            # Per-user ownership for the Stripe / billing flow
+            if "user_id" not in existing:
+                conn.execute(text("ALTER TABLE payments ADD COLUMN user_id INTEGER"))
+                conn.commit()
+                print("[migrations] added payments.user_id")
+
         # ── contracts table ──────────────────────────────────────────────
         existing_c = {col["name"] for col in inspector.get_columns("contracts")}
         with engine.connect() as conn:
@@ -83,11 +89,70 @@ def _run_migrations():
                 conn.execute(text("ALTER TABLE contracts ADD COLUMN contract_type VARCHAR DEFAULT 'design'"))
                 conn.commit()
                 print("[migrations] added contracts.contract_type")
+            if "user_id" not in existing_c:
+                conn.execute(text("ALTER TABLE contracts ADD COLUMN user_id INTEGER"))
+                conn.commit()
+                print("[migrations] added contracts.user_id")
+
+        # ── meetings table ───────────────────────────────────────────────
+        existing_m = {col["name"] for col in inspector.get_columns("meetings")}
+        with engine.connect() as conn:
+            if "user_id" not in existing_m:
+                conn.execute(text("ALTER TABLE meetings ADD COLUMN user_id INTEGER"))
+                conn.commit()
+                print("[migrations] added meetings.user_id")
+
+        # ── leads table: global archive lifecycle ────────────────────────
+        existing_l = {col["name"] for col in inspector.get_columns("leads")}
+        with engine.connect() as conn:
+            if "is_archived" not in existing_l:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN is_archived BOOLEAN DEFAULT FALSE"))
+                conn.commit()
+                print("[migrations] added leads.is_archived")
+            if "archived_reason" not in existing_l:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN archived_reason VARCHAR"))
+                conn.commit()
+                print("[migrations] added leads.archived_reason")
     except Exception as e:
         print(f"[migrations] warning: {e}")
 
 
+# Tables whose every row belongs to exactly one user. The shared ``leads`` pool
+# is deliberately excluded — it is visible to everyone.
+_PER_USER_TABLES = ("lead_pipeline", "contracts", "payments", "meetings")
+
+
+def _setup_row_level_security():
+    """
+    Enable Postgres row-level security on the per-user tables.
+
+    Each policy restricts rows to the authenticated user, identified by the
+    ``app.current_user_id`` session variable that ``get_current_user`` sets on
+    every request. This is a no-op on SQLite (used in local dev/tests), which
+    has no RLS. App-layer ``WHERE user_id = :me`` filters remain the primary,
+    test-covered guarantee; RLS is defense-in-depth for any direct DB access.
+    """
+    if engine.dialect.name != "postgresql":
+        return
+    from sqlalchemy import text
+    me = "NULLIF(current_setting('app.current_user_id', true), '')::int"
+    for table in _PER_USER_TABLES:
+        try:
+            with engine.connect() as conn:
+                conn.execute(text(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY"))
+                conn.execute(text(f"DROP POLICY IF EXISTS {table}_user_isolation ON {table}"))
+                conn.execute(text(
+                    f"CREATE POLICY {table}_user_isolation ON {table} "
+                    f"USING (user_id = {me}) WITH CHECK (user_id = {me})"
+                ))
+                conn.commit()
+                print(f"[rls] row-level security enabled on {table}")
+        except Exception as e:
+            print(f"[rls] warning on {table}: {e}")
+
+
 _run_migrations()
+_setup_row_level_security()
 
 app = FastAPI()
 app.state.limiter = limiter

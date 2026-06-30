@@ -9,6 +9,9 @@ class Payment(Base):
 
     id                     = Column(Integer, primary_key=True, index=True)
 
+    # Owning user — invoices/subscriptions are unique to the rep who issued them
+    user_id                = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
+
     # Links — contract_id goes NULL if contract deleted, lead_id stays forever
     lead_id                = Column(Integer, ForeignKey("leads.id", ondelete="SET NULL"), nullable=True, index=True)
     contract_id            = Column(Integer, ForeignKey("contracts.id", ondelete="SET NULL"), nullable=True, index=True)

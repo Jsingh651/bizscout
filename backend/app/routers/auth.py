@@ -12,6 +12,7 @@ from app.services.auth import (
     create_access_token, decode_token, hash_password
 )
 from app.limiter import limiter
+from app.dependencies import get_current_user
 import re
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -114,20 +115,16 @@ class MeResponse(BaseModel):
 
 
 @router.get("/me", response_model=MeResponse)
-def me(access_token: Optional[str] = Cookie(default=None), db: Session = Depends(get_db)):
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_token(access_token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = db.query(User).filter(User.id == int(payload["sub"])).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    new_token = create_access_token({"sub": str(user.id), "email": user.email})
+def me(current_user: User = Depends(get_current_user)):
+    # Auth is resolved by get_current_user, which accepts both the
+    # Authorization: Bearer header and the access_token cookie. This matters
+    # in cross-site deploys (e.g. Vercel frontend + Railway API) where the
+    # SameSite=Lax cookie is not sent and only the Bearer header is available.
+    new_token = create_access_token({"sub": str(current_user.id), "email": current_user.email})
     return {
-        "id": user.id,
-        "email": user.email,
-        "full_name": user.full_name,
+        "id": current_user.id,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
         "access_token": new_token,
     }
 
@@ -135,17 +132,10 @@ def me(access_token: Optional[str] = Cookie(default=None), db: Session = Depends
 @router.put("/me", response_model=UserResponse)
 def update_me(
     body: UpdateProfileRequest,
-    access_token: Optional[str] = Cookie(default=None),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    payload = decode_token(access_token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = db.query(User).filter(User.id == int(payload["sub"])).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    user = current_user
 
     # Update name
     if body.full_name is not None:
